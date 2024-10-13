@@ -163,6 +163,13 @@
                                 <option value="Temporary">Temporary</option>
                             </select>
                         </div>
+                        <div>
+                            <label for="editUserType" class="block text-sm font-medium text-gray-700">Account Type</label>
+                            <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                                <option value="admin">Admin</option>
+                                <option value="faculty">Faculty</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="mt-6 flex justify-end space-x-3">
                         <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-gray-300 rounded-md transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-200">Cancel</button>
@@ -290,7 +297,7 @@
                     document.getElementById('editProgram').value = data.faculty.program;
                     document.getElementById('editUnits').value = data.faculty.units;
                     document.getElementById('editPosition').value = data.faculty.position;
-
+                    document.getElementById('editUserType').value = data.faculty.user_type;
                     // Set the form action to the edit route
                     document.getElementById('editForm').action = `/admin/faculty/edit`;
 
@@ -326,6 +333,7 @@
                 program: document.getElementById('editProgram').value,
                 units: document.getElementById('editUnits').value,
                 position: document.getElementById('editPosition').value,
+                user_type: document.getElementById('editUserType').value,
             };
 
             fetch(this.action, {

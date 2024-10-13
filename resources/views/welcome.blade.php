@@ -124,7 +124,7 @@
             <div class="container">
                 <div class="header" style="transform: translateX(-10%);">
                     <h1>DB&C System</h1>
-                    <p>Data Banking of Quality Assurance Documents for the College of Art, Sciences, And Technology</p>
+                    <p>Data Banking and Clearance Checklist System for the College of Art, Sciences, and Technology</p>
                 </div>
                 @if (Route::has('login'))
                     <nav class="-mx-3 flex flex-1 justify-end left-50">

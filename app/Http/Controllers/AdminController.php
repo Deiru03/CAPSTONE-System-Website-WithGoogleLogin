@@ -131,6 +131,7 @@ class AdminController extends Controller
             'program' => 'nullable|string|max:255',
             'units' => 'nullable|integer',
             'position' => 'nullable|string|max:255',
+            'user_type' => 'required|string|max:255',
         ]);
 
         try {
