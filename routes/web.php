@@ -7,12 +7,18 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\Admin\ClearanceController as AdminClearanceController;
 use App\Http\Controllers\Faculty\ClearanceController as FacultyClearanceController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\GoogleAuthController;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Google Auth Routes
+Route::get('auth/google', [GoogleAuthController::class, 'redirectGoogle'])->name('google.login');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle'])->name('google.callback');
 
 Route::get('/dashboard', function () {
     if (Auth::check()) {

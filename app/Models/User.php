@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
         'user_type', // Added date 09/16/2024 // Admin, Faculty
         'program', // Added date 09/16/2024 // BSIT, COMSC, etc.
         'position', // Added date 09/16/2024 // Permanent, Temporary, Part-Timer

@@ -72,7 +72,7 @@
                 border: 2px solid #1e40af;
                 border-radius: 4px; /* Slightly rounded corners */
                 text-decoration: none; /* Remove underline */
-                font-size: 16px; /* Font size */
+                font-size: 14px; /* Font size */
                 transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
             }
 
@@ -85,6 +85,33 @@
                 position: fixed; /* Fix the position */
                 bottom: 50px; /* Adjust as needed */
                 left: 50px; /* Adjust as needed */
+            }
+
+            .button-google {
+                display: inline-block;
+                padding: 10px 20px; /* Reduced padding */
+                margin: 8px; /* Slightly reduced margin */
+                background-color: transparent; /* Google blue */
+                color: #1e40af;
+                border: 2px solid #1e40af;
+                border-radius: 4px;
+                text-decoration: none;
+                font-size: 14px; /* Slightly reduced font size */
+                transition: background-color 0.3s, color 0.3s;
+                display: flex;
+                align-items: center;
+                width: 180px; /* Set a fixed width */
+            }
+
+            .button-google:hover {
+                background-color: #357AE8;
+                color: white; /* Slightly darker blue on hover */
+            }
+
+            .button-google img {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
             }
         </style>
     </head>
@@ -99,34 +126,30 @@
                     <h1>DB&C System</h1>
                     <p>Data Banking of Quality Assurance Documents for the College of Art, Sciences, And Technology</p>
                 </div>
-                    @if (Route::has('login'))
-                        <nav class="-mx-3 flex flex-1 justify-end left-50">
-                            @auth
-                                <a
-                                    href="{{ url('/dashboard') }}"
-                                    class="button1"
-                                >
-                                    Dashboard
-                                </a>
-                            @else
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="button1"
-                                >
-                                    Log in
-                                </a>
+                @if (Route::has('login'))
+                    <nav class="-mx-3 flex flex-1 justify-end left-50">
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="button1">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="button1">
+                                Log in
+                            </a>
 
-                                @if (Route::has('register'))
-                                    <a
-                                        href="{{ route('register') }}"
-                                        class="button1"
-                                    >
-                                        Register
-                                    </a>
-                                @endif
-                            @endauth
-                        </nav>
-                    @endif
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="button1">
+                                    Register
+                                </a>
+                            @endif
+
+                            <a href="{{ route('google.login') }}" class="button-google">
+                                <img src="https://www.google.com/favicon.ico" alt="Google logo" />
+                                Login with Google
+                            </a>
+                        @endauth
+                    </nav>
+                @endif
             </div>
         </main>
         <footer class="py-16 text-center text-sm text-black dark:text-white/70">
