@@ -9,6 +9,21 @@
             <div class="p-6">
                 <h2 class="text-3xl font-bold mb-6 text-indigo-700 border-b-2 border-indigo-200 pb-2">Shared Clearances</h2>
 
+                <!-- Recommendations Section -->
+                @if($recommendations->isNotEmpty())
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-4">Recommended for You</h3>
+                        <ul class="list-disc pl-5">
+                            @foreach($recommendations as $recommendation)
+                                <li class="mb-2">
+                                    <span class="font-bold">{{ $recommendation->clearance->document_name }}</span> - {{ $recommendation->clearance->description }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <!-- End of Recommendations Section -->
+
                 @if(session('success'))
                     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow">
                         {{ session('success') }}
@@ -44,18 +59,28 @@
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Name</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Type</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center"># Req.</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($sharedClearances as $sharedClearance)
+                                @php
+                                    $isRecommended = $sharedClearance->clearance->units == Auth::user()->units || $sharedClearance->clearance->type == Auth::user()->position;
+                                @endphp
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->id }}</td>
-                                    <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->document_name }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        {{ $sharedClearance->clearance->document_name }}
+                                        @if($isRecommended)
+                                            <span class="ml-2 inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Recommended</span>
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-3">{{ Str::limit($sharedClearance->clearance->description, 50) }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap text-center">{{ $sharedClearance->clearance->units }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->type }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">{{ $sharedClearance->clearance->requirements->count() }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="flex justify-center space-x-2">
                                             @if(isset($userClearances[$sharedClearance->id]))
@@ -63,8 +88,7 @@
                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded-md transition duration-300 ease-in-out flex items-center"
                                                    onclick="event.preventDefault(); window.location.href='{{ route('faculty.views.clearances', $userClearances[$sharedClearance->id]) }}';">
                                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 011 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
                                                     </svg>
                                                     View
                                                 </a>

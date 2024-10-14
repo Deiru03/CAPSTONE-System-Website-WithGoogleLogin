@@ -527,7 +527,7 @@
                 // Wait for 3 seconds before opening the edit requirements modal
                 setTimeout(() => {
                     openEditRequirementsModal(newClearanceId, newClearanceName);
-                }, 3000);
+                }, 999);
             }
         }
 

@@ -17,7 +17,11 @@ class FacultyController extends Controller
         if (Auth::check() && Auth::user()->user_type === 'Admin') {
             return view('admindashboard');
         }
-        return view('dashboard'); // E redirect sa admin dashboard kun di sya admin bala
+
+        $user = Auth::user();
+        $showProfileModal = empty($user->program) || empty($user->position);
+
+        return view('dashboard', compact('showProfileModal'));
     }
     public function clearances(): View
     {

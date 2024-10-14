@@ -29,7 +29,12 @@ class ClearanceController extends Controller
             ->pluck('id', 'shared_clearance_id')
             ->toArray();
 
-        return view('faculty.views.clearances.clearance-index', compact('sharedClearances', 'userClearances'));
+        // Determine recommendations based on user's units and position
+        $recommendations = $sharedClearances->filter(function ($sharedClearance) use ($user) {
+            return $sharedClearance->clearance->units == $user->units && $sharedClearance->clearance->type == $user->position;
+        });
+
+        return view('faculty.views.clearances.clearance-index', compact('sharedClearances', 'userClearances', 'recommendations'));
     }
 
     /**
