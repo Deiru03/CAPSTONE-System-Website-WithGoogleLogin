@@ -108,9 +108,17 @@
                         <td class="border-t px-3 py-2">{{ $requirement->requirement }}</td>
                         <td class="border-t px-3 py-2">
                             @if($userClearance->uploadedClearanceFor($requirement->id))
-                                <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-semibold">Uploaded</span>
+                                @if($userClearance->uploadedClearanceFor($requirement->id)->status == 'signed')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Signed</span>
+                                @elseif($userClearance->uploadedClearanceFor($requirement->id)->status == 'return')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Return</span>
+                                @else
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 justify-center">On Check</span>
+                                @endif
                             @else
-                                <span class="px-2 py-1 bg-red-200 text-red-800 rounded-full text-xs font-semibold">Pending</span>
+                            <div class="flex items-center justify-center space-x-2 text-center">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Not Uploaded</span>
+                            </div>
                             @endif
                         </td>
                         <td class="border-t px-3 py-2">

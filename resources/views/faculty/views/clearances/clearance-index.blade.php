@@ -54,7 +54,7 @@
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->id }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->document_name }}</td>
                                     <td class="px-4 py-3">{{ Str::limit($sharedClearance->clearance->description, 50) }}</td>
-                                    <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->units }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">{{ $sharedClearance->clearance->units }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->type }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="flex justify-center space-x-2">

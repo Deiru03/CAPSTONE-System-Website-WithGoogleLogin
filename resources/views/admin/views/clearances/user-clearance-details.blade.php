@@ -70,8 +70,10 @@
                                         <td class="px-4 py-3 text-center">
                                         @if($userClearance->uploadedClearanceFor($requirement->id) && $userClearance->uploadedClearanceFor($requirement->id)->status == 'signed')
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Signed</span>
+                                        @elseif($userClearance->uploadedClearanceFor($requirement->id) && $userClearance->uploadedClearanceFor($requirement->id)->status == 'return ')
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Return</span>
                                         @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">On Check</span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
                                         @endif
                                         </td>
                                         <td class="px-4 py-3">
