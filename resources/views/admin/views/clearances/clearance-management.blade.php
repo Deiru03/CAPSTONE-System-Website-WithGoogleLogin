@@ -1,4 +1,3 @@
-{{-- resources/views/admin/views/clearance.blade.php --}}
 <x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -496,8 +495,12 @@
                     addNotification.classList.remove('hidden');
                     addNotification.innerText = data.message;
 
-                    // Optionally, append the new clearance to the table
-                    location.reload(); // Simple reload, can be optimized
+                    // Store the new clearance ID in localStorage
+                    localStorage.setItem('newClearanceId', data.clearance.id);
+                    localStorage.setItem('newClearanceName', data.clearance.document_name);
+
+                    // Reload the page
+                    location.reload();
                 } else {
                     addNotification.classList.remove('hidden');
                     addNotification.classList.add('text-red-600');
@@ -510,6 +513,26 @@
                 alert('An error occurred while adding the clearance.');
             });
         });
+
+        // Add this new function at the end of your script section
+        function checkAndOpenEditRequirements() {
+            const newClearanceId = localStorage.getItem('newClearanceId');
+            const newClearanceName = localStorage.getItem('newClearanceName');
+            
+            if (newClearanceId && newClearanceName) {
+                // Clear the localStorage items
+                localStorage.removeItem('newClearanceId');
+                localStorage.removeItem('newClearanceName');
+                
+                // Wait for 3 seconds before opening the edit requirements modal
+                setTimeout(() => {
+                    openEditRequirementsModal(newClearanceId, newClearanceName);
+                }, 3000);
+            }
+        }
+
+        // Call this function when the page loads
+        document.addEventListener('DOMContentLoaded', checkAndOpenEditRequirements);
 
         // Edit Modal Functions
         function openEditModal(id) {

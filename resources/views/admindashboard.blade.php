@@ -24,7 +24,7 @@
                     </svg>
                 </a>
                 <!-- Clearance Card -->
-                <a href="{{ route('admin.views.clearances') }}" class="bg-purple-500 text-white p-4 rounded-lg shadow relative hover:bg-purple-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
+                <a href="{{ route('admin.clearance.manage') }}" class="bg-purple-500 text-white p-4 rounded-lg shadow relative hover:bg-purple-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Checklist Created</h3>
                         <p class="text-2xl">{{ $clearanceChecklist }}</p>

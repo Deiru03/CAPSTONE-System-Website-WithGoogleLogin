@@ -9,6 +9,7 @@ use App\Models\ClearanceRequirement;
 use App\Models\SharedClearance;
 use Illuminate\Support\Facades\DB;
 use App\Models\UserClearance;
+use Illuminate\Support\Facades\Log;
 
 class ClearanceController extends Controller
 {
@@ -22,20 +23,39 @@ class ClearanceController extends Controller
     // Store a new clearance
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'document_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'units' => 'nullable|integer',
             'type' => 'required|in:Permanent,Part-Timer,Temporary',
         ]);
 
-        $clearance = Clearance::create($request->all());
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Clearance created successfully.',
-            'clearance' => $clearance
-        ]);
+        try {
+            $clearance = Clearance::create($validator->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Clearance added successfully',
+                'clearance' => [
+                    'id' => $clearance->id,
+                    'document_name' => $clearance->document_name,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error creating clearance: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while adding the clearance.'
+            ], 500);
+        }
     }
 
     // Fetch a clearance for editing
