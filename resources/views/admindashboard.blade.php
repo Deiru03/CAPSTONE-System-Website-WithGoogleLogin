@@ -4,9 +4,9 @@
     </x-slot>
 
     <!-- Existing Content -->
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-8">
-        <div class="p-6 text-gray-900">
-            {{ __("You're logged in!") }}
+    <div class="bg-white overflow-hidden">
+        <div class="p-1 text-gray-900">
+            {{ __("") }}
         </div>
     </div>
     <div class="py-12">
