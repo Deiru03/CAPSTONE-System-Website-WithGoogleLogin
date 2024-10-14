@@ -213,7 +213,8 @@
     <!-- View Files Modal -->
     <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full relative">
-            <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Uploaded Files for Requirement ID: <span id="modalRequirementId" class="text-blue-600"></span></h3>
+            <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Uploaded Files for Requirement: <span id="modalRequirementId" class="text-blue-600"></span></h3>
+            {{--}} <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Requirement Name: <span id="requirementName" class="text-blue-600"></span></h3> --}}
             <div class="max-h-96 overflow-y-auto">
                 <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <!-- Uploaded files will be dynamically inserted here -->
