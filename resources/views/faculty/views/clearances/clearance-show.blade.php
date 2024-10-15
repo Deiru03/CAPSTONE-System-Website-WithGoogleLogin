@@ -96,7 +96,7 @@
                     <tr>
                         <th class="py-2 px-3 text-left hidden">ID</th>
                         <th class="py-2 px-3 text-left">Requirement</th>
-                        <th class="py-2 px-3 text-left">Status</th>
+                        <th class="py-2 px-3 text-center">Check Status</th>
                         <th class="py-2 px-3 text-left">Feedback</th>
                         <th class="py-2 px-3 text-left text-center">Actions</th>
                     </tr>
@@ -107,18 +107,33 @@
                         <td class="border-t px-3 py-2 hidden">{{ $requirement->id }}</td>
                         <td class="border-t px-3 py-2">{{ $requirement->requirement }}</td>
                         <td class="border-t px-3 py-2">
-                            @if($userClearance->uploadedClearanceFor($requirement->id))
-                                @if($userClearance->uploadedClearanceFor($requirement->id)->status == 'signed')
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Signed</span>
-                                @elseif($userClearance->uploadedClearanceFor($requirement->id)->status == 'return')
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Return</span>
+                            @php
+                                $feedback = $userClearance->sharedClearance->clearance->requirements
+                                        ->where('id', $requirement->id)
+                                        ->first()
+                                        ->feedback
+                                        ->where('user_id', $userClearance->user_id)
+                                        ->first();
+                            @endphp
+                        
+                            @if($feedback)
+                                @if($feedback->signature_status == 'Signed')
+                                    <div class="flex items-center justify-center space-x-2 text-center">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-900">Signed</span>
+                                    </div>
+                                @elseif($feedback->signature_status == 'Return')
+                                    <div class="flex items-center justify-center space-x-2 text-center">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-900">Return</span>
+                                    </div>
                                 @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 justify-center">On Check</span>
+                                    <div class="flex items-center justify-center space-x-2 text-center">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-900">On Check</span>
+                                    </div>
                                 @endif
                             @else
-                            <div class="flex items-center justify-center space-x-2 text-center">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Not Uploaded</span>
-                            </div>
+                                <div class="flex items-center justify-center space-x-2 text-center">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Upload</span>
+                                </div>
                             @endif
                         </td>
                         <td class="border-t px-3 py-2">
@@ -132,11 +147,9 @@
                             @endphp
 
                             @if($feedback)
-                                <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-4 shadow-sm border-l-4 border-yellow-500">
-                                    <p><strong>Feedback:</strong> {{ $feedback->message }}</p>
-                                </div>
+                                <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
                             @else
-                                <p class="text-gray-500 italic">No comments yet.</p>
+                                <p class="text-gray-400 italic">No comments yet.</p>
                             @endif
                         </td>
                         <td class="border-t px-3 py-2">
@@ -145,7 +158,7 @@
                                     <div class="flex space-x-1">
                                         <button 
                                             onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-blue-500 hover:bg-blue-600 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
+                                            class="bg-blue-500 hover:bg-blue-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                             </svg>
@@ -153,7 +166,7 @@
                                         </button>
                                         <button 
                                             onclick="deleteFile({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-red-500 hover:bg-red-600 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
+                                            class="bg-red-500 hover:bg-red-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
@@ -163,7 +176,7 @@
                                     <div class="flex justify-center space-x-1">
                                         <button style="width: 108px;"
                                             onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
+                                            class="bg-green-500 hover:bg-green-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -175,7 +188,7 @@
                                 <div class="flex justify-center">
                                     <button 
                                         onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
+                                        class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
                                         Upload
                                     </button>
                                 </div>
