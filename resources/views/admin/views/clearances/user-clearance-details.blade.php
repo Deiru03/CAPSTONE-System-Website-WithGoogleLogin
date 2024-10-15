@@ -120,8 +120,8 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label for="feedbackMessage" class="block text-sm font-medium text-gray-700">Feedback</label>
-                        <textarea name="message" id="feedbackMessage" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                        <label for="feedbackMessage" class="block text-sm font-medium text-gray-700">Feedback (Optional)</label>
+                        <textarea name="message" id="feedbackMessage" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Enter feedback if needed"></textarea>
                     </div>
                     <div class="flex justify-end">
                         <button type="button" onclick="closeFeedbackModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</button>

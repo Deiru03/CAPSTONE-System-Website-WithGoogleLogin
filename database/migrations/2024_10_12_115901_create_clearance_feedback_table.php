@@ -15,7 +15,7 @@ class CreateClearanceFeedbackTable extends Migration
             $table->id();
             $table->unsignedBigInteger('requirement_id');
             $table->unsignedBigInteger('user_id');
-            $table->text('message');
+            $table->text('message')->nullable();
             $table->string('signature_status')->default('On Check');
             $table->timestamps();
 
