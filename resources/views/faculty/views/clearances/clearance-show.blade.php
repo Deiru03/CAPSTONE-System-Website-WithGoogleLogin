@@ -146,7 +146,7 @@
                                     ->first();
                             @endphp
 
-                            @if($feedback)
+                            @if($feedback && !empty($feedback->message))
                                 <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
                             @else
                                 <p class="text-gray-400 italic">No comments yet.</p>
