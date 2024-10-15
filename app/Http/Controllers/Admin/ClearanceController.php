@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Models\UserClearance;
 use App\Models\Clearance;
 use App\Models\ClearanceRequirement;
 use App\Models\SharedClearance;
-use Illuminate\Support\Facades\DB;
-use App\Models\UserClearance;
-use Illuminate\Support\Facades\Log;
+use App\Models\ClearanceFeedback;
 
 class ClearanceController extends Controller
 {
@@ -163,7 +164,7 @@ class ClearanceController extends Controller
     {
         $userClearance = UserClearance::with([
             'sharedClearance.clearance.requirements',
-            'uploadedClearances.feedback',
+            'uploadedClearances.requirement.feedback',
             'user' // Added to include user data
         ])->findOrFail($id);
         return view('admin.views.clearances.user-clearance-details', compact('userClearance'));
@@ -233,6 +234,33 @@ class ClearanceController extends Controller
             'success' => true,
             'message' => 'Requirement added successfully.',
             'requirement' => $requirement,
+        ]);
+    }
+
+    public function storeFeedback(Request $request)
+    {
+        $validatedData = $request->validate([
+            'requirement_id' => 'required|exists:clearance_requirements,id',
+            'user_id' => 'required|exists:users,id',
+            'message' => 'nullable|string',
+            'signature_status' => 'required|in:On Check,Signed,Return',
+        ]);
+    
+        $feedback = ClearanceFeedback::updateOrCreate(
+            [
+                'requirement_id' => $validatedData['requirement_id'],
+                'user_id' => $validatedData['user_id'],
+            ],
+            [
+                'message' => $validatedData['message'],
+                'signature_status' => $validatedData['signature_status'],
+            ]
+        );
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Feedback saved successfully.',
+            'feedback' => $feedback,
         ]);
     }
 

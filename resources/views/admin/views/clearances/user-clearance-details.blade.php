@@ -68,34 +68,28 @@
                                             @endforeach
                                         </td>--}} <!-- Pang DEBUG lng sa lahat ng user Overall Upload -->
                                         <td class="px-4 py-3 text-center">
-                                        @if($userClearance->uploadedClearanceFor($requirement->id) && $userClearance->uploadedClearanceFor($requirement->id)->status == 'signed')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Signed</span>
-                                        @elseif($userClearance->uploadedClearanceFor($requirement->id) && $userClearance->uploadedClearanceFor($requirement->id)->status == 'return ')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Return</span>
-                                        @else
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
-                                        @endif
+                                            @php
+                                                $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
+                                            @endphp
+                                            @if($feedback)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-800">
+                                                    {{ $feedback->signature_status }}
+                                                </span>
+                                            @else
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-3">
-                                            @php
-                                                $hasFeedback = false;
-                                            @endphp
-                                            @foreach($userClearance->uploadedClearances as $uploaded)
-                                                @foreach($uploaded->feedback as $feedback)
-                                                    <div class="bg-yellow-100 text-yellow-800 p-3 rounded-md mb-2 shadow-sm border-l-4 border-yellow-500 text-sm">
-                                                        <p><strong>Feedback:</strong> {{ $feedback->message }}</p>
-                                                    </div>
-                                                    @php
-                                                        $hasFeedback = true;
-                                                    @endphp
-                                                @endforeach
-                                            @endforeach
-                                            @if(!$hasFeedback)
+                                            @if($feedback)
+                                                <div class="bg-yellow-100 text-yellow-800 p-3 rounded-md mb-2 shadow-sm border-l-4 border-yellow-500 text-sm">
+                                                    <p><strong>Feedback:</strong> {{ $feedback->message }}</p>
+                                                </div>
+                                            @else
                                                 <div class="text-gray-500 italic text-sm">No comments yet.</div>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3">
-                                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold shadow-sm">
+                                            <button onclick="openFeedbackModal({{ $requirement->id }})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold shadow-sm">
                                                 Actions Document
                                             </button>
                                         </td>
@@ -108,5 +102,71 @@
             </div>
         </div>
     </div>
+
+        <!-- Add this modal at the end of your Blade file -->
+        <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+                <h3 class="text-2xl font-semibold mb-4">Provide Feedback</h3>
+                <form id="feedbackForm">
+                    @csrf
+                    <input type="hidden" name="requirement_id" id="requirementId">
+                    <input type="hidden" name="user_id" value="{{ $userClearance->user->id }}">
+                    <div class="mb-4">
+                        <label for="signatureStatus" class="block text-sm font-medium text-gray-700">Signature Status</label>
+                        <select name="signature_status" id="signatureStatus" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <option value="On Check">On Check</option>
+                            <option value="Signed">Signed</option>
+                            <option value="Return">Return</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="feedbackMessage" class="block text-sm font-medium text-gray-700">Feedback</label>
+                        <textarea name="message" id="feedbackMessage" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" onclick="closeFeedbackModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     
+
+    <script>
+        function openFeedbackModal(requirementId) {
+            document.getElementById('requirementId').value = requirementId;
+            document.getElementById('feedbackModal').classList.remove('hidden');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.add('hidden');
+        }
+
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('{{ route('admin.clearance.feedback.store') }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeFeedbackModal();
+                    alert('Feedback saved successfully.');
+                    location.reload(); // Refresh the page to show updated feedback
+                } else {
+                    alert('Failed to save feedback.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        });
+    </script>
 </x-admin-layout>

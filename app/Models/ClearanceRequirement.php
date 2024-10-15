@@ -36,4 +36,9 @@ class ClearanceRequirement extends Model
     {
         return $this->hasMany(UploadedClearance::class, 'requirement_id');
     }
+
+    public function feedback()
+    {
+        return $this->hasMany(ClearanceFeedback::class, 'requirement_id');
+    }
 }

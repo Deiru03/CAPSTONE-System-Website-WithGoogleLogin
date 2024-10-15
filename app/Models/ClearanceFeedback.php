@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\UploadedClearance;
+use App\Models\ClearanceRequirement;
 use App\Models\User;
 
 class ClearanceFeedback extends Model
@@ -12,14 +12,15 @@ class ClearanceFeedback extends Model
     use HasFactory;
 
     protected $fillable = [
-        'uploaded_clearance_id',
+        'requirement_id',
         'user_id',
         'message',
+        'signature_status',
     ];
 
-    public function uploadedClearance()
+    public function requirement()
     {
-        return $this->belongsTo(UploadedClearance::class);
+        return $this->belongsTo(ClearanceRequirement::class, 'requirement_id');
     }
 
     public function user()

@@ -123,19 +123,19 @@
                         </td>
                         <td class="border-t px-3 py-2">
                             @php
-                                $hasFeedback = false;
+                                $feedback = $userClearance->sharedClearance->clearance->requirements
+                                    ->where('id', $requirement->id)
+                                    ->first()
+                                    ->feedback
+                                    ->where('user_id', $userClearance->user_id)
+                                    ->first();
                             @endphp
-                            @foreach($userClearance->uploadedClearances as $uploaded)
-                                @foreach($uploaded->feedback as $feedback)
-                                    <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-4 shadow-sm border-l-4 border-yellow-500">
-                                        <p><strong>Feedback:</strong> {{ $feedback->message }}</p>
-                                    </div>
-                                    @php
-                                        $hasFeedback = true;
-                                    @endphp
-                                @endforeach
-                            @endforeach
-                            @if(!$hasFeedback)
+
+                            @if($feedback)
+                                <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-4 shadow-sm border-l-4 border-yellow-500">
+                                    <p><strong>Feedback:</strong> {{ $feedback->message }}</p>
+                                </div>
+                            @else
                                 <p class="text-gray-500 italic">No comments yet.</p>
                             @endif
                         </td>

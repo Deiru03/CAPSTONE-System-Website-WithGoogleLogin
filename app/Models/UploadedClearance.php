@@ -43,6 +43,6 @@ class UploadedClearance extends Model
 
     public function feedback()
     {
-        return $this->hasMany(ClearanceFeedback::class);
+        return $this->hasMany(ClearanceFeedback::class, 'requirement_id', 'requirement_id');
     }
 }
