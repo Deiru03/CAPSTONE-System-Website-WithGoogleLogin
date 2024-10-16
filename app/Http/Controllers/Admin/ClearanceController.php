@@ -59,6 +59,19 @@ class ClearanceController extends Controller
         }
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        $userClearances = UserClearance::with(['sharedClearance.clearance.requirements', 'user', 'uploadedClearances'])
+            ->whereHas('sharedClearance.clearance.requirements', function ($q) use ($query) {
+                $q->where('requirement', 'like', '%' . $query . '%');
+            })
+            ->get();
+
+        return view('admin.views.clearances.clearance-check', compact('userClearances', 'query'));
+    }
+
     // Fetch a clearance for editing
     public function edit($id)
     {

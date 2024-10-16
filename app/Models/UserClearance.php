@@ -32,7 +32,7 @@ class UserClearance extends Model
 
     public function uploadedClearances()
     {
-        return $this->hasMany(UploadedClearance::class, 'shared_clearance_id', 'shared_clearance_id');
+        return $this->hasMany(UploadedClearance::class, 'shared_clearance_id', 'shared_clearance_id', 'user_clearance_id');
     }
 
 
