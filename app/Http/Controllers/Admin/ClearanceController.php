@@ -232,7 +232,7 @@ class ClearanceController extends Controller
         $clearance = Clearance::findOrFail($clearanceId);
 
         $request->validate([
-            'requirement' => 'required|string|max:255',
+            'requirement' => 'required|string',
         ]);
 
         $requirement = $clearance->requirements()->create([
@@ -312,7 +312,7 @@ class ClearanceController extends Controller
         }
 
         $request->validate([
-            'requirement' => 'required|string|max:255',
+            'requirement' => 'required|string',
         ]);
 
         $requirement->update([

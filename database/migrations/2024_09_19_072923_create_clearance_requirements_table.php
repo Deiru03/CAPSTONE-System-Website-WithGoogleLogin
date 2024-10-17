@@ -11,7 +11,7 @@ class CreateClearanceRequirementsTable extends Migration
         Schema::create('clearance_requirements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('clearance_id')->constrained()->onDelete('cascade');
-            $table->string('requirement');
+            $table->text('requirement');
             $table->timestamps();
         });
     }
