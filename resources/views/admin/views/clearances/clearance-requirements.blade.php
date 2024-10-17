@@ -30,7 +30,7 @@
                     @foreach ($clearance->requirements as $requirement)
                     <tr>
                         <td class="px-4 py-3 whitespace-nowrap">{{ $requirement->id }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap">{{ $requirement->requirement }}</td>
+                        <td class="px-4 py-3 preserve-whitespace">{{ $requirement->requirement }}</td>
                         <td class="py-2 px-3 border-b">
                             <button 
                                 class="edit-button text-blue-500 flex items-center text-xs mr-2"
@@ -151,6 +151,10 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+    
+    .preserve-whitespace {
+       white-space: pre-wrap;
+   }
 </style>
 
 <!-- Scripts -->

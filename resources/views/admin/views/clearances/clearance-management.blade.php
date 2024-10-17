@@ -449,6 +449,10 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .preserve-whitespace {
+            white-space: pre-wrap;
+        }
     </style>
 
     <!-- Scripts -->
@@ -729,7 +733,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="px-4 py-2 border">${req.id}</td>
-                    <td class="px-4 py-2 border">${req.requirement}</td>
+                    <td class="px-4 py-2 border preserve-whitespace">${req.requirement}</td>
                     <td class="px-4 py-2 border">
                         <button onclick="openEditRequirementModal(${currentClearanceId}, ${req.id})" class="text-blue-500 mr-2">
                             Edit

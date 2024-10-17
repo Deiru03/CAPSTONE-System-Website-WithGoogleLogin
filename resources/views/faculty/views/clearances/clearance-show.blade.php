@@ -105,7 +105,7 @@
                     @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
                     <tr class="hover:bg-gray-50 transition-colors duration-200">
                         <td class="border-t px-3 py-2 hidden">{{ $requirement->id }}</td>
-                        <td class="border-t px-3 py-2">{{ $requirement->requirement }}</td>
+                        <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
                         <td class="border-t px-3 py-2">
                             @php
                                 $feedback = $userClearance->sharedClearance->clearance->requirements
