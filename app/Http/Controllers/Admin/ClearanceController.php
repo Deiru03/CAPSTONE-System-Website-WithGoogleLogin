@@ -185,7 +185,12 @@ class ClearanceController extends Controller
     
     public function checkClearances()
     {
-        $userClearances = UserClearance::with(['sharedClearance.clearance', 'user'])->get();
+        $userClearances = UserClearance::with(['sharedClearance.clearance', 'user', 'uploadedClearances'])
+            ->get()
+            ->sortByDesc(function ($userClearance) {
+                return optional($userClearance->uploadedClearances->first())->created_at;
+            });
+
         return view('admin.views.clearances.clearance-check', compact('userClearances'));
     }
 
