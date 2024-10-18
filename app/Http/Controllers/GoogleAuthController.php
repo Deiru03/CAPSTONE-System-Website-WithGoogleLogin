@@ -28,11 +28,16 @@ class GoogleAuthController extends Controller
                 if (!$user->google_id) {
                     $user->update(['google_id' => $google_user->getId()]);
                 }
+                if (!$user->profile_picture) {
+                    $user->update(['profile_picture' => $google_user->getAvatar()]);
+                }
+                
             } else {
                 // Create a new user if it doesn't exist
                 $user = User::create([
                     'name' => $google_user->getName(),
                     'email' => $google_user->getEmail(),
+                    'profile_picture' => $google_user->getAvatar(),
                     'google_id' => $google_user->getId(),
                     'user_type' => 'Faculty',
                     'clearances_status' => 'pending',

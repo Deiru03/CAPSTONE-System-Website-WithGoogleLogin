@@ -16,15 +16,42 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <script src="//unpkg.com/alpinejs" defer></script>
     </head>
+    <style>
+         .profile-picture {
+            width: 40px; /* Adjust size as needed */
+            height: 40px;
+            border-radius: 50%; /* Make it circular */
+            object-fit: cover; /* Ensure the image covers the area */
+            margin-right: 10px; /* Space between image and text */
+        }
+        .profile-section {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+    </style>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 flex">
             <!-- Sidebar -->
-            <div class="w-60 bg-gray-800 text-white h-screen fixed z-10">
-                <div class="flex items-center p-4">
-                    <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
-                    <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
+            <div class="w-60 bg-gray-800 text-white h-screen fixed z-10 overflow-y-auto">
+                <div class="profile-section">
+                    @if(Auth::check())
+                        <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture">
+                        <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
+                    @endif
+                    {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
+                    <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
                 </div>
-                <nav class="mt-6">
+                <div class="mt-auto p-5">
+                    <div class="flex flex-col items-center mt-0">
+                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="Occidental Mindoro State College Logo" class="h-16 w-16 rounded-full shadow-lg">
+                        <p class="text-center mt-2 text-sm font-serif font-semibold text-white-600">
+                            Occidental Mindoro<br>
+                            State College
+                        </p>
+                    </div>
+                </div>
+                <nav class="mt-2">
                     <!-- Dashboard -->
                     <a href="{{ route('dashboard') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('faculty.dashboard') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
@@ -97,6 +124,14 @@
                         </button>
                     </form>
                 </nav>
+                
+            <!-- About Us -->
+            <a href="" class="flex items-center px-10 py-4 hover:bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 {{-- request()->routeIs('about.us') ? 'bg-gradient-to-r from-indigo-500 to-purple-600 border-l-4 border-indigo-500' : '' --}} transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span class="{{ request()->routeIs('about.us') ? 'text-white font-semibold' : '' }}">About Us</span>
+            </a>
             </div>
             
             <div class="flex-1 ml-60"> <!-- Added margin-left to prevent content from being behind the sidebar -->
@@ -121,6 +156,7 @@
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
                                         <div>{{ Auth::user()->name }}</div>
                                         <div class="ms-1">
                                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
