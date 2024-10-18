@@ -114,20 +114,26 @@
                                         ->feedback
                                         ->where('user_id', $userClearance->user_id)
                                         ->first();
+                                $hasUpload = $userClearance->uploadedClearanceFor($requirement->id);
                             @endphp
-                        
-                            @if($feedback)
-                                @if($feedback->signature_status == 'Signed')
-                                    <div class="flex items-center justify-center space-x-2 text-center">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-900">Signed</span>
-                                    </div>
-                                @elseif($feedback->signature_status == 'Return')
-                                    <div class="flex items-center justify-center space-x-2 text-center">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-900">Return</span>
-                                    </div>
+                            @if($hasUpload)
+                                @if($feedback)
+                                    @if($feedback->signature_status == 'Signed')
+                                        <div class="flex items-center justify-center space-x-2 text-center">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-900">Signed</span>
+                                        </div>
+                                    @elseif($feedback->signature_status == 'Return')
+                                        <div class="flex items-center justify-center space-x-2 text-center">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-900">Return</span>
+                                        </div>
+                                    @else
+                                        <div class="flex items-center justify-center space-x-2 text-center">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-900">On Check</span>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="flex items-center justify-center space-x-2 text-center">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-900">On Check</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-900">Uploaded</span>
                                     </div>
                                 @endif
                             @else
@@ -165,7 +171,7 @@
                                             <span>Upload</span>
                                         </button>
                                         <button 
-                                            onclick="deleteFile({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                            onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
                                             class="bg-red-500 hover:bg-red-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -244,6 +250,22 @@
             <div class="mt-6 flex justify-end">
                 <button onclick="closeViewFilesModal()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
                     Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
+            <h3 class="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete this file?</p>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closeDeleteConfirmationModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                    Cancel
+                </button>
+                <button id="confirmDeleteButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                    Delete
                 </button>
             </div>
         </div>
@@ -344,16 +366,35 @@
         });
 
         /**
+         * Function to open the delete confirmation modal.
+         *
+         * @param {number} sharedClearanceId
+         * @param {number} requirementId
+         */
+        function openDeleteConfirmationModal(sharedClearanceId, requirementId) {
+            const modal = document.getElementById('deleteConfirmationModal');
+            const confirmButton = document.getElementById('confirmDeleteButton');
+            
+            modal.classList.remove('hidden');
+            confirmButton.onclick = function() {
+                deleteFile(sharedClearanceId, requirementId);
+            };
+        }
+
+        /**
+         * Function to close the delete confirmation modal.
+         */
+        function closeDeleteConfirmationModal() {
+            document.getElementById('deleteConfirmationModal').classList.add('hidden');
+        }
+
+        /**
          * Function to handle file deletion.
          *
          * @param {number} sharedClearanceId
          * @param {number} requirementId
          */
         function deleteFile(sharedClearanceId, requirementId) {
-            if (!confirm('Are you sure you want to delete this file?')) {
-                return;
-            }
-
             fetch(`/faculty/clearances/${sharedClearanceId}/upload/${requirementId}/delete`, {
                 method: 'DELETE',
                 headers: {
@@ -376,6 +417,7 @@
                 console.error('Error deleting file:', error);
                 alert('An error occurred while deleting the file.');
             });
+            closeDeleteConfirmationModal();
         }
 
         // Function to open the view files modal
