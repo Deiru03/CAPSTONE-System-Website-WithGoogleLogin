@@ -41,17 +41,18 @@
                     @endif
                     {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
                     <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
+                </div> 
+                <div class="mt-auto p-1">
+                    {{-- <div class="mt-auto p-5">
+                        <div class="flex flex-col items-center mt-0 profile-section">
+                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture" style="width: 80px; height: 80px;">
+                            <p class="text-center mt-2 text-lg font-semibold text-white">
+                                {{ Auth::user()->name }}
+                            </p>
+                        </div>
+                    </div> --}}
                 </div>
-                <div class="mt-auto p-5">
-                    <div class="flex flex-col items-center mt-0">
-                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="Occidental Mindoro State College Logo" class="h-16 w-16 rounded-full shadow-lg">
-                        <p class="text-center mt-2 text-sm font-serif font-semibold text-white-600">
-                            Occidental Mindoro<br>
-                            State College
-                        </p>
-                    </div>
-                </div>
-                <nav class="mt-2">
+                <nav class="mt-10">
                     <!-- Dashboard -->
                     <a href="{{ route('dashboard') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('faculty.dashboard') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
