@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\UploadedClearance;
 use App\Models\UserClearance;
+use App\Models\SubmittedReport;
+
 class FacultyController extends Controller
 {
 
@@ -46,9 +48,12 @@ class FacultyController extends Controller
 
     public function submittedReports(): View
     {
-        return view('faculty.views.submitted-reports');
-    }   
-    
+        $reports = SubmittedReport::where('user_id', Auth::id())
+            ->with(['requirement', 'uploadedClearance'])
+            ->get();
+
+        return view('faculty.views.submitted-reports', compact('reports'));
+    }
     public function test(): View
     {
         return view('faculty.views.test-page');
