@@ -31,6 +31,11 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $path = $file->store('profile_pictures', 'public');
+            $request->user()->profile_picture = '/storage/' . $path;
+        }
 
         $request->user()->clearances_status = 'pending';
         $request->user()->checked_by = 'System';
