@@ -10,111 +10,136 @@
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
   
-    <div class="p-8 bg-white border-b border-gray-200">
-        {{-- Display User ID and Name --}}
-        <div class="mb-8 bg-indigo-50 p-6 rounded-xl shadow-sm">
-            <h3 class="text-2xl font-bold mb-4 text-indigo-800">User Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">ID:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->id }}</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">Name:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->name }}</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">Position:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->position }}</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">Unit:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->units }}</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">Program:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->program }}</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-indigo-600 font-semibold mr-2">Email:</span>
-                    <span class="text-gray-800">{{ $userClearance->user->email }}</span>
+    {{-- Display User ID and Name --}}
+    <div class="mb-8 p-6 flex items-center space-x-8 border border-gray-300">
+        <div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8 p-6">
+            <div class="flex-shrink-0">
+                @if ($userClearance->user->profile_picture)
+                    <img src="{{ $userClearance->user->profile_picture }}" alt="{{ $userClearance->user->name }}" class="w-32 h-32 object-cover rounded-full border-4 border-indigo-200">
+                @else
+                    <div class="w-32 h-32 flex items-center justify-center rounded-full text-white font-bold text-4xl border-4 border-indigo-200" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        {{ strtoupper(substr($userClearance->user->name, 0, 1)) }}
+                    </div>
+                @endif
+            </div>
+            <div class="flex-grow">
+                <h3 class="text-3xl font-extrabold text-gray-800 mb-2">{{ $userClearance->user->name }}</h3>
+                <p class="text-lg text-indigo-600 mb-4">{{ $userClearance->user->email }}</p>
+                <div class="grid grid-cols-2 gap-y-3 gap-x-8 text-gray-700">
+                    <div>
+                        <span class="font-semibold text-gray-900">ID:</span>
+                        <span>{{ $userClearance->user->id }}</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-900">Position:</span>
+                        <span>{{ $userClearance->user->position }}</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-900">Unit:</span>
+                        <span>{{ $userClearance->user->units }}</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-900">Program:</span>
+                        <span>{{ $userClearance->user->program }}</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-900">College:</span>
+                        {{-- <span>{{ $userClearance->user->college }}</span> --}}
+                    </div>
                 </div>
             </div>
         </div>
-
-        <h3 class="text-3xl font-bold mb-6 text-gray-800">{{ $userClearance->sharedClearance->clearance->document_name }}</h3>
-        <div class="overflow-x-auto shadow-md rounded-lg">
-            <table class="min-w-full bg-white border border-gray-200">
-                <thead class="bg-indigo-600 text-white">
-                    <tr>
-                        <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
-                        <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
-                        <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Signature Status</th>
-                        <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
-                        <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
-                        <tr class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-4 py-4 text-sm text-gray-900">{{ $requirement->requirement }}</td>
-                            <td class="px-4 py-4">
-                                @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id) as $uploaded)
-                                    @if($uploaded->requirement_id == $requirement->id)
-                                        <div class="flex items-center justify-center space-x-2">
-                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16h16V8l-6-6H4zm2 2h8v4h4v10H6V6z"></path>
-                                            </svg>
-                                            <a href="{{ asset('storage/' . $uploaded->file_path) }}" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium">
-                                                {{ basename($uploaded->file_path) }}
-                                            </a>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td class="px-4 py-4 text-center">
-                                @php
-                                    $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
-                                    $uploadedFile = $userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->first();
-                                @endphp
-                                @if($uploadedFile)
-                                    @if($feedback)
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-800">
-                                            {{ $feedback->signature_status }}
-                                        </span>
-                                    @else
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
-                                    @endif
-                                @else
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-4">
-                                @php
-                                $feedback = $userClearance->sharedClearance->clearance->requirements
-                                    ->where('id', $requirement->id)
-                                    ->first()
-                                    ->feedback
-                                    ->where('user_id', $userClearance->user_id)
-                                    ->first();
-                                @endphp
-                            
-                                @if($feedback && !empty($feedback->message))
-                                    <p class="text-yellow-800"><strong>Feedback: {{ $feedback->message }}</strong></p>
-                                @else
-                                    <p class="text-gray-400 italic">No comments yet.</p>
-                                @endif
-                            </td>
-                            <td class="px-4 py-4">
-                                <button onclick="openFeedbackModal({{ $requirement->id }})" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-colors duration-200 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50">
-                                    Actions Document
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        
+        <div class="border-l-2 border-gray-400 h-52 mx-6"></div>
+        
+        <div class="mt-8">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-2xl font-semibold text-gray-800">Clearance Details</h4>
+                <div class="h-1 flex-grow mx-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded"></div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <span class="text-lg font-medium text-gray-700">Title:</span>
+                    <p class="text-xl text-indigo-600">{{ $userClearance->sharedClearance->clearance->document_name }}</p>
+                </div>
+                <div>
+                    <span class="text-lg font-medium text-gray-700">Description:</span>
+                    <p class="text-gray-600 mt-1">{{ $userClearance->sharedClearance->clearance->description ?? 'No description available' }}</p>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <h3 class="text-3xl font-bold mb-6 text-gray-800 hidden">{{ $userClearance->sharedClearance->clearance->document_name }}</h3> 
+    <div class="overflow-x-auto shadow-md rounded-lg">
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead class="bg-indigo-600 text-white">
+                <tr>
+                    <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
+                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
+                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Signature Status</th>
+                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
+                    <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-4 py-4 text-sm text-gray-900">{{ $requirement->requirement }}</td>
+                        <td class="px-4 py-4">
+                            @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id) as $uploaded)
+                                @if($uploaded->requirement_id == $requirement->id)
+                                    <div class="flex items-center justify-start space-x-3">
+                                        <span class="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full shadow-md"></span>
+                                        <a href="{{ asset('storage/' . $uploaded->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 hover:underline text-sm font-medium transition duration-300">
+                                            {{ basename($uploaded->file_path) }}
+                                        </a>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            @php
+                                $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
+                                $uploadedFile = $userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->first();
+                            @endphp
+                            @if($uploadedFile)
+                                @if($feedback)
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-800">
+                                        {{ $feedback->signature_status }}
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
+                                @endif
+                            @else
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-4">
+                            @php
+                            $feedback = $userClearance->sharedClearance->clearance->requirements
+                                ->where('id', $requirement->id)
+                                ->first()
+                                ->feedback
+                                ->where('user_id', $userClearance->user_id)
+                                ->first();
+                            @endphp
+                        
+                            @if($feedback && !empty($feedback->message))
+                                <p class="text-yellow-800"><strong>Feedback: {{ $feedback->message }}</strong></p>
+                            @else
+                                <p class="text-gray-400 italic">No comments yet.</p>
+                            @endif
+                        </td>
+                        <td class="px-4 py-4">
+                            <button onclick="openFeedbackModal({{ $requirement->id }})" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-colors duration-200 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50">
+                                Actions Document
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
             
        
