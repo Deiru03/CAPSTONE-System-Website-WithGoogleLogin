@@ -28,7 +28,9 @@ class User extends Authenticatable
         'units', // Added date 09/16/2024 // 3 units, 2 units, etc.
         'clearances_status', // Added date 09/16/2024 // pending, return, complete
         'last_clearance_update', // Added date 09/16/2024 // date when last clearance update was made
-        'checked_by', // Added date 09/16/2024 // name of the person who checked the clearance
+        'checked_by', // Added date 10/19/2024 // department id
+        'department_id', // Added date 10/19/2024 // department id
+        'program_id', // Added date 10/19/2024 // program id
     ];
 
     /**
@@ -75,5 +77,15 @@ class User extends Authenticatable
     public function feedback()
     {
         return $this->hasMany(ClearanceFeedback::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
     }
 }

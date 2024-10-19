@@ -47,6 +47,47 @@
             <x-text-input id="program" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" type="text" name="program" :value="old('program')" required autocomplete="program" />
             <x-input-error :messages="$errors->get('program')" class="mt-2" />
         </div>
+        
+        <!-- Department -->
+        <div class="mb-4">
+            <x-input-label for="department_id" :value="__('Department')" />
+            <select id="department_id" name="department_id" class="block mt-1 w-full" required>
+                <option value="" disabled selected>Select a department</option>
+                @foreach($departments as $department)
+                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
+        </div>
+
+        <!-- Program -->
+        <div class="mb-4">
+            <x-input-label for="program_id" :value="__('Program')" />
+            <select id="program_id" name="program_id" class="block mt-1 w-full" required>
+                <option value="" disabled selected>Select a program</option>
+                <!-- Options will be populated via JavaScript -->
+            </select>
+            <x-input-error :messages="$errors->get('program_id')" class="mt-2" />
+        </div>
+
+        <!-- Populate Programs -->
+        <script>
+            document.getElementById('department_id').addEventListener('change', function() {
+                const departmentId = this.value;
+                const programs = @json($departments->pluck('programs', 'id'));
+                const programSelect = document.getElementById('program_id');
+     
+                programSelect.innerHTML = '<option value="" disabled selected>Select a program</option>';
+                if (programs[departmentId]) {
+                    programs[departmentId].forEach(program => {
+                        const option = document.createElement('option');
+                        option.value = program.id;
+                        option.textContent = program.name;
+                        programSelect.appendChild(option);
+                    });
+                }
+            });
+        </script>
 
         <!-- Password -->
         <div class="mb-4 relative">

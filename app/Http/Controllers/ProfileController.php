@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-
+use App\Models\Department;
 class ProfileController extends Controller
 {
     /**
@@ -16,8 +16,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $departments = Department::with('programs')->get();
         return view('profile.edit', [
             'user' => $request->user(),
+            'departments' => $departments,
         ]);
     }
 
@@ -42,6 +44,9 @@ class ProfileController extends Controller
         $request->user()->program = $request->input('program');
         $request->user()->position = $request->input('position');
         $request->user()->units = $request->input('units');
+        $request->user()->department_id = $request->input('department_id');
+        $request->user()->program_id = $request->input('program_id');
+
 
         $request->user()->save();
 

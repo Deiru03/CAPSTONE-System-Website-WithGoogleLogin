@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-
+use App\Models\Department;
 class RegisteredUserController extends Controller
 {
     /**
@@ -19,7 +19,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $departments = Department::all();
+        return view('auth.register', compact('departments'));
     }
 
     /**
@@ -34,8 +35,10 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'user_type' => ['required', 'string', 'in:Admin,Faculty'],
-            'program' => ['required', 'string'],
+            'program' => ['nullable', 'string'],
             'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
+            'department_id' => ['required', 'exists:departments,id'],
+            'program_id' => ['required', 'exists:programs,id'],
         ]);
 
         $user = User::create([
@@ -45,6 +48,8 @@ class RegisteredUserController extends Controller
             'user_type' => $request->user_type,
             'program' => $request->program,
             'position' => $request->position,
+            'department_id' => $request->department_id,
+            'program_id' => $request->program_id,
         ]);
 
         event(new Registered($user));

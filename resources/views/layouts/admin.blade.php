@@ -106,6 +106,13 @@
                         <span class="{{ request()->routeIs('admin.views.faculty') ? 'text-indigo-300 font-semibold' : '' }}">Faculty</span>
                     </a>
 
+                    <a href="{{ route('admin.views.college') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.college') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                        <span class="{{ request()->routeIs('admin.views.college') ? 'text-indigo-300 font-semibold' : '' }}">College</span>
+                    </a>
+
                     <!-- My Files -->
                     <a href="{{ route('admin.views.myFiles') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.myFiles') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">

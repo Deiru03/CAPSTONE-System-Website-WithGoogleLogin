@@ -88,6 +88,56 @@
                         </div>
 
                         <div>
+                            <x-input-label for="department_id" :value="__('Department')" />
+                            <select id="department_id" name="department_id" class="mt-1 block w-full" required>
+                                <option value="" disabled>Select a department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
+                        </div>
+                        
+                        <div>
+                            <x-input-label for="program_id" :value="__('Program')" />
+                            <select id="program_id" name="program_id" class="mt-1 block w-full" required>
+                                <option value="" disabled>Select a program</option>
+                                @foreach($departments as $department)
+                                    @foreach($department->programs as $program)
+                                        <option value="{{ $program->id }}" data-department="{{ $department->id }}" {{ old('program_id', $user->program_id) == $program->id ? 'selected' : '' }}>
+                                            {{ $program->name }}
+                                        </option>
+                                    @endforeach
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const departmentSelect = document.getElementById('department_id');
+                                const programSelect = document.getElementById('program_id');
+                                const programOptions = programSelect.querySelectorAll('option');
+                        
+                                function updateProgramOptions() {
+                                    const selectedDepartmentId = departmentSelect.value;
+                                    programOptions.forEach(option => {
+                                        if (option.value === "" || option.dataset.department === selectedDepartmentId) {
+                                            option.style.display = '';
+                                        } else {
+                                            option.style.display = 'none';
+                                        }
+                                    });
+                                    // Set the selected program if it matches the user's current program
+                                    programSelect.value = "{{ old('program_id', $user->program_id) }}";
+                                }
+                        
+                                departmentSelect.addEventListener('change', updateProgramOptions);
+                                updateProgramOptions();
+                            });
+                        </script>
+
+                        <div>
                             <x-input-label for="position" :value="__('Position')" />
                             <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>

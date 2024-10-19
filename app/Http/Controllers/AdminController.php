@@ -12,6 +12,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Clearance;
+use App\Models\Department;
+use App\Models\Program;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -98,6 +100,15 @@ class AdminController extends Controller
         return view ('admin.views.faculty', compact('faculty'));
     }
 
+    public function showCollege(): View
+    {
+        $departments = Department::with('programs')->get();
+        $programs = Program::all();
+        $faculty = User::all();
+
+        return view('admin.views.college', compact('departments', 'programs', 'faculty'));
+    }
+
     public function myFiles(): View
     {
         return view ('admin.views.my-files');
@@ -106,9 +117,37 @@ class AdminController extends Controller
     public function profileEdit(): View
     {
         $user = Auth::user();
-        return view ('admin.profile.edit', compact('user'));
+        $departments = Department::with('programs')->get();
+        return view ('admin.profile.edit', compact('user', 'departments'));
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
+
+    /////////////////////////////////////////////// Departments and Programs /////////////////////////////////////////////////
+    public function storeCollegeDepartment(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+ 
+        Department::create($request->only('name'));
+ 
+        return redirect()->route('admin.views.college')->with('status', 'Department added successfully.');
+    }
+
+    public function storeCollegeProgram(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'department_id' => 'required|exists:departments,id',
+        ]);
+
+        Program::create([
+            'name' => $request->name,
+            'department_id' => $request->department_id,
+        ]);
+
+        return redirect()->route('admin.views.college')->with('status', 'Program added successfully.');
+    }
 
     /////////////////////////////////////////////// Edit Faculty /////////////////////////////////////////////////
     public function getFacultyData($id)
