@@ -60,27 +60,80 @@
             <!-- New Clearance Status Overview -->
             <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Clearance Status Overview</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-blue-100 p-4 rounded-lg">
-                            <h4 class="font-semibold text-blue-800">Total Requirements</h4>
-                            <p class="text-2xl font-bold text-blue-600">{{ $totalRequirements }}</p>
+                    <h3 class="text-2xl font-bold mb-6 text-indigo-800 border-b-2 border-indigo-200 pb-2">Clearance Status Overview</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h4 class="font-semibold text-lg mb-4 text-gray-700">Requirements Breakdown</h4>
+                            <div class="relative" style="height: 300px;">
+                                <canvas id="requirementsChart"></canvas>
+                            </div>
                         </div>
-                        <div class="bg-green-100 p-4 rounded-lg">
-                            <h4 class="font-semibold text-green-800">Uploaded Requirements</h4>
-                            <p class="text-2xl font-bold text-green-600">{{ $uploadedRequirements }}</p>
-                        </div>
-                        <div class="bg-yellow-100 p-4 rounded-lg">
-                            <h4 class="font-semibold text-yellow-800">Missing Requirements</h4>
-                            <p class="text-2xl font-bold text-yellow-600">{{ $missingRequirements }}</p>
-                        </div>
-                        <div class="bg-red-100 p-4 rounded-lg">
-                            <h4 class="font-semibold text-red-800">Returned Documents</h4>
-                            <p class="text-2xl font-bold text-red-600">{{ $returnedDocuments }}</p>
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h4 class="font-semibold text-lg mb-4 text-gray-700">Completion Progress</h4>
+                            <div class="relative" style="height: 300px;">
+                                <canvas id="progressChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Requirements Breakdown Chart
+                    var ctx1 = document.getElementById('requirementsChart').getContext('2d');
+                    new Chart(ctx1, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Uploaded', 'Missing', 'Returned'],
+                            datasets: [{
+                                data: [{{ $uploadedRequirements }}, {{ $missingRequirements }}, {{ $returnedDocuments }}],
+                                backgroundColor: ['#10B981', '#FBBF24', '#EF4444'],
+                                borderColor: ['#fff', '#fff', '#fff'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+
+                    // Completion Progress Chart
+                    var ctx2 = document.getElementById('progressChart').getContext('2d');
+                    new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total', 'Uploaded', 'Missing', 'Returned'],
+                            datasets: [{
+                                label: 'Requirements',
+                                data: [{{ $totalRequirements }}, {{ $uploadedRequirements }}, {{ $missingRequirements }}, {{ $returnedDocuments }}],
+                                backgroundColor: ['#6366F1', '#10B981', '#FBBF24', '#EF4444'],
+                                borderColor: ['#4F46E5', '#059669', '#D97706', '#DC2626'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
 
             <!-- Modal for First-Time Users -->
             @if($showProfileModal)

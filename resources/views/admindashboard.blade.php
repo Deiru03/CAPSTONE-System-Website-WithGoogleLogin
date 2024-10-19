@@ -93,141 +93,161 @@
                 <!-- Add more cards as needed -->
             </div>
 
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- 
-         
-                    --}}
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Clearance Status -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Clearance Status</h3>
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-yellow-500">{{ $clearancePending }}</div>
-                            <div class="text-sm text-gray-600">Pending</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-500">{{ $clearanceComplete }}</div>
-                            <div class="text-sm text-gray-600">Complete</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-orange-700">{{ $clearanceReturn }}</div>
-                            <div class="text-sm text-gray-600">Return</div>
-                        </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">Clearance Status</h3>
+                    <div class="h-32">
+                        <canvas id="clearanceStatusChart"></canvas>
                     </div>
-                    <div class="relative pt-1">
-                        <div class="flex mb-2 items-center justify-between">
-                            <div>
-                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-yellow-600 bg-yellow-200">
-                                    Pending
-                                </span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-semibold inline-block text-yellow-600">
-                                    {{ number_format(($clearancePending / ($clearancePending + $clearanceComplete + $clearanceReturn)) * 100, 1) }}%
-                                </span>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-yellow-200">
-                            <div style="width:{{ ($clearancePending / ($clearancePending + $clearanceComplete + $clearanceReturn)) * 100 }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-500"></div>
-                        </div>
+                    <div class="mt-2 text-sm text-gray-600 flex justify-between">
+                        <span>Pending: {{ $clearancePending }}</span>
+                        <span>Complete: {{ $clearanceComplete }}</span>
+                        <span>Return: {{ $clearanceReturn }}</span>
                     </div>
                 </div>
 
                 <!-- Faculty Status -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Faculty Status</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="w-1/4 text-sm font-medium text-gray-600">Permanent</div>
-                            <div class="w-3/4">
-                                <div class="relative pt-1">
-                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-blue-200">
-                                        <div style="width:{{ ($facultyPermanent / ($facultyPermanent + $facultyPartTime + $facultyTemporary)) * 100 }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-1/4 text-right text-sm font-medium text-gray-600">{{ $facultyPermanent }}</div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-1/4 text-sm font-medium text-gray-600">Part-Timer</div>
-                            <div class="w-3/4">
-                                <div class="relative pt-1">
-                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-green-200">
-                                        <div style="width:{{ ($facultyPartTime / ($facultyPermanent + $facultyPartTime + $facultyTemporary)) * 100 }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-1/4 text-right text-sm font-medium text-gray-600">{{ $facultyPartTime }}</div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-1/4 text-sm font-medium text-gray-600">Temporary</div>
-                            <div class="w-3/4">
-                                <div class="relative pt-1">
-                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-red-200">
-                                        <div style="width:{{ ($facultyTemporary / ($facultyPermanent + $facultyPartTime + $facultyTemporary)) * 100 }}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-1/4 text-right text-sm font-medium text-gray-600">{{ $facultyTemporary }}</div>
-                        </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">Faculty Status</h3>
+                    <div class="h-32">
+                        <canvas id="facultyStatusChart"></canvas>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600 flex justify-between">
+                        <span>Permanent: {{ $facultyPermanent }}</span>
+                        <span>Part-Time: {{ $facultyPartTime }}</span>
+                        <span>Temporary: {{ $facultyTemporary }}</span>
                     </div>
                 </div>
 
                 <!-- User Type Distribution -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">User Types</h3>
-                    <div class="flex items-center justify-center space-x-8 mb-6">
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 text-blue-600 text-2xl font-bold mb-2">
-                                {{ $facultyAdmin }}
-                            </div>
-                            <p class="text-sm font-medium text-gray-600">Admin</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 text-green-600 text-2xl font-bold mb-2">
-                                {{ $facultyFaculty }}
-                            </div>
-                            <p class="text-sm font-medium text-gray-600">Faculty</p>
-                        </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">User Types</h3>
+                    <div class="h-32">
+                        <canvas id="userTypeChart"></canvas>
                     </div>
-                    <div class="mt-6">
-                        <div class="bg-gray-200 h-4 rounded-full overflow-hidden">
-                            @php
-                                $totalUsers = $facultyAdmin + $facultyFaculty;
-                                $adminPercentage = ($facultyAdmin / $totalUsers) * 100;
-                            @endphp
-                            <div class="h-full bg-blue-600" style="width: {{ $adminPercentage }}%"></div>
-                        </div>
-                        <div class="flex justify-between mt-2 text-sm text-gray-600">
-                            <span>{{ number_format($adminPercentage, 1) }}% Admin</span>
-                            <span>{{ number_format(100 - $adminPercentage, 1) }}% Faculty</span>
-                        </div>
+                    <div class="mt-2 text-sm text-gray-600 flex justify-between">
+                        <span>Admin: {{ $facultyAdmin }}</span>
+                        <span>Faculty: {{ $facultyFaculty }}</span>
                     </div>
                 </div>
 
-                    <!-- Overall Analytics -->
-                    <div class="bg-white p-6 rounded-lg shadow-lg col-span-2">
-                    <h3 class="text-xl font-bold mb-4">Overall Analytics</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-blue-100 p-4 rounded-lg text-center">
-                            <div class="text-3xl font-bold text-blue-600">{{ $TotalUser }}</div>
-                            <div class="text-sm text-gray-600">Total Users</div>
-                        </div>
-                        <div class="bg-green-100 p-4 rounded-lg text-center">
-                            <div class="text-3xl font-bold text-green-600">{{ $clearanceTotal }}</div>
-                            <div class="text-sm text-gray-600">Total Clearances</div>
-                        </div>
-                        <div class="bg-yellow-100 p-4 rounded-lg text-center">
-                            <div class="text-3xl font-bold text-yellow-600">{{ $clearanceChecklist }}</div>
-                            <div class="text-sm text-gray-600">Clearance Checklists</div>
-                        </div>
-                        <div class="bg-purple-100 p-4 rounded-lg text-center">
-                            <div class="text-3xl font-bold text-purple-600">{{ $facultyAdmin + $facultyFaculty }}</div>
-                            <div class="text-sm text-gray-600">Total Faculty</div>
-                        </div>
+                <!-- Overall Analytics -->
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">Overall Analytics</h3>
+                    <div class="h-32">
+                        <canvas id="overallAnalyticsChart"></canvas>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600 grid grid-cols-2 gap-2">
+                        <span>Users: {{ $TotalUser }}</span>
+                        <span>Clearances: {{ $clearanceTotal }}</span>
+                        <span>Checklists: {{ $clearanceChecklist }}</span>
+                        <span>Faculty: {{ $facultyAdmin + $facultyFaculty }}</span>
                     </div>
                 </div>
             </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Clearance Status Chart
+                    new Chart(document.getElementById('clearanceStatusChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Pending', 'Complete', 'Return'],
+                            datasets: [{
+                                data: [{{ $clearancePending }}, {{ $clearanceComplete }}, {{ $clearanceReturn }}],
+                                backgroundColor: ['#FCD34D', '#10B981', '#F97316']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+
+                    // Faculty Status Chart
+                    new Chart(document.getElementById('facultyStatusChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Permanent', 'Part-Timer', 'Temporary'],
+                            datasets: [{
+                                data: [{{ $facultyPermanent }}, {{ $facultyPartTime }}, {{ $facultyTemporary }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    display: false
+                                },
+                                x: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+
+                    // User Type Chart
+                    new Chart(document.getElementById('userTypeChart'), {
+                        type: 'pie',
+                        data: {
+                            labels: ['Admin', 'Faculty'],
+                            datasets: [{
+                                data: [{{ $facultyAdmin }}, {{ $facultyFaculty }}],
+                                backgroundColor: ['#3B82F6', '#10B981']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+
+                    // Overall Analytics Chart
+                    new Chart(document.getElementById('overallAnalyticsChart'), {
+                        type: 'polarArea',
+                        data: {
+                            labels: ['Users', 'Clearances', 'Checklists', 'Faculty'],
+                            datasets: [{
+                                data: [{{ $TotalUser }}, {{ $clearanceTotal }}, {{ $clearanceChecklist }}, {{ $facultyAdmin + $facultyFaculty }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#FCD34D', '#8B5CF6']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                r: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
         </div>
     </div>
     <div class="py-12">
