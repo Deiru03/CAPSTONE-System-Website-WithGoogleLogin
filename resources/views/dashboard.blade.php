@@ -7,10 +7,15 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Add New Content Here -->
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Example Card 1 -->
+            <!-- Original Content -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    {{ __("You're logged in!") }}
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <a href="{{ route('profile.edit') }}" class="bg-green-500 text-white p-4 rounded-lg shadow relative hover:bg-green-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Profile</h3>
@@ -21,8 +26,7 @@
                     </svg>
                 </a>
 
-                <!-- Example Card 2 -->
-                <a href="{{ route('faculty.clearances.index') }}" class="bg-purple-500 text-white p-4 rounded-lg shadow relative hover:bg-purple-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
+                <a href="{{ route('faculty.views.clearances') }}" class="bg-purple-500 text-white p-4 rounded-lg shadow relative hover:bg-purple-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">View Checklist </h3>
                         <p class="text-sm mt-2">Check your clearance and uploaded files</p>
@@ -32,7 +36,6 @@
                     </svg>
                 </a>
 
-                <!-- Random Box 1 -->
                 <a href="{{ route('faculty.views.myFiles') }}" class="block bg-blue-500 text-white p-4 rounded-lg shadow relative hover:bg-blue-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Manage My Files</h3>
@@ -43,7 +46,6 @@
                     </svg>
                 </a>
 
-                <!-- Random Box 2 -->
                 <a href="{{ route('faculty.views.submittedReports') }}" class="block bg-yellow-500 text-white p-4 rounded-lg shadow relative hover:bg-yellow-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Submitted History</h3>
@@ -55,64 +57,30 @@
                 </a>
             </div>
 
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Example Status Table 1 -->
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold">Profile Status</h3>
-                    <table class="min-w-full mt-4">
-                        <thead>
-                            <tr>
-                                <th class="text-left">Status</th>
-                                <th class="text-left">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-blue-500">Active</td>
-                                <td>0</td>
-                            </tr>
-                            <tr>
-                                <td class="text-red-500">Inactive</td>
-                                <td>0</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Example Status Table 2 -->
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold">Messages Status</h3>
-                    <table class="min-w-full mt-4">
-                        <thead>
-                            <tr>
-                                <th class="text-left">Type</th>
-                                <th class="text-left">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-green-500">Read</td>
-                                <td>0</td>
-                            </tr>
-                            <tr>
-                                <td class="text-yellow-500">Unread</td>
-                                <td>0</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-
-            <!-- End of New Content -->
-
-            <!-- Existing Content -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-8">
+            <!-- New Clearance Status Overview -->
+            <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
+                    <h3 class="text-lg font-semibold mb-4">Clearance Status Overview</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-blue-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800">Total Requirements</h4>
+                            <p class="text-2xl font-bold text-blue-600">{{ $totalRequirements }}</p>
+                        </div>
+                        <div class="bg-green-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-green-800">Uploaded Requirements</h4>
+                            <p class="text-2xl font-bold text-green-600">{{ $uploadedRequirements }}</p>
+                        </div>
+                        <div class="bg-yellow-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-yellow-800">Missing Requirements</h4>
+                            <p class="text-2xl font-bold text-yellow-600">{{ $missingRequirements }}</p>
+                        </div>
+                        <div class="bg-red-100 p-4 rounded-lg">
+                            <h4 class="font-semibold text-red-800">Returned Documents</h4>
+                            <p class="text-2xl font-bold text-red-600">{{ $returnedDocuments }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- End of Existing Content -->
 
             <!-- Modal for First-Time Users -->
             @if($showProfileModal)
@@ -137,7 +105,6 @@
                     }
                 </script>
             @endif
-            <!-- End of Modal -->
         </div>
     </div>
 </x-app-layout>
