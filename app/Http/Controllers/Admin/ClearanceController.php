@@ -183,15 +183,21 @@ class ClearanceController extends Controller
         return view('admin.views.clearances.user-clearance-details', compact('userClearance'));
     }
     
-    public function checkClearances()
+    public function checkClearances(Request $request)
     {
+        $query = $request->input('search');
+
         $userClearances = UserClearance::with(['sharedClearance.clearance', 'user', 'uploadedClearances'])
+            ->whereHas('user', function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('id', 'like', "%{$query}%");
+            })
             ->get()
             ->sortByDesc(function ($userClearance) {
                 return optional($userClearance->uploadedClearances->first())->created_at;
             });
 
-        return view('admin.views.clearances.clearance-check', compact('userClearances'));
+        return view('admin.views.clearances.clearance-check', compact('userClearances', 'query'));
     }
 
     public function approveClearance($id)
