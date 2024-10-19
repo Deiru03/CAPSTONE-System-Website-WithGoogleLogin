@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UploadedClearance;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
+use App\Models\ClearanceFeedback;
 
 class FacultyController extends Controller
 {
@@ -40,7 +41,10 @@ class FacultyController extends Controller
 
             $uploadedRequirements = $currentUploadedClearances->unique('requirement_id')->count();
             $missingRequirements = $totalRequirements - $uploadedRequirements;
-            $returnedDocuments = $currentUploadedClearances->where('status', 'returned')->count();
+            $returnedDocuments = ClearanceFeedback::whereIn('requirement_id', $currentUploadedClearances->pluck('requirement_id'))
+                ->where('user_id', $user->id)
+                ->where('signature_status', 'return')
+                ->count();
         }
 
         return view('dashboard', compact('showProfileModal', 'totalRequirements', 'uploadedRequirements', 'missingRequirements', 'returnedDocuments'));
