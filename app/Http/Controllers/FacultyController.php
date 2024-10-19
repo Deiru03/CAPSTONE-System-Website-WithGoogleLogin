@@ -19,9 +19,10 @@ class FacultyController extends Controller
         $user = Auth::user();
         $showProfileModal = empty($user->program) || empty($user->position);
 
-        // Fetch the user's clearance data
+        // Fetch the user's current active clearance data
         $userClearance = UserClearance::with(['sharedClearance.clearance.requirements', 'uploadedClearances'])
             ->where('user_id', $user->id)
+            ->where('is_active', true) // Ensure only active clearance is fetched
             ->first();
 
         $totalRequirements = 0;
@@ -31,9 +32,15 @@ class FacultyController extends Controller
 
         if ($userClearance) {
             $totalRequirements = $userClearance->sharedClearance->clearance->requirements->count();
-            $uploadedRequirements = $userClearance->uploadedClearances->unique('requirement_id')->count();
+
+            // Filter uploaded clearances to only include those for the current active clearance
+            $currentUploadedClearances = UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
+                ->where('user_id', $user->id)
+                ->get();
+
+            $uploadedRequirements = $currentUploadedClearances->unique('requirement_id')->count();
             $missingRequirements = $totalRequirements - $uploadedRequirements;
-            $returnedDocuments = $userClearance->uploadedClearances->where('status', 'returned')->count();
+            $returnedDocuments = $currentUploadedClearances->where('status', 'returned')->count();
         }
 
         return view('dashboard', compact('showProfileModal', 'totalRequirements', 'uploadedRequirements', 'missingRequirements', 'returnedDocuments'));

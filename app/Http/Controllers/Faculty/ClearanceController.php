@@ -56,13 +56,18 @@ class ClearanceController extends Controller
             return redirect()->route('faculty.clearances.index')->with('error', 'You have already copied this clearance.');
         }
 
-        // Create a new user clearance
+        // Deactivate other clearances
+        UserClearance::where('user_id', $user->id)
+            ->update(['is_active' => false]);
+
+        // Create a new user clearance and set it as active
         UserClearance::create([
             'shared_clearance_id' => $id,
             'user_id' => $user->id,
+            'is_active' => true,
         ]);
 
-        return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copied successfully.');
+        return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copied and set as active successfully.');
     }
     public function removeCopy($id)
     {
@@ -74,14 +79,17 @@ class ClearanceController extends Controller
                 ->where('user_id', $user->id)
                 ->firstOrFail();
 
-            // Delete the user's clearance copy
-            $userClearance->delete();
+            // Deactivate the clearance
+            $userClearance->update(['is_active' => false]);
 
-            return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy removed successfully.');
+            // Optionally, delete the user's clearance copy
+            // $userClearance->delete();
+
+            return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy deactivated successfully.');
         } catch (\Exception $e) {
             Log::error('Removing Clearance Copy Error: '.$e->getMessage());
 
-            return redirect()->route('faculty.clearances.index')->with('error', 'Failed to remove clearance copy.');
+            return redirect()->route('faculty.clearances.index')->with('error', 'Failed to deactivate clearance copy.');
         }
     }
     /**
