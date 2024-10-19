@@ -39,12 +39,12 @@
                         <span>{{ $userClearance->user->units }}</span>
                     </div>
                     <div>
-                        <span class="font-semibold text-gray-900">Program:</span>
-                        <span>{{ $userClearance->user->program }}</span>
-                    </div>
-                    <div>
                         <span class="font-semibold text-gray-900">College:</span>
                         {{-- <span>{{ $userClearance->user->college }}</span> --}}
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-900">Program:</span>
+                        <span>{{ $userClearance->user->program }}</span>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">     
+    <div class="py-5 w-auto">     
         <h3 class="text-3xl font-semibold mb-4 text-blue-600">User Clearance Check</h3>
         
         <!-- Search Form -->
@@ -45,35 +45,34 @@
         </div>
 
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
-            <div class="col-span-full mb-4 border-b border-gray-300 pb-2 flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-gray-700">User Clearances</h3>
-                <span class="text-sm font-medium text-gray-600 bg-gray-200 px-3 py-1 rounded-full">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+            <div class="col-span-full mb-3 border-b border-gray-300 pb-2 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-700">User Clearances</h3>
+                <span class="text-xs font-medium text-gray-600 bg-gray-200 px-2 py-1 rounded-full">
                     Total Users: {{ $userClearances->count() }}
                 </span>
             </div>
             @foreach($userClearances as $userClearance)
-                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center transform hover:scale-105 transition-transform duration-300 ease-in-out border border-gray-200">
-                    <div class="w-28 h-28 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mb-4 flex items-center justify-center p-1">
+                <a href="{{ route('admin.clearances.show', $userClearance->id) }}" class="bg-white rounded-lg shadow p-3 flex flex-col items-center transform hover:scale-105 transition-transform duration-300 ease-in-out border border-gray-200">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mb-2 flex items-center justify-center p-1">
                         @if ($userClearance->user->profile_picture)
-                            <img src="{{ $userClearance->user->profile_picture }}" alt="{{ $userClearance->user->name }}" class="w-full h-full object-cover rounded-full border-4 border-white">
+                            <img src="{{ $userClearance->user->profile_picture }}" alt="{{ $userClearance->user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
                         @else
-                            <div class="w-full h-full flex items-center justify-center rounded-full text-white font-bold text-4xl bg-gradient-to-br from-blue-500 to-indigo-600">
+                            <div class="w-full h-full flex items-center justify-center rounded-full text-white font-bold text-xl bg-gradient-to-br from-blue-500 to-indigo-600">
                                 {{ strtoupper(substr($userClearance->user->name, 0, 1)) }}
                             </div>
                         @endif
                     </div>
-                    <div class="flex items-center w-full mb-2">
-                        <h4 class="text-xl font-semibold text-gray-800">{{ $userClearance->user->name }}</h4>
-                        <div class="mx-2 flex-grow">
-                            <div class="border-t border-gray-300"></div>
+                    <div class="flex items-center w-full mb-1">
+                        <div class="mx-1 flex-grow">
+                            <h4 class="text-xs font-semibold text-gray-800 truncate w-full text-center">{{ $userClearance->user->name }}</h4>
+                           {{-- <p class="text-xs text-gray-600 mb-1 text-center">ID: {{ $userClearance->user->id }}</p> --}}
                         </div>
-                        <p class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">ID: {{ $userClearance->user->id }}</p>
                     </div>
-                    <p class="text-sm font-medium text-indigo-600 mb-1">{{ $userClearance->sharedClearance->clearance->document_name }}</p>
-                    <p class="text-xs text-gray-500 mb-4">Recent Upload: {{ optional($userClearance->uploadedClearances->first())->created_at ?? 'N/A' }}</p>
-                    <a href="{{ route('admin.clearances.show', $userClearance->id) }}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1">View Details</a>
-                </div>
+                    <p class="text-xs font-medium text-indigo-600 mb-1 truncate w-full text-center">{{ Str::limit($userClearance->sharedClearance->clearance->document_name, 20) }}</p>
+                    <p class="text-xs text-gray-500 mb-2">Recent: {{ optional($userClearance->uploadedClearances->first())->created_at ? optional($userClearance->uploadedClearances->first())->created_at->format('m/d/Y') : 'N/A' }}</p>
+                    <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs px-2 py-1 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1">View</span>
+                </a>
             @endforeach
         </div>
     </div>
