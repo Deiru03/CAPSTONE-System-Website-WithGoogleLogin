@@ -13,40 +13,41 @@
                     <p class="text-gray-600 mb-8 text-lg">Here you can view your submitted reports and their current status.</p>
                     
                     <!-- Reports Table -->
-                    <div class="overflow-x-auto bg-gray-50 rounded-xl shadow-inner">
-                        <table class="w-full table-auto">
-                            <thead>
-                                <tr class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Title</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Date</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Details</th>
-
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <!-- Loop through reports -->
-                                @foreach($reports as $report)
-                                <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $report->title }}</div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">{{ $report->created_at->format('M d, Y') }}</div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @if($report->status == 'pending') bg-yellow-100 text-yellow-800
-                                            @elseif($report->status == 'Upload') bg-green-100 text-green-800
-                                            @elseif($report->status == 'Delete') bg-red-100 text-red-800
-                                            @else bg-gray-100 text-gray-800
-                                            @endif">
-                                            {{ ucfirst($report->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="bg-gray-50 rounded-xl shadow-inner">
+                        <div class="overflow-x-auto">
+                            <table class="w-full table-auto">
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                                        <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Title</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Date</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <!-- Loop through reports -->
+                                    @foreach($reports as $report)
+                                    <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $report->title }}</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-500">{{ $report->created_at->format('M d, Y') }}</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                @if($report->status == 'pending') bg-yellow-100 text-yellow-800
+                                                @elseif($report->status == 'Upload') bg-green-100 text-green-800
+                                                @elseif($report->status == 'Delete') bg-red-100 text-red-800
+                                                @else bg-gray-100 text-gray-800
+                                                @endif">
+                                                {{ ucfirst($report->status) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     
                     <!-- Fancy Summary Section -->
