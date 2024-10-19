@@ -16,6 +16,7 @@ class CreateUserClearancesTable extends Migration
             $table->unsignedBigInteger('shared_clearance_id');
             $table->unsignedBigInteger('user_id');
             $table->string('status')->default('pending'); // Add this line for the status column
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->foreign('shared_clearance_id')->references('id')->on('shared_clearances')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -12,6 +12,7 @@ class UserClearance extends Model
     protected $fillable = [
         'shared_clearance_id',
         'user_id',
+        'is_active',
     ];
 
     /**
