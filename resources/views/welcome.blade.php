@@ -13,146 +13,208 @@
         <!-- Styles -->
         <style>
             body {
-                background: linear-gradient(to bottom, #1e3a8a, #e0f7fa); /* Gradient from dark blue to light blue */
+                background: linear-gradient(45deg, #1e3a8a, #3b82f6, #e0f7fa);
+                background-size: 400% 400%;
+                animation: gradientBG 15s ease infinite;
                 margin: 0;
-                font-family: Arial, sans-serif; /* Use Arial or sans-serif */
-                height: 100vh; /* Ensure full viewport height */
+                font-family: 'Figtree', Arial, sans-serif;
+                height: 100vh;
+                overflow-x: hidden;
+            }
+
+            @keyframes gradientBG {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
             }
 
             .header2 {
                 display: flex;
                 align-items: center;
-                margin-left: 20px; /* Adjust left position */
-                margin-top: 20px; /* Adjust top position */
+                padding: 20px;
                 color: white;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow effect */
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                animation: fadeInDown 1s ease-out;
             }
 
             .logo {
-                width: 100px; /* Adjust size as needed */
-                height: auto; /* Maintain aspect ratio */
-                margin-right: 10px; /* Space between logo and title */
-                margin-left: 10px
+                width: 100px;
+                height: auto;
+                margin-right: 20px;
+                transition: transform 0.3s ease;
+            }
+
+            .logo:hover {
+                transform: scale(1.1);
             }
 
             .container {
-                text-align: left; /* Align the text to the left */
-                margin-left: 70px; /* Add left margin of 70px */
-                padding: 10px; /* Add padding */
-                min-height: 80vh; /* Full viewport height */
-                width: 700px;
+                text-align: left;
+                padding: 50px 70px;
+                min-height: 80vh;
+                max-width: 1200px;
+                margin: 0 auto;
+                animation: fadeIn 1s ease-out;
+                position: relative;
+                z-index: 1;
             }
 
             .header {
-                margin-bottom: 10px; /* Space between header and buttons */
-                margin-left: 70px; /* Add left margin of 70px */
-                margin-top: 200px;
+                margin-bottom: 50px;
             }
 
             h1 {
-                font-size: 80px; /* Large title */
-                color: white; /* White color */
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow effect */
-                margin-bottom: 10px; /* Reduce space between h1 and p */
+                font-size: 5rem;
+                color: white;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                margin-bottom: 20px;
+                animation: slideInLeft 1s ease-out;
             }
 
             p {
-                font-size: 20px; /* Subtitle size */
-                color: hsl(0, 0%, 75%); /* Gray color for subtitle */
-                margin-top: 5; /* Remove top margin for p */
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow effect */
+                font-size: 1.5rem;
+                color: hsl(0, 0%, 90%);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                animation: slideInRight 1s ease-out;
             }
 
-            .button1 {
-                display: inline-block;
-                padding: 12px 24px; /* Moderate padding */
-                margin: 10px;
-                background-color: transparent; /* Dark blue background */
-                color: #1e40af; /* White text */
-                border: 2px solid #1e40af;
-                border-radius: 4px; /* Slightly rounded corners */
-                text-decoration: none; /* Remove underline */
-                font-size: 14px; /* Font size */
-                transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+            .button-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-top: 40px;
+                animation: fadeInUp 1s ease-out;
             }
 
-            .button1:hover {
-                background-color: #3b82f6; /* Lighter blue on hover */
+            .button1, .button-google {
+                padding: 12px 24px;
+                background-color: rgba(255, 255, 255, 0.1);
                 color: white;
-            }
-
-            .position-bottom-left {
-                position: fixed; /* Fix the position */
-                bottom: 50px; /* Adjust as needed */
-                left: 50px; /* Adjust as needed */
-            }
-
-            .button-google {
-                display: inline-block;
-                padding: 10px 20px; /* Reduced padding */
-                margin: 8px; /* Slightly reduced margin */
-                background-color: transparent; /* Google blue */
-                color: #1e40af;
-                border: 2px solid #1e40af;
-                border-radius: 4px;
+                border: 2px solid white;
+                border-radius: 30px;
                 text-decoration: none;
-                font-size: 14px; /* Slightly reduced font size */
-                transition: background-color 0.3s, color 0.3s;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(5px);
                 display: flex;
                 align-items: center;
-                width: 180px; /* Set a fixed width */
+                justify-content: center;
             }
 
-            .button-google:hover {
-                background-color: #357AE8;
-                color: white; /* Slightly darker blue on hover */
+            .button1:hover, .button-google:hover {
+                background-color: white;
+                color: #1e40af;
+                transform: translateY(-3px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             }
 
             .button-google img {
-                width: 18px;
-                height: 18px;
+                width: 20px;
+                height: 20px;
                 margin-right: 10px;
+            }
+
+            footer {
+                text-align: center;
+                padding: 20px;
+                color: white;
+                font-size: 0.9rem;
+                background-color: rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(5px);
+                position: relative;
+                z-index: 1;
+            }
+
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+            @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+            .floating-items {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: 0;
+            }
+
+            .floating-item {
+                position: absolute;
+                display: block;
+                list-style: none;
+                animation: float 25s linear infinite;
+                bottom: -150px;
+                font-size: 24px;
+            }
+
+            .floating-item:nth-child(1) { left: 25%; animation-delay: 0s; }
+            .floating-item:nth-child(2) { left: 10%; animation-delay: 2s; animation-duration: 12s; }
+            .floating-item:nth-child(3) { left: 70%; animation-delay: 4s; }
+            .floating-item:nth-child(4) { left: 40%; animation-delay: 0s; animation-duration: 18s; }
+            .floating-item:nth-child(5) { left: 65%; animation-delay: 0s; }
+            .floating-item:nth-child(6) { left: 75%; animation-delay: 3s; }
+            .floating-item:nth-child(7) { left: 35%; animation-delay: 7s; }
+            .floating-item:nth-child(8) { left: 50%; animation-delay: 15s; animation-duration: 45s; }
+            .floating-item:nth-child(9) { left: 20%; animation-delay: 2s; animation-duration: 35s; }
+            .floating-item:nth-child(10) { left: 85%; animation-delay: 0s; animation-duration: 11s; }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-1000px) rotate(720deg);
+                    opacity: 0;
+                }
             }
         </style>
     </head>
     <body>
-        <main class="mt-6">
+        <div class="floating-items">
+            <li class="floating-item">📚</li>
+            <li class="floating-item">🎓</li>
+            <li class="floating-item">✏️</li>
+            <li class="floating-item">🖋️</li>
+            <li class="floating-item">📝</li>
+            <li class="floating-item">🔬</li>
+            <li class="floating-item">🧪</li>
+            <li class="floating-item">📐</li>
+            <li class="floating-item">🖥️</li>
+            <li class="floating-item">🧮</li>
+        </div>
+        <main>
             <div class="header2">
                 <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="logo" />
-                <h3 style="margin: 0;">OCCIDENTAL MINDORO STATE COLLEGE</h3>
+                <h3>OCCIDENTAL MINDORO STATE COLLEGE</h3>
             </div>
             <div class="container">
-                <div class="header" style="transform: translateX(-10%);">
+                <div class="header">
                     <h1>DB&C System</h1>
                     <p>Data Banking and Clearance Checklist System for the College of Art, Sciences, and Technology</p>
                 </div>
                 @if (Route::has('login'))
-                    <nav class="-mx-3 flex flex-1 justify-end left-50">
+                    <div class="button-container">
                         @auth
-                            <a href="{{ url('/dashboard') }}" class="button1">
-                                Dashboard
-                            </a>
+                            <a href="{{ url('/dashboard') }}" class="button1">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="button1">
-                                Log in
-                            </a>
-
+                            <a href="{{ route('login') }}" class="button1">Log in</a>
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="button1">
-                                    Register
-                                </a>
+                                <a href="{{ route('register') }}" class="button1">Register</a>
                             @endif
-
                             <a href="{{ route('google.login') }}" class="button-google">
                                 <img src="https://www.google.com/favicon.ico" alt="Google logo" />
                                 Login with Google
                             </a>
                         @endauth
-                    </nav>
+                    </div>
                 @endif
             </div>
         </main>
-        <footer class="py-16 text-center text-sm text-black dark:text-white/70">
+        <footer>
             Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
         </footer>
     </body>
