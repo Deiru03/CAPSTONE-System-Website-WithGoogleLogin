@@ -42,9 +42,9 @@
                 <div class="profile-section">
                     @if(Auth::check())
                         @if(Auth::user()->profile_picture)
-                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture">
+                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture h-9 w-9">
                         @else
-                            <div class="profile-picture flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
+                            <div class="h-9 w-9 profile-picture flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </div>
                         @endif
@@ -53,17 +53,21 @@
                     {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
                     <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
                 </div> 
-                <div class="mt-auto p-1">
-                    {{-- <div class="mt-auto p-5">
-                        <div class="flex flex-col items-center mt-0 profile-section">
-                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture" style="width: 80px; height: 80px;">
-                            <p class="text-center mt-2 text-lg font-semibold text-white">
-                                {{ Auth::user()->name }}
-                            </p>
-                        </div>
-                    </div> --}}
+                <div class="mt-auto p-2">
+                    <div class="flex flex-col items-center">
+                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-16 h-16 mb-3">
+                        <p class="text-sm text-gray-400 text-center">
+                            Welcome to the OMSC Admin Dashboard
+                        </p>
+                        <p class="text-xs text-gray-500 mt-2 text-center">
+                            Manage clearances, analyze reports, and oversee system files.
+                        </p>
+                        {{-- <a href="{{ route('profile.edit') }}" class="mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out">
+                            Edit Profile
+                        </a> --}}
+                    </div>
                 </div>
-                <nav class="mt-6">
+                <nav class="mt-2">
                     <!-- Dashboard -->
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
