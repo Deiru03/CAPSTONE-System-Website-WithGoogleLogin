@@ -6,7 +6,7 @@
 
         <div class="flex flex-col sm:flex-row sm:space-x-4">
             <!-- User Type -->
-            <div class="mb-4 w-full sm:w-1/2">
+            <div class="mb-4 w-full sm:w-1/3">
                 <x-input-label for="user_type" :value="__('User Type')" class="text-sm font-medium text-gray-700" />
                 <select id="user_type" name="user_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <option value="Faculty" selected>Faculty</option>
@@ -16,7 +16,7 @@
             </div>
 
             <!-- Position -->
-            <div class="mb-4 w-full sm:w-1/2">
+            <div class="mb-4 w-full sm:w-1/3">
                 <x-input-label for="position" :value="__('Position')" class="text-sm font-medium text-gray-700" />
                 <select id="position" name="position" :value="old('position')" required autocomplete="position" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <option value="Permanent">Permanent</option>
@@ -24,6 +24,13 @@
                     <option value="Part-Timer">Part-Timer</option>
                 </select>
                 <x-input-error :messages="$errors->get('position')" class="mt-2" />
+            </div>
+
+            <!-- Units -->
+            <div class="mb-4 w-full sm:w-1/3">
+                <x-input-label for="units" :value="__('Units')" class="text-sm font-medium text-gray-700" />
+                <x-text-input id="units" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-300 ease-in-out hover:bg-gray-50 hover:border-gray-400" type="number" name="units" :value="old('units')" autocomplete="units" title="Leave blank if not applicable or if you don't have units" />
+                <x-input-error :messages="$errors->get('units')" class="mt-2" />
             </div>
         </div>
 
@@ -42,16 +49,16 @@
         </div>
 
         <!-- Program -->
-        <div class="mb-4">
+        {{-- <div class="mb-4">
             <x-input-label for="program" :value="__('Program')" class="text-sm font-medium text-gray-700" />
             <x-text-input id="program" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" type="text" name="program" :value="old('program')" required autocomplete="program" />
             <x-input-error :messages="$errors->get('program')" class="mt-2" />
-        </div>
-        
+        </div> --}}
+
         <!-- Department -->
         <div class="mb-4">
-            <x-input-label for="department_id" :value="__('Department')" />
-            <select id="department_id" name="department_id" class="block mt-1 w-full" required>
+            <x-input-label for="department_id" :value="__('Department')" class="text-sm font-medium text-gray-700" />
+            <select id="department_id" name="department_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required>
                 <option value="" disabled selected>Select a department</option>
                 @foreach($departments as $department)
                     <option value="{{ $department->id }}">{{ $department->name }}</option>
@@ -62,8 +69,8 @@
 
         <!-- Program -->
         <div class="mb-4">
-            <x-input-label for="program_id" :value="__('Program')" />
-            <select id="program_id" name="program_id" class="block mt-1 w-full" required>
+            <x-input-label for="program_id" :value="__('Program')" class="text-sm font-medium text-gray-700" />
+            <select id="program_id" name="program_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required>
                 <option value="" disabled selected>Select a program</option>
                 <!-- Options will be populated via JavaScript -->
             </select>
