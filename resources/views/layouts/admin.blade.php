@@ -41,7 +41,13 @@
             <div class="w-60 bg-gray-800 text-white h-screen fixed z-10 overflow-y-auto">
                 <div class="profile-section">
                     @if(Auth::check())
-                        <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture">
+                        @if(Auth::user()->profile_picture)
+                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture">
+                        @else
+                            <div class="profile-picture flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                        @endif
                         <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
                     @endif
                     {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
@@ -171,7 +177,13 @@
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                        <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
+                                        @if(Auth::user()->profile_picture)
+                                            <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
+                                        @else
+                                            <div class="h-6 w-6 rounded-full mr-2 flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
+                                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                            </div>
+                                        @endif
                                         <div>{{ Auth::user()->name }}</div>
                                         <div class="ms-1">
                                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

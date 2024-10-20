@@ -33,6 +33,9 @@ class AdminController extends Controller
         $facultyAdmin = User::where('user_type', 'Admin')->count();
         $facultyFaculty = User::where('user_type', 'Faculty')->count();
 
+        //////////////////////// College Counts //////////////////////////
+        $collegeCount = Department::count();
+
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
         }
@@ -40,7 +43,7 @@ class AdminController extends Controller
         return view('admindashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
-         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist' ));
+         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount' ));
     }
 
     public function clearances(Request $request): View
