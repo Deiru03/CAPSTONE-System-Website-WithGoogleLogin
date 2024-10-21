@@ -11,7 +11,8 @@ use App\Models\Clearance;
 use App\Models\ClearanceRequirement;
 use App\Models\SharedClearance;
 use App\Models\ClearanceFeedback;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 class ClearanceController extends Controller
 {
     // Display the clearance management page
@@ -175,29 +176,31 @@ class ClearanceController extends Controller
     ///////////////////////////////////////// Clearance Requirements ///////////////////////////////////////
     public function showUserClearance($id)
     {
-        $userClearance = UserClearance::with([
-            'sharedClearance.clearance.requirements',
-            'uploadedClearances.requirement.feedback',
-            'user' // Added to include user data
-        ])->findOrFail($id);
+        $userClearance = UserClearance::with(['sharedClearance.clearance.requirements', 'uploadedClearances.requirement.feedback', 'user'])
+        ->where('user_id', $id)
+        ->first();
+
+        if (!$userClearance) {
+            return redirect()->route('admin.clearance.check')
+                ->with('error', 'This user does not have a clearance copy yet.');
+        }
+
         return view('admin.views.clearances.user-clearance-details', compact('userClearance'));
     }
     
     public function checkClearances(Request $request)
     {
-        $query = $request->input('search');
+        $adminId = Auth::id(); // Get the current admin's ID
 
-        $userClearances = UserClearance::with(['sharedClearance.clearance', 'user', 'uploadedClearances'])
-            ->whereHas('user', function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('id', 'like', "%{$query}%");
+        // Fetch all users managed by the current admin
+        $users = User::with(['userClearances.sharedClearance.clearance'])
+            ->whereHas('managingAdmins', function($q) use ($adminId) {
+                $q->where('admin_id', $adminId);
             })
-            ->get()
-            ->sortByDesc(function ($userClearance) {
-                return optional($userClearance->uploadedClearances->first())->created_at;
-            });
-
-        return view('admin.views.clearances.clearance-check', compact('userClearances', 'query'));
+            ->get();
+    
+            
+        return view('admin.views.clearances.clearance-check', compact('users'));
     }
 
     public function approveClearance($id)

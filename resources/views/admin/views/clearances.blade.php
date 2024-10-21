@@ -34,13 +34,13 @@
                 <h3 class="text-lg font-semibold text-green-700 mb-2">Complete</h3>
                 <p class="text-3xl font-bold text-green-800">{{ $clearance->where('clearances_status', 'complete')->count() }}</p>
             </div>
-            <div class="bg-red-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                <h3 class="text-lg font-semibold text-red-700 mb-2">Pending</h3>
-                <p class="text-3xl font-bold text-red-800">{{ $clearance->where('clearances_status', 'pending')->count() }}</p>
-            </div>
             <div class="bg-yellow-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                <h3 class="text-lg font-semibold text-yellow-700 mb-2">Return</h3>
-                <p class="text-3xl font-bold text-yellow-800">{{ $clearance->where('clearances_status', 'return')->count() }}</p>
+                <h3 class="text-lg font-semibold text-yellow-700 mb-2">Pending</h3>
+                <p class="text-3xl font-bold text-yellow-800">{{ $clearance->where('clearances_status', 'pending')->count() }}</p>
+            </div>
+            <div class="bg-red-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+                <h3 class="text-lg font-semibold text-red-700 mb-2">Return</h3>
+                <p class="text-3xl font-bold text-red-800">{{ $clearance->where('clearances_status', 'return')->count() }}</p>
             </div>
         </div>
     </div>

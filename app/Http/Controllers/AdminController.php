@@ -48,29 +48,32 @@ class AdminController extends Controller
 
     public function clearances(Request $request): View
     {
-        $clearance = User::all();
-        $clearance = User::select('id', 'name', 'email', 'program', 'units', 'position', 'clearances_status', 'last_clearance_update', 'checked_by')->get();
-        {
-            $query = User::query();
-        
-            if ($request->has('search')) {
-                $search = $request->input('search');
-                $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('program', 'like', "%{$search}%")
-                        ->orWhere('position', 'like', "%{$search}%")
-                        ->orWhere('clearances_status', 'like', "%{$search}%")
-                        ->orWhere('id', 'like', "%{$search}%");
-            }
-        
-            if ($request->has('sort')) {
-                $sort = $request->input('sort');
-                $query->orderBy('id', $sort);
-            }
-        
-            $clearance = $query->get();
-        return view ('admin.views.clearances', compact('clearance'));
+        $adminId = Auth::id(); // Get the current admin's ID
+    
+        // Fetch only the users managed by the current admin
+        $query = User::whereHas('managingAdmins', function($q) use ($adminId) {
+            $q->where('admin_id', $adminId);
+        });
+    
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('program', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%")
+                  ->orWhere('clearances_status', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
+            });
         }
+    
+        if ($request->has('sort')) {
+            $sort = $request->input('sort');
+            $query->orderBy('id', $sort);
+        }
+    
+        $clearance = $query->get();
+        return view('admin.views.clearances', compact('clearance'));
     }   
 
     public function submittedReports(): View
