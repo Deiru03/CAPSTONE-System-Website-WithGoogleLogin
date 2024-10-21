@@ -165,6 +165,55 @@ class AdminController extends Controller
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
+    /////////////////////////////////////////////// Admin Faculty /////////////////////////////////////////////////
+    public function assignFaculty(Request $request)
+    {
+        $validatedData = $request->validate([
+            'admin_id' => 'required|exists:users,id',
+            'faculty_ids' => 'array', // Allow empty array
+            'faculty_ids.*' => 'exists:users,id',
+        ]);
+    
+        // Clear existing faculty assignments
+        DB::table('admin_faculty')->where('admin_id', $validatedData['admin_id'])->delete();
+    
+        // Insert new faculty assignments if any
+        if (!empty($validatedData['faculty_ids'])) {
+            foreach ($validatedData['faculty_ids'] as $facultyId) {
+                DB::table('admin_faculty')->insert([
+                    'admin_id' => $validatedData['admin_id'],
+                    'faculty_id' => $facultyId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+    
+        return response()->json(['success' => true, 'message' => 'Faculty members assigned successfully.']);
+    }
+    
+    public function manageFaculty()
+    {
+        try {
+            $allFaculty = User::with(['department', 'program'])
+                ->select('id', 'name', 'position', 'profile_picture', 'department_id', 'program_id')
+                ->where('user_type', 'Faculty')
+                ->get();
+            $managedFaculty = DB::table('admin_faculty')
+                ->where('admin_id', Auth::id())
+                ->pluck('faculty_id')
+                ->toArray();
+    
+            return response()->json([
+                'allFaculty' => $allFaculty,
+                'managedFaculty' => $managedFaculty,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching faculty data: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch faculty data.'], 500);
+        }
+    }
+
     /////////////////////////////////////////////// Departments and Programs /////////////////////////////////////////////////
     public function storeCollegeDepartment(Request $request): RedirectResponse
     {

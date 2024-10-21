@@ -88,4 +88,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Program::class);
     }
+
+    public function managedFaculty()
+    {
+        return $this->belongsToMany(User::class, 'admin_faculty', 'admin_id', 'faculty_id');
+    }
+
+    public function managingAdmins()
+    {
+        return $this->belongsToMany(User::class, 'admin_faculty', 'faculty_id', 'admin_id');
+    }
 }

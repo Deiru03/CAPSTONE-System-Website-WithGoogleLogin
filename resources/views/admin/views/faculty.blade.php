@@ -17,7 +17,7 @@
         position: sticky;
         top: 0;
         background-color: rgb(228, 250, 255); /* Background color to cover content below */
-        z-index: 10; /* Ensure it stays above other content */
+        z-index: 0; /* Ensure it stays above other content */
         }
 
         /* Ensure the table has a defined height */
@@ -30,7 +30,7 @@
             position: sticky;
             top: 0;
             background-color: white; /* Adjust as needed */
-            z-index: 20; /* Ensure it stays above other content */
+            z-index: 0; /* Ensure it stays above other content */
         }
         #editModal {
             z-index: 1000; /* Ensure the modal is above other content */
@@ -57,6 +57,41 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #manageModal .faculty-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #manageModal .faculty-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        #manageModal .faculty-item div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.5rem;
+            font-size: 14px;
+        }
     </style>
 
 
@@ -80,6 +115,16 @@
                     </select>
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
                 </form>
+
+                <!-- Assign Faculty -->
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 shadow-lg border border-gray-300">
+                    <div class="p-6 text-gray-900">
+                        <h2 class="text-2xl font-bold mb-4">Faculty Management</h2>
+                        <button onclick="openManageModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4">
+                            Manage My Faculty
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <!-- Faculty Table -->
@@ -228,6 +273,151 @@
             </div>
         </div>
 
+
+        <!-- Assign Faculty -->
+        <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full relative">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Manage Faculty</h3>
+                
+                <div class="flex justify-between mb-4">
+                    <div class="w-1/2 pr-4">
+                        <h4 class="text-lg font-medium mb-2">Unselected Faculty</h4>
+                        <div id="unselectedFaculty" class="border rounded p-2 h-80 overflow-y-auto bg-gray-100">
+                            <!-- Unselected faculty list will be populated here -->
+                        </div>
+                        <button onclick="addSelected()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Add</button>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <h4 class="text-lg font-medium mb-2">Selected Faculty</h4>
+                        <div id="selectedFaculty" class="border rounded p-2 h-80 overflow-y-auto bg-gray-100">
+                            <!-- Selected faculty list will be populated here -->
+                        </div>
+                        <button onclick="removeSelected()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
+                    </div>
+                </div>
+        
+                <button onclick="closeManageModal()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Close</button>
+            </div>
+        </div>
+        
+
+    <!-- Script for Assign Faculty -->
+    <script>
+        function getInitials(name) {
+            return name.split(' ').map(word => word[0]).join('').toUpperCase();
+        }
+
+        function getRandomColor() {
+            const colors = ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#C71585'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function openManageModal() {
+            fetch('/admin/admin/manage-faculty', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const unselectedFaculty = document.getElementById('unselectedFaculty');
+                const selectedFaculty = document.getElementById('selectedFaculty');
+                unselectedFaculty.innerHTML = '';
+                selectedFaculty.innerHTML = '';
+
+                data.allFaculty.forEach(faculty => {
+                    const departmentName = faculty.department ? faculty.department.name : 'N/A';
+                    const programName = faculty.program ? faculty.program.name : 'N/A';
+                    const profilePicture = faculty.profile_picture ? 
+                        `<img src="${faculty.profile_picture}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-2">` :
+                        `<div class="initials" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;
+
+                    const facultyItem = `
+                        <div class="flex items-center mb-4 p-2 bg-white rounded shadow">
+                            <input type="checkbox" id="faculty-${faculty.id}" class="mr-2">
+                            ${profilePicture}
+                            <div>
+                                <strong>${faculty.name}</strong> - <span class="text-sm text-gray-600">${faculty.position}</span><br>
+                                <span class="text-sm text-gray-600">${departmentName}</span> - <span class="text-sm text-gray-600">${programName}</span>
+                            </div>
+                        </div>
+                    `;
+                    if (data.managedFaculty.includes(faculty.id)) {
+                        selectedFaculty.innerHTML += facultyItem;
+                    } else {
+                        unselectedFaculty.innerHTML += facultyItem;
+                    }
+                });
+
+                document.getElementById('manageModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching faculty data:', error);
+                alert('An error occurred while fetching faculty data.');
+            });
+        }
+
+        function addSelected() {
+            const selectedFaculty = document.getElementById('selectedFaculty');
+            const unselectedFaculty = document.getElementById('unselectedFaculty');
+            const selectedIds = [];
+    
+            unselectedFaculty.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const facultyItem = checkbox.parentElement;
+                selectedFaculty.appendChild(facultyItem);
+                selectedIds.push(parseInt(checkbox.id.replace('faculty-', '')));
+            });
+    
+            updateFaculty(selectedIds);
+        }
+    
+        function removeSelected() {
+            const selectedFaculty = document.getElementById('selectedFaculty');
+            const unselectedFaculty = document.getElementById('unselectedFaculty');
+            const selectedIds = [];
+    
+            selectedFaculty.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const facultyItem = checkbox.parentElement;
+                unselectedFaculty.appendChild(facultyItem);
+                selectedIds.push(parseInt(checkbox.id.replace('faculty-', '')));
+            });
+    
+            updateFaculty(selectedIds);
+        }
+    
+        function updateFaculty(selectedIds) {
+            const allSelectedIds = Array.from(document.querySelectorAll('#selectedFaculty input[type="checkbox"]'))
+                .map(checkbox => parseInt(checkbox.id.replace('faculty-', '')));
+    
+            fetch('/admin/admin/assign-faculty', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    admin_id: {{ Auth::id() }},
+                    faculty_ids: allSelectedIds,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('An error occurred while updating faculty management.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating faculty management:', error);
+                alert('An error occurred while updating faculty management.');
+            });
+        }
+    
+        function closeManageModal() {
+            document.getElementById('manageModal').classList.add('hidden');
+        }
+    </script>
 
     <!--////////////////////// Edit Modal //////////////////////-->
     <script>

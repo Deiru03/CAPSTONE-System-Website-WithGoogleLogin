@@ -95,6 +95,12 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
     Route::get('/admin/departments', [AdminController::class, 'showCollege'])->name('admin.views.college');
     Route::post('/admin/departments', [AdminController::class, 'storeCollegeDepartment'])->name('admin.departments.store');
     Route::post('/admin/programs', [AdminController::class, 'storeCollegeProgram'])->name('admin.programs.store');
+
+    /////////////////////////////////////////// Admin Faculty Management Controller ///////////////////////////////////////////
+    Route::post('/admin/assign-faculty', [AdminController::class, 'assignFaculty'])->name('admin.assignFaculty');
+    Route::post('/admin/admin/assign-faculty', [AdminController::class, 'assignFaculty'])->name('admin.assignFaculty');
+    Route::get('/admin/manage-faculty', [AdminController::class, 'manageFaculty'])->name('admin.manageFaculty');
+    Route::get('/admin/admin/manage-faculty', [AdminController::class, 'manageFaculty'])->name('admin.manageFaculty');
 });
 
 
