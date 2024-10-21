@@ -66,11 +66,17 @@
                 <p>Here you can manage Faculty members.</p>
                 <!-- Add your Faculty management content here -->
                 <form method="GET" action="{{ route('admin.views.faculty') }}" class="mb-4 flex items-center">
-                    <input type="text" name="search" placeholder="Search by name, email, program, units, or position..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
+                    <input type="text" name="search" placeholder="Search by name, email, department, program, units, or position..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
                     <select name="sort" class="border rounded p-2 mr-2 w-40">
-                        <option value="" disabled selected>Sort name</option>
-                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A to Z</option>
-                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z to A</option>
+                        <option value="" disabled selected>Sort by</option>
+                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name A to Z</option>
+                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name Z to A</option>
+                        <option value="college_asc" {{ request('sort') == 'college_asc' ? 'selected' : '' }}>College A to Z</option>
+                        <option value="college_desc" {{ request('sort') == 'college_desc' ? 'selected' : '' }}>College Z to A</option>
+                        <option value="program_asc" {{ request('sort') == 'program_asc' ? 'selected' : '' }}>Program A to Z</option>
+                        <option value="program_desc" {{ request('sort') == 'program_desc' ? 'selected' : '' }}>Program Z to A</option>
+                        <option value="units_asc" {{ request('sort') == 'units_asc' ? 'selected' : '' }}>Units Low to High</option>
+                        <option value="units_desc" {{ request('sort') == 'units_desc' ? 'selected' : '' }}>Units High to Low</option>
                     </select>
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
                 </form>
@@ -85,6 +91,7 @@
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
@@ -98,7 +105,8 @@
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $member->id }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $member->name }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $member->email }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->program }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->program->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-center">{{ $member->units }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap">{{ $member->position }}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-center">{{ $member->user_type }}</td>
@@ -148,8 +156,20 @@
                             <input type="email" name="email" id="editEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
                         </div>
                         <div>
+                            <label for="editDepartment" class="block text-sm font-medium text-gray-700">Department</label>
+                            <select name="department_id" id="editDepartment" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
                             <label for="editProgram" class="block text-sm font-medium text-gray-700">Program</label>
-                            <input type="text" name="program" id="editProgram" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                            <select name="program_id" id="editProgram" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                                @foreach ($programs as $program)
+                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div>
                             <label for="editUnits" class="block text-sm font-medium text-gray-700">Units</label>
@@ -280,7 +300,6 @@
 
         function openEditModal(id) {
             currentEditId = id;
-            // Fetch faculty data and populate the form
             fetch(`/admin/faculty/edit/${id}`, {
                 method: 'GET',
                 headers: {
@@ -290,18 +309,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Populate the form fields with fetched data
                     document.getElementById('editId').value = data.faculty.id;
                     document.getElementById('editName').value = data.faculty.name;
                     document.getElementById('editEmail').value = data.faculty.email;
-                    document.getElementById('editProgram').value = data.faculty.program;
+                    document.getElementById('editDepartment').value = data.faculty.department_id;
+                    document.getElementById('editProgram').value = data.faculty.program_id;
                     document.getElementById('editUnits').value = data.faculty.units;
                     document.getElementById('editPosition').value = data.faculty.position;
                     document.getElementById('editUserType').value = data.faculty.user_type;
-                    // Set the form action to the edit route
                     document.getElementById('editForm').action = `/admin/faculty/edit`;
-
-                    // Open the edit modal
                     document.getElementById('editModal').classList.remove('hidden');
                 } else {
                     alert('Failed to fetch faculty data.');
@@ -330,7 +346,8 @@
                 id: document.getElementById('editId').value,
                 name: document.getElementById('editName').value,
                 email: document.getElementById('editEmail').value,
-                program: document.getElementById('editProgram').value,
+                department_id: document.getElementById('editDepartment').value,
+                program_id: document.getElementById('editProgram').value,
                 units: document.getElementById('editUnits').value,
                 position: document.getElementById('editPosition').value,
                 user_type: document.getElementById('editUserType').value,

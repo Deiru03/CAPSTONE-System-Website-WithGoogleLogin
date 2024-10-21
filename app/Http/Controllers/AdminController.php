@@ -80,27 +80,67 @@ class AdminController extends Controller
 
     public function faculty(Request $request): View
     {
-        $faculty = User::all();
-        $query = User::query();
+        $query = User::with(['department', 'program']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('program', 'like', '%' . $search . '%')
-                  ->orWhere('position', 'like', '%' . $search . '%')
-                  ->orWhere('units', 'like', '%' . $search . '%');
+            $query->where(function($q) use ($search) {
+                $q->where('users.name', 'like', '%' . $search . '%')
+                  ->orWhere('users.email', 'like', '%' . $search . '%')
+                  ->orWhere('users.units', 'like', '%' . $search . '%')
+                  ->orWhere('users.position', 'like', '%' . $search . '%')
+                  ->orWhereHas('department', function($q) use ($search) {
+                      $q->where('departments.name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('program', function($q) use ($search) {
+                      $q->where('programs.name', 'like', '%' . $search . '%');
+                  });
+            });
         }
 
         if ($request->has('sort')) {
             $sort = $request->input('sort');
-            $query->orderBy('id', $sort);
+            switch ($sort) {
+                case 'name_asc':
+                    $query->orderBy('users.name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('users.name', 'desc');
+                    break;
+                case 'college_asc':
+                    $query->join('departments', 'users.department_id', '=', 'departments.id')
+                          ->orderBy('departments.name', 'asc')
+                          ->select('users.*');
+                    break;
+                case 'college_desc':
+                    $query->join('departments', 'users.department_id', '=', 'departments.id')
+                          ->orderBy('departments.name', 'desc')
+                          ->select('users.*');
+                    break;
+                case 'program_asc':
+                    $query->join('programs', 'users.program_id', '=', 'programs.id')
+                          ->orderBy('programs.name', 'asc')
+                          ->select('users.*');
+                    break;
+                case 'program_desc':
+                    $query->join('programs', 'users.program_id', '=', 'programs.id')
+                          ->orderBy('programs.name', 'desc')
+                          ->select('users.*');
+                    break;
+                case 'units_asc':
+                    $query->orderBy('users.units', 'asc');
+                    break;
+                case 'units_desc':
+                    $query->orderBy('users.units', 'desc');
+                    break;
+            }
         }
 
-
         $faculty = $query->paginate(30);
+        $departments = Department::all();
+        $programs = Program::all();
 
-        return view ('admin.views.faculty', compact('faculty'));
+        return view('admin.views.faculty', compact('faculty', 'departments', 'programs'));
     }
 
     public function showCollege(): View
@@ -156,7 +196,7 @@ class AdminController extends Controller
     public function getFacultyData($id)
     {
         try {
-            $facultyMember = User::findOrFail($id);
+            $facultyMember = User::with(['department', 'program'])->findOrFail($id);
             return response()->json(['success' => true, 'faculty' => $facultyMember]);
         } catch (\Exception $e) {
             Log::error('Error fetching faculty member: ' . $e->getMessage());
@@ -170,7 +210,8 @@ class AdminController extends Controller
             'id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'program' => 'nullable|string|max:255',
+            'department_id' => 'required|exists:departments,id',
+            'program_id' => 'required|exists:programs,id',
             'units' => 'nullable|integer',
             'position' => 'nullable|string|max:255',
             'user_type' => 'required|string|max:255',
