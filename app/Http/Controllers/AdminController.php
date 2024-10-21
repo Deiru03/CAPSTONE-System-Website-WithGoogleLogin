@@ -170,6 +170,34 @@ class AdminController extends Controller
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
+
+    /////////////////////////////////////////////// Departments and Programs Controller /////////////////////////////////////////////////
+    public function destroyCollegeProgram($id)
+    {
+        try {
+            $program = Program::findOrFail($id);
+            $program->delete();
+
+            return response()->json(['success' => true, 'message' => 'Program deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting program: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete program.'], 500);
+        }
+    }
+
+    public function destroyCollegeDepartment($id)
+    {
+        try {
+            $department = Department::findOrFail($id);
+            $department->delete();
+
+            return response()->json(['success' => true, 'message' => 'Department deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting department: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete department.'], 500);
+        }
+    }
+
     /////////////////////////////////////////////// Admin Faculty /////////////////////////////////////////////////
     public function assignFaculty(Request $request)
     {
