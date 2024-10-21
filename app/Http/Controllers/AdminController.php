@@ -80,7 +80,9 @@ class AdminController extends Controller
 
     public function faculty(Request $request): View
     {
-        $query = User::with(['department', 'program']);
+        $query = User::with(['department', 'program', 'managingAdmins']);
+        // Get the currently authenticated admin's name
+        $adminName = Auth::user()->name;
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -140,7 +142,7 @@ class AdminController extends Controller
         $departments = Department::all();
         $programs = Program::all();
 
-        return view('admin.views.faculty', compact('faculty', 'departments', 'programs'));
+        return view('admin.views.faculty', compact('faculty', 'departments', 'programs', 'adminName'));
     }
 
     public function showCollege(): View

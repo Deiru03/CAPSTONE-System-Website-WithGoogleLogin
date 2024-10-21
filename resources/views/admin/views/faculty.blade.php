@@ -92,70 +92,110 @@
             margin-right: 0.5rem;
             font-size: 14px;
         }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-card img {
+            border-radius: 50%;
+            width: 4rem;
+            height: 4rem;
+            object-fit: cover;
+        }
+
+        .profile-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .profile-card p {
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .profile-card button {
+            margin-top: 0.5rem;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+            background-color: #4299e1;
+            color: white;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-card button:hover {
+            background-color: #3182ce;
+            transform: scale(1.05);
+        }
     </style>
 
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 shadow-lg border border-gray-300">
             <div class="p-6 text-gray-900">
                 <h2 class="text-2xl font-bold mb-4">Faculty Management</h2>
                 <p>Here you can manage Faculty members.</p>
                 <!-- Add your Faculty management content here -->
-                <form method="GET" action="{{ route('admin.views.faculty') }}" class="mb-4 flex items-center">
-                    <input type="text" name="search" placeholder="Search by name, email, department, program, units, or position..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
-                    <select name="sort" class="border rounded p-2 mr-2 w-40">
-                        <option value="" disabled selected>Sort by</option>
-                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name A to Z</option>
-                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name Z to A</option>
-                        <option value="college_asc" {{ request('sort') == 'college_asc' ? 'selected' : '' }}>College A to Z</option>
-                        <option value="college_desc" {{ request('sort') == 'college_desc' ? 'selected' : '' }}>College Z to A</option>
-                        <option value="program_asc" {{ request('sort') == 'program_asc' ? 'selected' : '' }}>Program A to Z</option>
-                        <option value="program_desc" {{ request('sort') == 'program_desc' ? 'selected' : '' }}>Program Z to A</option>
-                        <option value="units_asc" {{ request('sort') == 'units_asc' ? 'selected' : '' }}>Units Low to High</option>
-                        <option value="units_desc" {{ request('sort') == 'units_desc' ? 'selected' : '' }}>Units High to Low</option>
-                    </select>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
-                </form>
-
-                <!-- Assign Faculty -->
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 shadow-lg border border-gray-300">
-                    <div class="p-6 text-gray-900">
-                        <h2 class="text-2xl font-bold mb-4">Faculty Management</h2>
-                        <button onclick="openManageModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4">
-                            Manage My Faculty
-                        </button>
-                    </div>
+                <div class="flex justify-between items-center mb-4">
+                    <form method="GET" action="{{ route('admin.views.faculty') }}" class="flex items-center w-4/5">
+                        <input type="text" name="search" placeholder="Search by name, email, department, program, units, or position..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
+                        <select name="sort" class="border rounded p-2 mr-2 w-40">
+                            <option value="" disabled selected>Sort by</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name A to Z</option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name Z to A</option>
+                            <option value="college_asc" {{ request('sort') == 'college_asc' ? 'selected' : '' }}>College A to Z</option>
+                            <option value="college_desc" {{ request('sort') == 'college_desc' ? 'selected' : '' }}>College Z to A</option>
+                            <option value="program_asc" {{ request('sort') == 'program_asc' ? 'selected' : '' }}>Program A to Z</option>
+                            <option value="program_desc" {{ request('sort') == 'program_desc' ? 'selected' : '' }}>Program Z to A</option>
+                            <option value="units_asc" {{ request('sort') == 'units_asc' ? 'selected' : '' }}>Units Low to High</option>
+                            <option value="units_desc" {{ request('sort') == 'units_desc' ? 'selected' : '' }}>Units High to Low</option>
+                        </select>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
+                    </form>
+                    <button onclick="openManageModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                        Manage My Faculty
+                    </button>
                 </div>
             </div>
             
             <!-- Faculty Table -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full">
-                <div class="table-container overflow-x-auto" style="max-height: 490px; max-width: 1200px;">
-                    <table class="min-w-full text-sm">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full border border-gray-300">
+                <div class="table-container overflow-y-auto" style="max-height: 490px;">
+                    <table class="w-full text-sm">
                         <thead class="bg-gray-200 sticky-header">
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Account<br>Type</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Managed By</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200"> 
                             @foreach ($faculty as $member)
                             <tr>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->id }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->name }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->email }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->program->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center">{{ $member->units }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">{{ $member->position }}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center">{{ $member->user_type }}</td>
-                                <td class="py-2 px-3 border-b">
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->id }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->name }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->email }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->program->name ?? 'N/A' }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap text-center">{{ $member->units }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->position }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">
+                                    {{ $member->managingAdmins->pluck('name')->join(', ') ?? 'N/A' }}
+                                </td>
+                                <td class="px-2 py-3 whitespace-nowrap text-center">{{ $member->user_type }}</td>
+                                <td class="py-2 px-2 border-b">
                                     <button onclick="openEditModal({{ $member->id }})" class="text-blue-500 flex items-center text-xs">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -180,7 +220,6 @@
                     {{ $faculty->links() }}
                 </div>
             </div>
-        </div>
   
 
         <!-- Edit Modal -->
@@ -189,6 +228,11 @@
                 <h3 class="text-2xl font-semibold mb-4 text-gray-800">Edit Faculty</h3>
                 <form id="editForm" method="POST" action="{{ route('admin.faculty.edit') }}">
                     @csrf
+                    <div class="bg-white p-2 mb-2 flex justify-center items-center">
+                        <div class="w-24 h-24 rounded-full overflow-hidden">
+                            <img id="profileImage" src="default-profile.png" alt="Profile Picture" class="w-full h-full object-cover">
+                        </div>
+                    </div>
                     <input type="hidden" name="id" id="editId">
                     <!-- Other form fields -->
                     <div class="space-y-4">
@@ -203,6 +247,7 @@
                         <div>
                             <label for="editDepartment" class="block text-sm font-medium text-gray-700">Department</label>
                             <select name="department_id" id="editDepartment" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                                <option value="">Select Department</option>
                                 @foreach ($departments as $department)
                                     <option value="{{ $department->id }}">{{ $department->name }}</option>
                                 @endforeach
@@ -211,29 +256,58 @@
                         <div>
                             <label for="editProgram" class="block text-sm font-medium text-gray-700">Program</label>
                             <select name="program_id" id="editProgram" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                                <option value="">Select Program</option>
                                 @foreach ($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                    <option value="{{ $program->id }}" data-department="{{ $program->department_id }}">{{ $program->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label for="editUnits" class="block text-sm font-medium text-gray-700">Units</label>
-                            <input type="number" name="units" id="editUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                        </div>
-                        <div>
-                            <label for="editPosition" class="block text-sm font-medium text-gray-700">Status/Position</label>
-                            <select name="position" id="editPosition" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
-                                <option value="Permanent">Permanent</option>
-                                <option value="Part-Timer">Part-Timer</option>
-                                <option value="Temporary">Temporary</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="editUserType" class="block text-sm font-medium text-gray-700">Account Type</label>
-                            <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
-                                <option value="admin">Admin</option>
-                                <option value="faculty">Faculty</option>
-                            </select>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const departmentSelect = document.getElementById('editDepartment');
+                                const programSelect = document.getElementById('editProgram');
+                                const programOptions = programSelect.querySelectorAll('option');
+
+                                function filterPrograms() {
+                                    const selectedDepartmentId = departmentSelect.value;
+                                    programOptions.forEach(option => {
+                                        if (option.value === "") return; // Skip the "Select Program" option
+                                        if (selectedDepartmentId === "" || option.dataset.department === selectedDepartmentId) {
+                                            option.style.display = "";
+                                        } else {
+                                            option.style.display = "none";
+                                        }
+                                    });
+                                    // Reset program selection when department changes
+                                    programSelect.value = "";
+                                }
+
+                                departmentSelect.addEventListener('change', filterPrograms);
+
+                                // Initial filter
+                                filterPrograms();
+                            });
+                        </script>
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-3">
+                                <label for="editUnits" class="block text-sm font-medium text-gray-700">Units</label>
+                                <input type="number" name="units" id="editUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            </div>
+                            <div class="col-span-5">
+                                <label for="editPosition" class="block text-sm font-medium text-gray-700">Status/Position</label>
+                                <select name="position" id="editPosition" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                    <option value="Permanent">Permanent</option>
+                                    <option value="Part-Timer">Part-Timer</option>
+                                    <option value="Temporary">Temporary</option>
+                                </select>
+                            </div>
+                            <div class="col-span-4">
+                                <label for="editUserType" class="block text-sm font-medium text-gray-700">Account Type</label>
+                                <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                    <option value="admin">Admin</option>
+                                    <option value="faculty">Faculty</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-end space-x-3">
@@ -275,28 +349,48 @@
 
 
         <!-- Assign Faculty -->
-        <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
-            <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full relative">
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Manage Faculty</h3>
+        <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-20">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full h-[90vh] relative flex flex-col">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Manage Faculty</h3>
                 
-                <div class="flex justify-between mb-4">
-                    <div class="w-1/2 pr-4">
-                        <h4 class="text-lg font-medium mb-2">Unselected Faculty</h4>
-                        <div id="unselectedFaculty" class="border rounded p-2 h-80 overflow-y-auto bg-gray-100">
-                            <!-- Unselected faculty list will be populated here -->
-                        </div>
-                        <button onclick="addSelected()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Add</button>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="relative">
+                        <input type="text" id="facultyNameSearch" placeholder="Search by name..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
+                        <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <div class="w-1/2 pl-4">
-                        <h4 class="text-lg font-medium mb-2">Selected Faculty</h4>
-                        <div id="selectedFaculty" class="border rounded p-2 h-80 overflow-y-auto bg-gray-100">
-                            <!-- Selected faculty list will be populated here -->
-                        </div>
-                        <button onclick="removeSelected()" class="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
+                    <div class="relative">
+                        <input type="text" id="facultyDepartmentSearch" placeholder="Search by college..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
+                        <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="facultyPositionSearch" placeholder="Search by position..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
+                        <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="facultyProgramSearch" placeholder="Search by program..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
+                        <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
                 </div>
+                
+                <div class="flex justify-between mb-3 flex-grow overflow-hidden">
+                    <div class="w-1/2 pr-2 flex flex-col h-full">
+                        <h4 class="text-base font-medium mb-1 text-gray-700">Unselected Faculty</h4>
+                        <div id="unselectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
+                        <button onclick="addSelected()" class="mt-2 px-4 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Add Selected</button>
+                    </div>
+                    <div class="w-1/2 pl-2 flex flex-col h-full">
+                        <h4 class="text-base font-medium mb-1 text-gray-700">Selected Faculty</h4>
+                        <div id="selectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
+                        <button onclick="removeSelected()" class="mt-2 px-4 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Remove Selected</button>
+                    </div>
+                </div>
+                
+                <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50"></div>
         
-                <button onclick="closeManageModal()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Close</button>
+                <div class="flex justify-end mt-4">
+                    <button onclick="updateFaculty()" class="px-4 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">Save</button>
+                    <button onclick="closeManageModal()" class="ml-2 px-4 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Close</button>
+                </div>
             </div>
         </div>
         
@@ -308,16 +402,24 @@
         }
 
         function getRandomColor() {
-            const colors = ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#C71585'];
+            const colors = [
+                '#FFB6C1', '#FF69B4', '#4682B4', '#1E90FF', '#90EE90',
+                '#3CB371', '#FFA07A', '#FF7F50', '#FF0000', '#DC143C',
+                '#D2691E', '#CD853F', '#708090', '#778899', '#00CED1',
+                '#20B2AA', '#8A2BE2', '#DDA0DD', '#B0C4DE', '#00FA9A',
+                '#48D1CC', '#C71585', '#191970', '#F0E68C', '#AFEEEE',
+                '#DB7093', '#FFDAB9', '#CD5C5C', '#40E0D0', '#9ACD32',
+                '#7B68EE', '#FA8072', '#F4A460', '#D8BFD8', '#DEB887',
+                '#5F9EA0', '#FF4500', '#DA70D6', '#EEE8AA', '#98FB98',
+                '#F0FFF0', '#F5DEB3', '#FFDAB9', '#D2B48C', '#FAEBD7'
+            ];
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
         function openManageModal() {
             fetch('/admin/admin/manage-faculty', {
                 method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
+                headers: { 'Accept': 'application/json' },
             })
             .then(response => response.json())
             .then(data => {
@@ -330,16 +432,16 @@
                     const departmentName = faculty.department ? faculty.department.name : 'N/A';
                     const programName = faculty.program ? faculty.program.name : 'N/A';
                     const profilePicture = faculty.profile_picture ? 
-                        `<img src="${faculty.profile_picture}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-2">` :
-                        `<div class="initials" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;
+                        `<img src="${faculty.profile_picture}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-1">` :
+                        `<div class="initials w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold mr-1" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;
 
                     const facultyItem = `
-                        <div class="flex items-center mb-4 p-2 bg-white rounded shadow">
-                            <input type="checkbox" id="faculty-${faculty.id}" class="mr-2">
+                        <div class="flex items-center mb-2 p-1 bg-white rounded shadow text-xs">
+                            <input type="checkbox" id="faculty-${faculty.id}" class="mr-1">
                             ${profilePicture}
-                            <div>
-                                <strong>${faculty.name}</strong> - <span class="text-sm text-gray-600">${faculty.position}</span><br>
-                                <span class="text-sm text-gray-600">${departmentName}</span> - <span class="text-sm text-gray-600">${programName}</span>
+                            <div class="overflow-hidden">
+                                <strong>${faculty.name}</strong> - ${faculty.position}<br>
+                                <span class="text-xxs text-gray-600">${departmentName} - ${programName}</span>
                             </div>
                         </div>
                     `;
@@ -354,7 +456,7 @@
             })
             .catch(error => {
                 console.error('Error fetching faculty data:', error);
-                alert('An error occurred while fetching faculty data.');
+                showNotification('An error occurred while fetching faculty data.');
             });
         }
 
@@ -389,7 +491,7 @@
         function updateFaculty(selectedIds) {
             const allSelectedIds = Array.from(document.querySelectorAll('#selectedFaculty input[type="checkbox"]'))
                 .map(checkbox => parseInt(checkbox.id.replace('faculty-', '')));
-    
+
             fetch('/admin/admin/assign-faculty', {
                 method: 'POST',
                 headers: {
@@ -404,18 +506,66 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (!data.success) {
-                    alert('An error occurred while updating faculty management.');
+                if (data.success) {
+                    showNotification('Faculty updated successfully!');
+                } else {
+                    showNotification('Failed to update faculty: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error updating faculty management:', error);
-                alert('An error occurred while updating faculty management.');
+                showNotification('An error occurred while updating faculty management: ' + error.message);
             });
         }
-    
+
         function closeManageModal() {
             document.getElementById('manageModal').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Script for Notification -->
+    <script>
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.remove('hidden');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+
+    <!-- Script for Filtering Faculty -->
+    <script>
+        function filterFaculty() {
+            const nameSearch = document.getElementById('facultyNameSearch').value.toLowerCase();
+            const departmentSearch = document.getElementById('facultyDepartmentSearch').value.toLowerCase();
+            const positionSearch = document.getElementById('facultyPositionSearch').value.toLowerCase();
+            const programSearch = document.getElementById('facultyProgramSearch').value.toLowerCase();
+            const unselectedFaculty = document.getElementById('unselectedFaculty');
+            const selectedFaculty = document.getElementById('selectedFaculty');
+
+            function filterList(list) {
+                Array.from(list.children).forEach(item => {
+                    const name = item.querySelector('strong').textContent.toLowerCase();
+                    const details = item.querySelector('.text-sm.text-gray-600').textContent.toLowerCase();
+                    const matchesName = name.includes(nameSearch);
+                    const matchesDepartment = details.includes(departmentSearch);
+                    const matchesPosition = details.includes(positionSearch);
+                    const matchesProgram = details.includes(programSearch);
+
+                    if (matchesName && matchesDepartment && matchesPosition && matchesProgram) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            filterList(unselectedFaculty);
+            filterList(selectedFaculty);
         }
     </script>
 
@@ -488,6 +638,19 @@
         // Edit Functionality
         let currentEditId;
 
+        function getInitials(name) {
+            return name.split(' ')[0][0].toUpperCase();
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         function openEditModal(id) {
             currentEditId = id;
             fetch(`/admin/faculty/edit/${id}`, {
@@ -499,14 +662,34 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('editId').value = data.faculty.id;
-                    document.getElementById('editName').value = data.faculty.name;
-                    document.getElementById('editEmail').value = data.faculty.email;
-                    document.getElementById('editDepartment').value = data.faculty.department_id;
-                    document.getElementById('editProgram').value = data.faculty.program_id;
-                    document.getElementById('editUnits').value = data.faculty.units;
-                    document.getElementById('editPosition').value = data.faculty.position;
-                    document.getElementById('editUserType').value = data.faculty.user_type;
+                    const faculty = data.faculty;
+                    const profileImage = document.getElementById('profileImage');
+                    if (faculty.profile_picture) {
+                        profileImage.src = faculty.profile_picture;
+                        profileImage.style.backgroundColor = '';
+                        profileImage.textContent = '';
+                    } else {
+                        const initials = getInitials(faculty.name);
+                        const bgColor = getRandomColor();
+                        profileImage.src = '';
+                        profileImage.style.backgroundColor = bgColor;
+                        profileImage.textContent = initials;
+                        profileImage.style.display = 'flex';
+                        profileImage.style.alignItems = 'center';
+                        profileImage.style.justifyContent = 'center';
+                        profileImage.style.color = 'white';
+                        profileImage.style.fontWeight = 'bold';
+                        profileImage.style.fontSize = '2rem';
+                    }
+
+                    document.getElementById('editId').value = faculty.id;
+                    document.getElementById('editName').value = faculty.name;
+                    document.getElementById('editEmail').value = faculty.email;
+                    document.getElementById('editDepartment').value = faculty.department_id;
+                    document.getElementById('editProgram').value = faculty.program_id;
+                    document.getElementById('editUnits').value = faculty.units;
+                    document.getElementById('editPosition').value = faculty.position;
+                    document.getElementById('editUserType').value = faculty.user_type;
                     document.getElementById('editForm').action = `/admin/faculty/edit`;
                     document.getElementById('editModal').classList.remove('hidden');
                 } else {
