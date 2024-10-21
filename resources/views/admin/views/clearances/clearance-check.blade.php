@@ -62,7 +62,7 @@
         
         <!-- Search Form -->
         <div class="flex items-center mb-6">
-            <form action="{{ route('admin.clearance.check') }}" method="GET" class="flex-grow mr-2">
+            <form action="{{ route('admin.clearance.search') }}" method="GET" class="flex-grow mr-2">
                 <div class="flex items-center">
                     <input type="text" name="search" placeholder="Search by name or ID" value="{{ request('search') }}" 
                            class="border-2 border-gray-300 bg-white h-10 px-5 pr-15 rounded-lg text-sm focus:outline-none w-64">

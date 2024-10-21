@@ -62,15 +62,20 @@ class ClearanceController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
-
-        $userClearances = UserClearance::with(['sharedClearance.clearance.requirements', 'user', 'uploadedClearances'])
-            ->whereHas('sharedClearance.clearance.requirements', function ($q) use ($query) {
-                $q->where('requirement', 'like', '%' . $query . '%');
+        $query = $request->input('search');
+        $adminId = Auth::id();
+    
+        $users = User::with(['userClearances.sharedClearance.clearance'])
+            ->whereHas('managingAdmins', function ($q) use ($adminId) {
+                $q->where('admin_id', $adminId);
+            })
+            ->when($query, function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                  ->orWhere('id', 'like', '%' . $query . '%');
             })
             ->get();
-
-        return view('admin.views.clearances.clearance-check', compact('userClearances', 'query'));
+    
+        return view('admin.views.clearances.clearance-check', compact('users', 'query'));
     }
 
     // Fetch a clearance for editing

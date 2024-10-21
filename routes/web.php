@@ -11,6 +11,7 @@ use App\Http\Controllers\GoogleAuthController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
+use Faker\Provider\ar_EG\Address;
 
 Route::get('/', function () {
     return view('welcome');
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
     Route::post('/admin/clearance/feedback/store', [AdminClearanceController::class, 'storeFeedback'])->name('admin.clearance.feedback.store');
     Route::post('/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
     Route::get('/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
+    Route::get('/admin/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
 
     /////////////////////////////////////////// Departments and Programs ///////////////////////////////////////////
     Route::get('/admin/departments', [AdminController::class, 'showCollege'])->name('admin.views.college');
