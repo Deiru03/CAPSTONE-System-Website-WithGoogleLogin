@@ -223,10 +223,17 @@
   
 
         <!-- Edit Modal -->
-        <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
-            <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Edit Faculty</h3>
-                <form id="editForm" method="POST" action="{{ route('admin.faculty.edit') }}">
+        <!-- Edit Modal -->
+        <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-green-500"></div>
+                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Edit Faculty
+                </h3>
+                <form id="editForm" method="POST" action="{{ route('admin.faculty.edit') }}" class="space-y-6">
                     @csrf
                     <div class="bg-white p-2 mb-2 flex justify-center items-center">
                         <div class="w-24 h-24 rounded-full overflow-hidden">
@@ -234,28 +241,27 @@
                         </div>
                     </div>
                     <input type="hidden" name="id" id="editId">
-                    <!-- Other form fields -->
                     <div class="space-y-4">
-                        <div>
-                            <label for="editName" class="block text-sm font-medium text-gray-700">Name</label>
-                            <input type="text" name="name" id="editName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                        <div class="relative">
+                            <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" name="name" id="editName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                         </div>
-                        <div>
-                            <label for="editEmail" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" name="email" id="editEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                        <div class="relative">
+                            <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" name="email" id="editEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                         </div>
-                        <div>
-                            <label for="editDepartment" class="block text-sm font-medium text-gray-700">Department</label>
-                            <select name="department_id" id="editDepartment" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                        <div class="relative">
+                            <label for="editDepartment" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                            <select name="department_id" id="editDepartment" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                                 <option value="">Select Department</option>
                                 @foreach ($departments as $department)
                                     <option value="{{ $department->id }}">{{ $department->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label for="editProgram" class="block text-sm font-medium text-gray-700">Program</label>
-                            <select name="program_id" id="editProgram" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105 focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                        <div class="relative">
+                            <label for="editProgram" class="block text-sm font-medium text-gray-700 mb-1">Program</label>
+                            <select name="program_id" id="editProgram" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                                 <option value="">Select Program</option>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}" data-department="{{ $program->department_id }}">{{ $program->name }}</option>
@@ -290,68 +296,102 @@
                         </script>
                         <div class="grid grid-cols-12 gap-4">
                             <div class="col-span-3">
-                                <label for="editUnits" class="block text-sm font-medium text-gray-700">Units</label>
-                                <input type="number" name="units" id="editUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <label for="editUnits" class="block text-sm font-medium text-gray-700 mb-1">Units</label>
+                                <input type="number" name="units" id="editUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
                             </div>
                             <div class="col-span-5">
-                                <label for="editPosition" class="block text-sm font-medium text-gray-700">Status/Position</label>
-                                <select name="position" id="editPosition" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                <label for="editPosition" class="block text-sm font-medium text-gray-700 mb-1">Status/Position</label>
+                                <select name="position" id="editPosition" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                                     <option value="Permanent">Permanent</option>
                                     <option value="Part-Timer">Part-Timer</option>
                                     <option value="Temporary">Temporary</option>
                                 </select>
                             </div>
                             <div class="col-span-4">
-                                <label for="editUserType" class="block text-sm font-medium text-gray-700">Account Type</label>
-                                <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                <label for="editUserType" class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+                                <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                                     <option value="admin">Admin</option>
                                     <option value="faculty">Faculty</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-gray-300 rounded-md transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-200">Cancel</button>
-                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md bg-green-600 text-white transition duration-300 ease-in-out transform hover:scale-105 hover:bg-green-700">Save</button>
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <button type="button" onclick="closeEditModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Changes
+                        </button>
                     </div>
                 </form>
-                <div id="editNotification" class="hidden mt-2 text-green-600"></div>
+                <div id="editNotification" class="hidden mt-4 text-green-600 bg-green-100 p-3 rounded-lg border border-green-200"></div>
                 
                 <!-- Loader for Edit Modal -->
-                <div id="editLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-                    <div class="loader"></div>
+                <div id="editLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+                    <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-12 w-12"></div>
                 </div>
             </div>
         </div>
     
         <!-- Delete Modal -->
-        <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
-            <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
-                <p class="mb-6">Are you sure you want to delete <span id="facultyName" class="font-bold"></span>?</p>
+        <!-- Delete Modal -->
+        <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
+                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Confirm Deletion
+                </h3>
+                <p class="mb-6 text-lg text-gray-600">Are you sure you want to delete <span id="facultyName" class="font-bold text-red-600"></span>? This action cannot be undone.</p>
                 <form id="deleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <div class="flex justify-end space-x-4">
-                        <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md">Delete</button>
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <button type="button" onclick="closeDeleteModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                        </button>
                     </div>
                 </form>
-                <div id="deleteNotification" class="hidden mt-2 text-red-600 bg-red-100 p-2 rounded">
+                <div id="deleteNotification" class="hidden mt-4 text-red-600 bg-red-100 p-3 rounded-lg border border-red-200">
                     <!-- Notification message will appear here -->
                 </div>
-                <!-- Loader (optional) -->
-                <div id="loader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-                    <div class="loader"></div>
+                
+                <!-- Loader for Delete Modal -->
+                <div id="deleteLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+                    <div class="loader border-t-4 border-red-500 border-solid rounded-full animate-spin h-12 w-12"></div>
                 </div>
             </div>
         </div>
 
 
         <!-- Assign Faculty -->
-        <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-20">
-            <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full h-[90vh] relative flex flex-col">
-                <h3 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Manage Faculty</h3>
+        <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full h-[90vh] relative overflow-hidden flex flex-col">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-green-500"></div>
+                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Manage Faculty
+                </h3>
                 
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div class="relative">
@@ -374,12 +414,12 @@
                 
                 <div class="flex justify-between mb-3 flex-grow overflow-hidden">
                     <div class="w-1/2 pr-2 flex flex-col h-full">
-                        <h4 class="text-base font-medium mb-1 text-gray-700">Unselected Faculty</h4>
+                        <h4 class="text-base font-medium mb-1 text-gray-700">Available Faculty</h4>
                         <div id="unselectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
                         <button onclick="addSelected()" class="mt-2 px-4 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Add Selected</button>
                     </div>
                     <div class="w-1/2 pl-2 flex flex-col h-full">
-                        <h4 class="text-base font-medium mb-1 text-gray-700">Selected Faculty</h4>
+                        <h4 class="text-base font-medium mb-1 text-gray-700">My Managed Faculty</h4>
                         <div id="selectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
                         <button onclick="removeSelected()" class="mt-2 px-4 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Remove Selected</button>
                     </div>
