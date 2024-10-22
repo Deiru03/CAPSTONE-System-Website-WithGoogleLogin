@@ -254,24 +254,61 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
         ]);
  
-        Department::create($request->only('name'));
- 
-        return redirect()->route('admin.views.college')->with('status', 'Department added successfully.');
+        try {
+            Department::create([
+                'name' => $request->name,
+            ]);
+
+            // Change 'status' to 'success'
+            return redirect()->route('admin.views.college')->with('success', 'Department added successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.views.college')->with('error', 'Failed to add department.');
+        }
     }
 
+    
     public function storeCollegeProgram(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'department_id' => 'required|exists:departments,id',
         ]);
-
-        Program::create([
-            'name' => $request->name,
-            'department_id' => $request->department_id,
+        
+        try {
+            Program::create([
+                'name' => $request->name,
+                'department_id' => $request->department_id,
+            ]);
+            
+            // Change 'status' to 'success' if not already
+            return redirect()->route('admin.views.college')->with('success', 'Program added successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.views.college')->with('error', 'Failed to add program.');
+        }
+    }
+    
+    public function storeMultipleCollegePrograms(Request $request): RedirectResponse
+    {
+       
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+            'programs' => 'required|array',
+            'programs.*.name' => 'required|string|max:255',
         ]);
-
-        return redirect()->route('admin.views.college')->with('status', 'Program added successfully.');
+    
+        try {
+            foreach ($request->programs as $programData) {
+                Program::create([
+                    'name' => $programData['name'],
+                    'department_id' => $request->department_id,
+                ]);
+            }
+    
+            // Ensure using 'success' here as well
+            return redirect()->route('admin.views.college')->with('success', 'Programs added successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.views.college')->with('error', 'Failed to add programs.');
+        }
     }
 
     /////////////////////////////////////////////// Edit Faculty /////////////////////////////////////////////////
