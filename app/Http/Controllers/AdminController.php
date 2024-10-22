@@ -253,13 +253,13 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
- 
+
         try {
             Department::create([
                 'name' => $request->name,
             ]);
 
-            // Change 'status' to 'success'
+            // Use 'success' as the session key
             return redirect()->route('admin.views.college')->with('success', 'Department added successfully.');
         } catch (\Exception $e) {
             return redirect()->route('admin.views.college')->with('error', 'Failed to add department.');
@@ -280,7 +280,7 @@ class AdminController extends Controller
                 'department_id' => $request->department_id,
             ]);
             
-            // Change 'status' to 'success' if not already
+            // Use 'success' as the session key
             return redirect()->route('admin.views.college')->with('success', 'Program added successfully.');
         } catch (\Exception $e) {
             return redirect()->route('admin.views.college')->with('error', 'Failed to add program.');
@@ -289,13 +289,12 @@ class AdminController extends Controller
     
     public function storeMultipleCollegePrograms(Request $request): RedirectResponse
     {
-       
         $request->validate([
             'department_id' => 'required|exists:departments,id',
             'programs' => 'required|array',
             'programs.*.name' => 'required|string|max:255',
         ]);
-    
+
         try {
             foreach ($request->programs as $programData) {
                 Program::create([
@@ -303,8 +302,8 @@ class AdminController extends Controller
                     'department_id' => $request->department_id,
                 ]);
             }
-    
-            // Ensure using 'success' here as well
+
+            // Use 'success' as the session key
             return redirect()->route('admin.views.college')->with('success', 'Programs added successfully.');
         } catch (\Exception $e) {
             return redirect()->route('admin.views.college')->with('error', 'Failed to add programs.');

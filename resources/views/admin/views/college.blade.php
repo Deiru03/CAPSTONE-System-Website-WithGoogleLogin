@@ -19,7 +19,7 @@
         </div>
 
         <!-- Notification -->
-        <div id="notification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50"> <!-- Changed z-20 to z-50 -->
+        <div id="notification" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
             <div class="flex items-center">
                 <div id="notificationIcon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
                 <div id="notificationMessage" class="text-sm font-medium"></div>
@@ -27,28 +27,30 @@
         </div>
 
         <!-- Departments List -->
-        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-white shadow-md border border-gray-200 rounded-lg overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                 @foreach($departments as $department)
-                    <div class="bg-gray-100 rounded-lg p-6 hover:shadow-lg transition duration-300">
+                    <div class="bg-gradient-to-br from-white to-gray-100 rounded-lg p-6 hover:shadow-xl transition duration-300 transform hover:-translate-y-1 border border-gray-200 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50">
                         <div class="flex items-center mb-4">
-                            <svg class="h-12 w-12 text-yellow-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                            </svg>
+                            <div class="bg-yellow-100 rounded-full p-3 mr-4 border-2 border-yellow-300 transition-colors duration-300 group-hover:bg-blue-100 group-hover:border-blue-300">
+                                <svg class="h-8 w-8 text-yellow-500 transition-colors duration-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
                             <div>
-                                <h3 class="text-xl font-semibold text-gray-800">{{ $department->name }}</h3>
-                                <p class="text-sm text-gray-600">{{ $department->programs->count() }} programs</p>
+                                <h3 class="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors duration-300">{{ $department->name }}</h3>
+                                <p class="text-sm text-gray-600 group-hover:text-indigo-400 transition-colors duration-300">{{ $department->programs->count() }} programs</p>
                             </div>
                         </div>
-                        <div class="space-y-2">
-                            <button onclick="openDepartmentModal('{{ $department->id }}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center">
+                        <div class="space-y-3">
+                            <button onclick="openDepartmentModal('{{ $department->id }}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
                                 View Programs
                             </button>
-                            <button onclick="openConfirmModal('removeDepartment', '{{ $department->id }}')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center">
+                            <button onclick="openConfirmModal('removeDepartment', '{{ $department->id }}')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
@@ -241,12 +243,12 @@
                 <ul id="programsList" class="space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100 pr-2">
                     <!-- Programs will be dynamically added here -->
                 </ul>
-                <div class="relative py-3 mt-4">
+                <div class="relative py-1 mt-4">
                     <div class="absolute inset-0 flex items-center" aria-hidden="true">
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                 </div>
-                <div class="mt-6 flex justify-end">
+                <div class="mt-3 flex justify-end">
                     <button type="button" onclick="closeDepartmentProgramsModal()" class="px-6 py-3 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:from-gray-300 hover:to-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 shadow-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -349,20 +351,13 @@
                 const li = document.createElement('li');
                 li.className = 'py-4';
                 li.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
+                   <div class="flex items-center justify-between py-1 border-b border-gray-200">
+                        <div class="flex items-center space-x-2 flex-grow">
+                            <svg class="h-4 w-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            <p class="text-sm font-medium text-gray-900 truncate">${program.name}</p>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 truncate">
-                                ${program.name}
-                            </p>
-                        </div>
-                        <button onclick="openConfirmModal('removeProgram', '${program.id}')" class="text-red-500 hover:text-red-700">Remove</button>
+                        <button onclick="openConfirmModal('removeProgram', '${program.id}')" class="text-xs text-red-500 hover:text-red-700 ml-2">Remove</button>
                     </div>
-                    <div class="border-t border-gray-200 my-2"></div>
                 `;
                 programsList.appendChild(li);
             });
@@ -398,8 +393,8 @@
                 setTimeout(() => {
                     notification.classList.add('hidden');
                     notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
-                }, 300);
-            }, 3000);
+                }, 500);
+            }, 1100);
         }
 
         function openConfirmModal(action, id) {
@@ -420,6 +415,9 @@
 
         function removeProgram(programId) {
             closeModal('confirmModal');
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.disabled = true; // Disable the button to prevent multiple clicks
+
             fetch(`/admin/admin/programs/${programId}`, {
                 method: 'DELETE',
                 headers: {
@@ -429,27 +427,31 @@
             })
             .then(response => response.json())
             .then(data => {
+                confirmButton.disabled = false; // Re-enable the button
                 if (data.success) {
                     showNotification('Program removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
-                    }, 3000); // Delay reload by 3 seconds
+                    }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove program.', 'error');
                 }
             })
             .catch(error => {
+                confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the program.', 'error');
             });
         }
-
         function closeDepartmentProgramsModal() {
             closeModal('departmentProgramsModal');
         }
 
         function removeDepartment(departmentId) {
             closeModal('confirmModal');
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.disabled = true; // Disable the button to prevent multiple clicks
+
             fetch(`/admin/admin/admin/departments/${departmentId}`, {
                 method: 'DELETE',
                 headers: {
@@ -459,66 +461,35 @@
             })
             .then(response => response.json())
             .then(data => {
+                confirmButton.disabled = false; // Re-enable the button
                 if (data.success) {
                     showNotification('Department removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
-                    }, 3000); // Delay reload by 3 seconds
+                    }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove department.', 'error');
                 }
             })
             .catch(error => {
+                confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the department.', 'error');
             });
         }
 
-        
-       function showNotification(message, type) {
-           const notification = document.getElementById('notification');
-           const notificationMessage = document.getElementById('notificationMessage');
-           const notificationIcon = document.getElementById('notificationIcon');
+        // Trigger notifications based on session messages
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showNotification('{{ session('success') }}', 'success');
+            });
+        @endif
 
-           notificationMessage.textContent = message;
-
-           // Reset classes
-           notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
-           notificationIcon.innerHTML = '';
-
-           if (type === 'success') {
-               notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
-               notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-           } else if (type === 'error') {
-               notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
-               notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-           }
-
-           notification.classList.remove('hidden', 'translate-x-full');
-           notification.classList.add('translate-x-0');
-
-           setTimeout(() => {
-               notification.classList.remove('translate-x-0');
-               notification.classList.add('translate-x-full');
-               setTimeout(() => {
-                   notification.classList.add('hidden');
-                   notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
-               }, 300);
-           }, 3000);
-       }
-
-       // Trigger notifications based on session messages
-       @if(session('success'))
-           document.addEventListener('DOMContentLoaded', function() {
-               showNotification('{{ session('success') }}', 'success');
-           });
-       @endif
-
-       @if(session('error'))
-           document.addEventListener('DOMContentLoaded', function() {
-               showNotification('{{ session('error') }}', 'error');
-           });
-       @endif
+        @if(session('error'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showNotification('{{ session('error') }}', 'error');
+            });
+        @endif
     </script>
 
     <!-- Script for Multiple add of programs -->
