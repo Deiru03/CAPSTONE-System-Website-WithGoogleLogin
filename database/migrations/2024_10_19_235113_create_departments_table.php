@@ -12,6 +12,7 @@ class CreateDepartmentsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->string('profile_picture')->nullable(); // Add this line
             $table->timestamps();
         });
     }

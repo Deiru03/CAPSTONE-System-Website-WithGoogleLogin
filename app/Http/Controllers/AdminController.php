@@ -252,14 +252,20 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+    
         try {
-            Department::create([
-                'name' => $request->name,
-            ]);
-
-            // Use 'success' as the session key
+            $data = $request->only('name', 'description');
+    
+            if ($request->hasFile('profile_picture')) {
+                $filePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+                $data['profile_picture'] = $filePath;
+            }
+    
+            Department::create($data);
+    
             return redirect()->route('admin.views.college')->with('success', 'Department added successfully.');
         } catch (\Exception $e) {
             return redirect()->route('admin.views.college')->with('error', 'Failed to add department.');

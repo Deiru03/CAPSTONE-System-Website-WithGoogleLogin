@@ -12,6 +12,7 @@ class CreateProgramsTable extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->string('profile_picture')->nullable(); // Add this line
             $table->timestamps();
         });
     }

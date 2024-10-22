@@ -11,7 +11,8 @@ class Department extends Model
 
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'profile_picture' // Add line 10/22/2024
     ];
 
     public function programs()

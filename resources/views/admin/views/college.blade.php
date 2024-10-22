@@ -33,9 +33,13 @@
                     <div class="bg-gradient-to-br from-white to-gray-100 rounded-lg p-6 hover:shadow-xl transition duration-300 transform hover:-translate-y-1 border border-gray-200 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50">
                         <div class="flex items-center mb-4">
                             <div class="bg-yellow-100 rounded-full p-3 mr-4 border-2 border-yellow-300 transition-colors duration-300 group-hover:bg-blue-100 group-hover:border-blue-300">
-                                <svg class="h-8 w-8 text-yellow-500 transition-colors duration-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
+                                @if($department->profile_picture)
+                                    <img src="{{ asset('storage/' . $department->profile_picture) }}" alt="{{ $department->name }}" class="h-16 w-16 rounded-full object-cover">
+                                @else
+                                    <svg class="h-16 w-16 text-yellow-500 transition-colors duration-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                @endif
                             </div>
                             <div>
                                 <h3 class="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors duration-300">{{ $department->name }}</h3>
@@ -72,12 +76,30 @@
                     </svg>
                     Add College Department
                 </h3>
-                <form action="{{ route('admin.departments.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('admin.departments.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
-                    <div class="space-y-4">
-                        <div class="relative">
-                            <label for="department_name" class="block text-sm font-medium text-gray-700 mb-1">College Department Name</label>
-                            <input type="text" name="name" id="department_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
+                    <div class="flex space-x-6">
+                        <div class="w-1/4">
+                            <label for="profile_picture" class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                            <div class="mt-2 flex flex-col items-center space-y-4">
+                                <div class="flex-shrink-0">
+                                    <img id="preview_image" class="h-24 w-24 rounded-full object-cover border-4 border-gray-200" src="{{ asset('images/default-avatar.png') }}" alt="Department Logo">
+                                </div>
+                                <label for="profile_picture" class="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Change
+                                </label>
+                                <input type="file" name="profile_picture" id="profile_picture" class="hidden" onchange="previewImage(event)">
+                            </div>
+                        </div>
+                        <div class="w-2/3 flex flex-col space-y-4">
+                            <div class="w-full">
+                                <label for="department_name" class="block text-sm font-medium text-gray-700 mb-2">College Department Name</label>
+                                <input type="text" name="name" id="department_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
+                            </div>
+                            <div class="relative">
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" id="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"></textarea>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-8 flex justify-end space-x-4">
@@ -103,6 +125,17 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            function previewImage(event) {
+                const reader = new FileReader();
+                reader.onload = function(){
+                    const output = document.getElementById('preview_image');
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        </script>
 
         <!-- Add Program Modal -->
         <div id="programModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
@@ -232,6 +265,7 @@
                     </svg>
                     <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-green-500">College Programs</span>
                 </h3>
+                <p id="departmentDescription" class="text-sm text-gray-600 mb-4"></p> <!-- Add this line -->
                 <div class="relative py-3">
                     <div class="absolute inset-0 flex items-center" aria-hidden="true">
                         <div class="w-full border-t border-gray-300"></div>
@@ -338,12 +372,12 @@
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
         }
-
         function openDepartmentModal(departmentId) {
             const department = @json($departments->keyBy('id'));
             const departmentData = department[departmentId];
             
             document.getElementById('departmentName').textContent = departmentData.name + ' Programs';
+            document.getElementById('departmentDescription').textContent = departmentData.description || 'No description available.'; // Add this line
             
             const programsList = document.getElementById('programsList');
             programsList.innerHTML = '';
@@ -351,7 +385,7 @@
                 const li = document.createElement('li');
                 li.className = 'py-4';
                 li.innerHTML = `
-                   <div class="flex items-center justify-between py-1 border-b border-gray-200">
+                    <div class="flex items-center justify-between py-1 border-b border-gray-200">
                         <div class="flex items-center space-x-2 flex-grow">
                             <svg class="h-4 w-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             <p class="text-sm font-medium text-gray-900 truncate">${program.name}</p>
