@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Welcome to DB&C System</title>
+        <title>Welcome to IQA ClearVault</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -193,8 +193,8 @@
             </div>
             <div class="container">
                 <div class="header">
-                    <h1>DB&C System</h1>
-                    <p>Data Banking and Clearance Checklist System for the College of Art, Sciences, and Technology</p>
+                    <h1>IQA ClearVault</h1>
+                    <p>Occidental Mindoro State College's secure vault for Institutional Quality Assurance data banking and clearance management</p>
                 </div>
                 @if (Route::has('login'))
                     <div class="button-container">
