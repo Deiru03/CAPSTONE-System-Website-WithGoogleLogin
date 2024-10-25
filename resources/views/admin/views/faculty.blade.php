@@ -4,6 +4,7 @@
             {{ __('Faculty') }}
         </h2>
     </x-slot>
+    <script src="{{ asset('js/faculty.js') }}"></script>
 
     <style>
         /* Set a maximum height for the modal content and enable overflow scrolling */
@@ -244,11 +245,11 @@
                     <div class="space-y-4">
                         <div class="relative">
                             <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                            <input type="text" name="name" id="editName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
+                            <input type="text" name="name" id="editName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required autocomplete="name">
                         </div>
                         <div class="relative">
                             <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" name="email" id="editEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
+                            <input type="email" name="email" id="editEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required autocomplete="email">
                         </div>
                         <div class="relative">
                             <label for="editDepartment" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
@@ -410,16 +411,24 @@
                         <input type="text" id="facultyProgramSearch" placeholder="Search by program..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
                         <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
-                </div>
+                </div>  
                 
                 <div class="flex justify-between mb-3 flex-grow overflow-hidden">
                     <div class="w-1/2 pr-2 flex flex-col h-full">
                         <h4 class="text-base font-medium mb-1 text-gray-700">Available Faculty</h4>
+                        <div class="flex justify-between mb-2">
+                            <button onclick="selectAll('unselectedFaculty')" class="px-2 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">Select All</button>
+                            <button onclick="deselectAll('unselectedFaculty')" class="px-2 py-1 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300 ease-in-out">Deselect All</button>
+                        </div>
                         <div id="unselectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
                         <button onclick="addSelected()" class="mt-2 px-4 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Add Selected</button>
                     </div>
                     <div class="w-1/2 pl-2 flex flex-col h-full">
                         <h4 class="text-base font-medium mb-1 text-gray-700">My Managed Faculty</h4>
+                        <div class="flex justify-between mb-2">
+                            <button onclick="selectAll('selectedFaculty')" class="px-2 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">Select All</button>
+                            <button onclick="deselectAll('selectedFaculty')" class="px-2 py-1 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300 ease-in-out">Deselect All</button>
+                        </div>
                         <div id="selectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>
                         <button onclick="removeSelected()" class="mt-2 px-4 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Remove Selected</button>
                     </div>
@@ -463,12 +472,16 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log(data); // Log the data to check its structure   
                 const unselectedFaculty = document.getElementById('unselectedFaculty');
                 const selectedFaculty = document.getElementById('selectedFaculty');
                 unselectedFaculty.innerHTML = '';
                 selectedFaculty.innerHTML = '';
 
                 data.allFaculty.forEach(faculty => {
+                    const isManaged = data.managedFaculty.includes(faculty.id);
+                    const managedBy = faculty.managed_by || 'None'; // Use the managed_by field
+
                     const departmentName = faculty.department ? faculty.department.name : 'N/A';
                     const programName = faculty.program ? faculty.program.name : 'N/A';
                     const profilePicture = faculty.profile_picture ? 
@@ -481,11 +494,12 @@
                             ${profilePicture}
                             <div class="overflow-hidden">
                                 <strong>${faculty.name}</strong> - ${faculty.position}<br>
-                                <span class="text-xxs text-gray-600">${departmentName} - ${programName}</span>
+                                <span class="text-xxs text-gray-600">${departmentName} - ${programName}</span><br>
+                                <span class="text-xxs text-gray-500">Managed by: ${managedBy}</span>
                             </div>
                         </div>
                     `;
-                    if (data.managedFaculty.includes(faculty.id)) {
+                    if (isManaged) {
                         selectedFaculty.innerHTML += facultyItem;
                     } else {
                         unselectedFaculty.innerHTML += facultyItem;
@@ -500,35 +514,40 @@
             });
         }
 
+        function triggerDeselectAll(containerId) {
+            const deselectButton = document.querySelector(`#${containerId} ~ .flex button:nth-child(2)`);
+            if (deselectButton) {
+                deselectButton.click();
+            }
+        }
+
         function addSelected() {
             const selectedFaculty = document.getElementById('selectedFaculty');
             const unselectedFaculty = document.getElementById('unselectedFaculty');
-            const selectedIds = [];
-    
+
             unselectedFaculty.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const facultyItem = checkbox.parentElement;
                 selectedFaculty.appendChild(facultyItem);
-                selectedIds.push(parseInt(checkbox.id.replace('faculty-', '')));
             });
-    
-            updateFaculty(selectedIds);
+
+            updateFaculty();
+            deselectAll('unselectedFaculty'); // Uncheck all after adding
         }
-    
+
         function removeSelected() {
             const selectedFaculty = document.getElementById('selectedFaculty');
             const unselectedFaculty = document.getElementById('unselectedFaculty');
-            const selectedIds = [];
-    
+
             selectedFaculty.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
                 const facultyItem = checkbox.parentElement;
                 unselectedFaculty.appendChild(facultyItem);
-                selectedIds.push(parseInt(checkbox.id.replace('faculty-', '')));
             });
-    
-            updateFaculty(selectedIds);
+
+            updateFaculty();
+            deselectAll('selectedFaculty'); // Uncheck all after removing
         }
-    
-        function updateFaculty(selectedIds) {
+
+        function updateFaculty() {
             const allSelectedIds = Array.from(document.querySelectorAll('#selectedFaculty input[type="checkbox"]'))
                 .map(checkbox => parseInt(checkbox.id.replace('faculty-', '')));
 
@@ -548,6 +567,8 @@
             .then(data => {
                 if (data.success) {
                     showNotification('Faculty updated successfully!');
+                    deselectAll('selectedFaculty');
+                    deselectAll('unselectedFaculty');
                 } else {
                     showNotification('Failed to update faculty: ' + data.message);
                 }
@@ -560,6 +581,24 @@
 
         function closeManageModal() {
             document.getElementById('manageModal').classList.add('hidden');
+        }
+
+        function selectAll(containerId) {
+            const container = document.getElementById(containerId);
+            container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        function deselectAll(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            } else {
+                console.error(`Container with ID ${containerId} not found.`);
+            }
         }
     </script>
 
@@ -580,6 +619,7 @@
     <!-- Script for Filtering Faculty -->
     <script>
         function filterFaculty() {
+            console.log('Filtering faculty...');
             const nameSearch = document.getElementById('facultyNameSearch').value.toLowerCase();
             const departmentSearch = document.getElementById('facultyDepartmentSearch').value.toLowerCase();
             const positionSearch = document.getElementById('facultyPositionSearch').value.toLowerCase();
@@ -590,7 +630,7 @@
             function filterList(list) {
                 Array.from(list.children).forEach(item => {
                     const name = item.querySelector('strong').textContent.toLowerCase();
-                    const details = item.querySelector('.text-sm.text-gray-600').textContent.toLowerCase();
+                    const details = item.querySelector('span').textContent.toLowerCase();
                     const matchesName = name.includes(nameSearch);
                     const matchesDepartment = details.includes(departmentSearch);
                     const matchesPosition = details.includes(positionSearch);

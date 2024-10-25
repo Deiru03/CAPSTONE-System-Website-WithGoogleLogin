@@ -228,19 +228,23 @@ class AdminController extends Controller
     public function manageFaculty()
     {
         try {
-            $allFaculty = User::with(['department', 'program'])
-                ->select('id', 'name', 'position', 'profile_picture', 'department_id', 'program_id')
+            $allFaculty = User::with(['department', 'program', 'managingAdmins'])
                 ->where('user_type', 'Faculty')
-                ->get();
+                ->get()
+                ->map(function ($faculty) {
+                    $faculty->managed_by = $faculty->managingAdmins->pluck('name')->join(', ') ?: 'None';
+                    return $faculty;
+                });
+        
             $managedFaculty = DB::table('admin_faculty')
                 ->where('admin_id', Auth::id())
                 ->pluck('faculty_id')
                 ->toArray();
-    
+        
             return response()->json([
                 'allFaculty' => $allFaculty,
                 'managedFaculty' => $managedFaculty,
-            ]);
+            ]);        
         } catch (\Exception $e) {
             Log::error('Error fetching faculty data: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch faculty data.'], 500);
