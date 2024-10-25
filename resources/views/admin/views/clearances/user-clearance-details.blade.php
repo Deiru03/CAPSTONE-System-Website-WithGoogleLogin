@@ -179,7 +179,13 @@
 
     <script>
         function openFeedbackModal(requirementId) {
+            const feedback = @json($userClearance->sharedClearance->clearance->requirements->pluck('feedback', 'id'));
+            const currentFeedback = feedback[requirementId]?.find(f => f.user_id === {{ $userClearance->user->id }});
+
             document.getElementById('requirementId').value = requirementId;
+            document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'On Check';
+            document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
+
             document.getElementById('feedbackModal').classList.remove('hidden');
         }
 
