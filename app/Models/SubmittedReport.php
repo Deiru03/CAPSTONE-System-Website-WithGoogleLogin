@@ -14,6 +14,7 @@ class SubmittedReport extends Model
         'requirement_id',
         'uploaded_clearance_id',
         'title',
+        'transaction_type',
         'status',
     ];
 
