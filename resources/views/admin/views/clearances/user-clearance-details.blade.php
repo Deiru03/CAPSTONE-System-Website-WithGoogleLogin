@@ -84,6 +84,11 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
+                    @php
+                        $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
+                        $uploadedFile = $userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->first();
+                        $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Return' && $uploadedFile->created_at > $feedback->updated_at;
+                    @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-4 py-4 text-sm text-gray-900">{{ $requirement->requirement }}</td>
                         <td class="px-4 py-4">
@@ -99,11 +104,11 @@
                             @endforeach
                         </td>
                         <td class="px-4 py-4 text-center">
-                            @php
-                                $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
-                                $uploadedFile = $userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->first();
-                            @endphp
-                            @if($uploadedFile)
+                            @if($isComplied)
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    Returned Complied
+                                </span>
+                            @elseif($uploadedFile)
                                 @if($feedback)
                                     <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-800">
                                         {{ $feedback->signature_status }}
@@ -116,15 +121,6 @@
                             @endif
                         </td>
                         <td class="px-4 py-4">
-                            @php
-                            $feedback = $userClearance->sharedClearance->clearance->requirements
-                                ->where('id', $requirement->id)
-                                ->first()
-                                ->feedback
-                                ->where('user_id', $userClearance->user_id)
-                                ->first();
-                            @endphp
-                        
                             @if($feedback && !empty($feedback->message))
                                 <p class="text-yellow-800"><strong>Feedback: {{ $feedback->message }}</strong></p>
                             @else
@@ -156,8 +152,8 @@
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Signature Status</label>
                     <select name="signature_status" id="signatureStatus" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="On Check">On Check</option>
-                        <option value="Signed">Signed</option>
-                        <option value="Return">Return</option>
+                        <option value="Signed" class="bg-green-100 text-green-800">Signed</option>
+                        <option value="Return" class="bg-red-100 text-red-800">Return</option>
                     </select>
                 </div>
                 <div class="mb-6">
