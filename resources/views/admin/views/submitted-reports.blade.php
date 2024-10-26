@@ -37,19 +37,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Loop through reports -->
-                           {{--}} @foreach($reports as $report)
+                            @foreach($reports as $report)
                             <tr>
                                 <td class="py-2 px-4 border-b">{{ $report->title }}</td>
-                                <td class="py-2 px-4 border-b">{{ $report->submitted_by }}</td>
+                                <td class="py-2 px-4 border-b">{{ $report->user->name }}</td>
                                 <td class="py-2 px-4 border-b">{{ $report->created_at->format('Y-m-d') }}</td>
+                                <td class="py-2 px-4 border-b">{{ $report->transaction_type }}</td>
                                 <td class="py-2 px-4 border-b">{{ $report->status }}</td>
-                                <td class="py-2 px-4 border-b">
-                                    <button class="bg-green-500 text-white px-2 py-1 rounded">Approve</button>
-                                    <button class="bg-red-500 text-white px-2 py-1 rounded">Reject</button>
-                                </td>
                             </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
