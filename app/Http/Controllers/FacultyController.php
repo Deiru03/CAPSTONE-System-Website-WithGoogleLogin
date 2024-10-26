@@ -26,6 +26,10 @@ class FacultyController extends Controller
             ->where('is_active', true) // Ensure only active clearance is fetched
             ->first();
 
+        $userFeedbackReturn = ClearanceFeedback::where('user_id', $user->id)
+            ->where('signature_status', 'return')
+            ->count();
+
         $totalRequirements = 0;
         $uploadedRequirements = 0;
         $missingRequirements = 0;
@@ -47,7 +51,14 @@ class FacultyController extends Controller
                 ->count();
         }
 
-        return view('dashboard', compact('showProfileModal', 'totalRequirements', 'uploadedRequirements', 'missingRequirements', 'returnedDocuments'));
+        return view('dashboard', compact(
+            'showProfileModal',
+            'totalRequirements',
+            'uploadedRequirements',
+            'missingRequirements',
+            'returnedDocuments',
+            'userFeedbackReturn'
+        ));
     }
     public function clearances(): View
     {
