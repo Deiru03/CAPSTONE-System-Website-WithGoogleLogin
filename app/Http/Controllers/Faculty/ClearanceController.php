@@ -158,11 +158,12 @@ class ClearanceController extends Controller
                     $requirementName = $requirement->requirement;
 
                     SubmittedReport::create([
-                        'user_id' => $user->id,
+                        'user_id' => Auth::id(),
                         'requirement_id' => $requirementId,
                         'uploaded_clearance_id' => $uploadedClearance->id,
-                        'title' => 'Uploaded a file for requirement: ' . $requirementName,
-                        'status' => 'Upload',
+                        'title' => 'Uploaded a file for requirement: ' . $requirement->requirement,
+                        'transaction_type' => 'Upload',
+                        'status' => 'Completed',
                     ]);
                 }
 

@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Clearance;
 use App\Models\Department;
 use App\Models\Program;
+use App\Models\SubmittedReport;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -78,7 +79,8 @@ class AdminController extends Controller
 
     public function submittedReports(): View
     {
-        return view ('admin.views.submitted-reports');
+        $reports = SubmittedReport::with('user')->get();
+        return view('admin.views.submitted-reports', compact('reports'));
     }
 
     public function faculty(Request $request): View
@@ -198,7 +200,7 @@ class AdminController extends Controller
         }
     }
 
-    /////////////////////////////////////////////// Admin Faculty /////////////////////////////////////////////////
+    /////////////////////////////////////////////// Admin Faculty Assigned or Managed /////////////////////////////////////////////////
     public function assignFaculty(Request $request)
     {
         $validatedData = $request->validate([
@@ -206,6 +208,9 @@ class AdminController extends Controller
             'faculty_ids' => 'array', // Allow empty array
             'faculty_ids.*' => 'exists:users,id',
         ]);
+    
+        // Get admin name
+        $adminName = User::find($validatedData['admin_id'])->name;
     
         // Clear existing faculty assignments
         DB::table('admin_faculty')->where('admin_id', $validatedData['admin_id'])->delete();
@@ -219,8 +224,18 @@ class AdminController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+                
+                // Update checked_by field for the assigned faculty with admin name
+                User::where('id', $facultyId)->update([
+                    'checked_by' => $adminName
+                ]);
             }
         }
+        
+        // Update checked_by to NULL for unassigned faculty
+        User::whereNotIn('id', $validatedData['faculty_ids'] ?? [])
+            ->where('checked_by', $adminName)
+            ->update(['checked_by' => null]);
     
         return response()->json(['success' => true, 'message' => 'Faculty members assigned successfully.']);
     }

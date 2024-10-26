@@ -15,6 +15,7 @@ class CreateSubmittedReportsTable extends Migration
             $table->unsignedBigInteger('uploaded_clearance_id');
             $table->string('title')->nullable();
             $table->string('status')->default('pending');
+            $table->string('transaction_type'); // Add this line
             $table->timestamps();
 
             $table->foreign('user_id')

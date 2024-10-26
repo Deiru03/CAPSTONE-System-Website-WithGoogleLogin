@@ -150,11 +150,12 @@
                 <input type="hidden" name="user_id" value="{{ $userClearance->user->id }}">
                 <div class="mb-6">
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Signature Status</label>
-                    <select name="signature_status" id="signatureStatus" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="On Check">On Check</option>
-                        <option value="Signed" class="bg-green-100 text-green-800">Signed</option>
-                        <option value="Return" class="bg-red-100 text-red-800">Return</option>
-                    </select>
+                    <div class="flex space-x-2">
+                        <button type="button" onclick="setSignatureStatus('On Check')" id="onCheckButton" class="status-button bg-yellow-100 text-yellow-800 py-2 px-4 rounded-md transition-all duration-200 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">On Check</button>
+                        <button type="button" onclick="setSignatureStatus('Signed')" id="signedButton" class="status-button bg-green-100 text-green-800 py-2 px-4 rounded-md transition-all duration-200 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Signed</button>
+                        <button type="button" onclick="setSignatureStatus('Return')" id="returnButton" class="status-button bg-red-100 text-red-800 py-2 px-4 rounded-md transition-all duration-200 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Return</button>
+                    </div>
+                    <input type="hidden" name="signature_status" id="signatureStatus" value="On Check">
                 </div>
                 <div class="mb-6">
                     <label for="feedbackMessage" class="block text-sm font-medium text-gray-700 mb-2">Feedback (Optional)</label>
@@ -165,6 +166,40 @@
                     <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Save</button>
                 </div>
             </form>
+            <script>
+                function setSignatureStatus(status) {
+                    document.getElementById('signatureStatus').value = status;
+                    updateButtonStyles(status);
+                }
+
+                function updateButtonStyles(status) {
+                    const buttons = document.querySelectorAll('.status-button');
+                    buttons.forEach(button => {
+                        button.classList.remove('ring-2', 'ring-opacity-50', 'font-bold');
+                        button.classList.add('bg-opacity-50');
+                    });
+
+                    let activeButton;
+                    if (status === 'On Check') {
+                        activeButton = document.getElementById('onCheckButton');
+                        activeButton.classList.add('ring-2', 'ring-yellow-500', 'ring-opacity-50', 'font-bold');
+                        activeButton.classList.remove('bg-opacity-50');
+                    } else if (status === 'Signed') {
+                        activeButton = document.getElementById('signedButton');
+                        activeButton.classList.add('ring-2', 'ring-green-500', 'ring-opacity-50', 'font-bold');
+                        activeButton.classList.remove('bg-opacity-50');
+                    } else if (status === 'Return') {
+                        activeButton = document.getElementById('returnButton');
+                        activeButton.classList.add('ring-2', 'ring-red-500', 'ring-opacity-50', 'font-bold');
+                        activeButton.classList.remove('bg-opacity-50');
+                    }
+                }
+
+                // Initialize the button styles based on the current value
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateButtonStyles(document.getElementById('signatureStatus').value);
+                });
+            </script>
         </div>
     </div>
 
