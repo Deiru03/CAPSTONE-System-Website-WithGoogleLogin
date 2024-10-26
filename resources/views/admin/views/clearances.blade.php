@@ -78,8 +78,26 @@
                             <td class="py-2 px-3 text-sm">{{ $user->id }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->name }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->email }}</td>
-                            <td class="py-2 px-3 text-sm">{{ $user->program }}</td>
-                            <td class="py-2 px-3 clearances_status text-center text-sm">{{ $user->clearances_status }}</td>
+                            <td class="py-2 px-3 text-sm">{{ $user->program->name ?? 'N/A' }}</td>
+                            <td class="py-2 px-3 clearances_status text-center text-sm">
+                                @if($user->clearances_status == 'pending')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <svg class="mr-1.5 h-2 w-2 text-yellow-400" fill="currentColor" viewBox="0 0 8 8">
+                                            <circle cx="4" cy="4" r="3" />
+                                        </svg>
+                                        Pending
+                                    </span>
+                                @elseif($user->clearances_status == 'complete')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="mr-1.5 h-2 w-2 text-green-400" fill="currentColor" viewBox="0 0 8 8">
+                                            <circle cx="4" cy="4" r="3" />
+                                        </svg>
+                                        Complete
+                                    </span>
+                                @else
+                                    {{ $user->clearances_status }}
+                                @endif
+                            </td>
                             <td class="py-2 px-3 checked_by text-sm">{{ $user->checked_by }}</td>
                             <td class="py-2 px-3 last_clearance_update text-sm">
                                 {{ $user->last_clearance_update ? \Carbon\Carbon::parse($user->last_clearance_update)->format('M d, Y H:i') : 'N/A' }}

@@ -15,6 +15,8 @@ use App\Models\Clearance;
 use App\Models\Department;
 use App\Models\Program;
 use App\Models\SubmittedReport;
+use App\Models\UserClearance;
+use App\Models\ClearanceFeedback;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -50,9 +52,9 @@ class AdminController extends Controller
     public function clearances(Request $request): View
     {
         $adminId = Auth::id(); // Get the current admin's ID
-    
-        // Fetch only the users managed by the current admin
-        $query = User::whereHas('managingAdmins', function($q) use ($adminId) {
+
+        // Fetch only the users managed by the current admin and eager load the program
+        $query = User::with('program')->whereHas('managingAdmins', function($q) use ($adminId) {
             $q->where('admin_id', $adminId);
         });
     
@@ -74,6 +76,9 @@ class AdminController extends Controller
         }
     
         $clearance = $query->get();
+        //foreach ($clearance as $user) {
+          //  Log::info('User Program:', ['user_id' => $user->id, 'program' => $user->program ? $user->program->name : 'None']);
+        //}
         return view('admin.views.clearances', compact('clearance'));
     }   
 
@@ -173,6 +178,26 @@ class AdminController extends Controller
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
 
+    /////////////////////////////////////////////// Clearance Controller /////////////////////////////////////////////////
+
+    public function updateClearanceStatus($userId)
+    {
+        $userClearance = UserClearance::with('sharedClearance.clearance.requirements.feedback')
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($userClearance) {
+            $allSigned = $userClearance->sharedClearance->clearance->requirements->every(function ($requirement) use ($userClearance) {
+                $feedback = $requirement->feedback->where('user_id', $userClearance->user_id)->first();
+                return $feedback && $feedback->signature_status === 'Signed';
+            });
+
+            $user = User::find($userId);
+            $user->clearances_status = $allSigned ? 'complete' : 'pending';
+            $user->save();
+        }
+    }
+   
     /////////////////////////////////////////////// Departments and Programs Controller /////////////////////////////////////////////////
     public function destroyCollegeProgram($id)
     {

@@ -289,6 +289,9 @@ class ClearanceController extends Controller
             ]
         );
     
+        // Update clearance status if all requirements are signed
+        app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
+    
         return response()->json([
             'success' => true,
             'message' => 'Feedback saved successfully.',
