@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'user_type' => ['required', 'string', 'in:Admin,Faculty'],
+            'units' => ['nullable', 'integer'],
            // 'program' => ['nullable', 'string'],
             'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
             'department_id' => ['required', 'exists:departments,id'],
@@ -46,6 +47,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type,
+            'units' => $request->units,
            // 'program' => $request->program,
             'position' => $request->position,
             'department_id' => $request->department_id,
@@ -56,6 +58,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('homepage', absolute: false));
     }
 }
