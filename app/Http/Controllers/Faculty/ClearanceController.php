@@ -78,18 +78,15 @@ class ClearanceController extends Controller
             $userClearance = UserClearance::where('shared_clearance_id', $id)
                 ->where('user_id', $user->id)
                 ->firstOrFail();
-
-            // Deactivate the clearance
-            $userClearance->update(['is_active' => false]);
-
-            // Optionally, delete the user's clearance copy
-            // $userClearance->delete();
-
-            return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy deactivated successfully.');
+    
+            // Delete the user's clearance copy
+            $userClearance->delete();
+    
+            return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy removed successfully.');
         } catch (\Exception $e) {
             Log::error('Removing Clearance Copy Error: '.$e->getMessage());
-
-            return redirect()->route('faculty.clearances.index')->with('error', 'Failed to deactivate clearance copy.');
+    
+            return redirect()->route('faculty.clearances.index')->with('error', 'Failed to remove clearance copy.');
         }
     }
     /**
