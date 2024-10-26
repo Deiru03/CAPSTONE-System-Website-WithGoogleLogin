@@ -73,8 +73,7 @@ class FacultyController extends Controller
     public function submittedReports(): View
     {
         $reports = SubmittedReport::where('user_id', Auth::id())
-            ->with(['requirement', 'uploadedClearance'])
-            ->get();
+        ->get();
 
         return view('faculty.views.submitted-reports', compact('reports'));
     }

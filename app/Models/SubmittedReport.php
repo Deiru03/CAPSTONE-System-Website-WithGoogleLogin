@@ -11,8 +11,8 @@ class SubmittedReport extends Model
 
     protected $fillable = [
         'user_id',
-        'requirement_id',
-        'uploaded_clearance_id',
+        'requirement_name',
+        'uploaded_clearance_name',
         'title',
         'transaction_type',
         'status',
@@ -21,15 +21,5 @@ class SubmittedReport extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function requirement()
-    {
-        return $this->belongsTo(ClearanceRequirement::class);
-    }
-
-    public function uploadedClearance()
-    {
-        return $this->belongsTo(UploadedClearance::class);
     }
 }

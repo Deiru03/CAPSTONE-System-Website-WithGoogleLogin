@@ -11,19 +11,15 @@ class CreateSubmittedReportsTable extends Migration
         Schema::create('submitted_reports', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('requirement_id');
-            $table->unsignedBigInteger('uploaded_clearance_id');
+            $table->string('requirement_name'); // Change this line
+            $table->string('uploaded_clearance_name'); // Change this line
             $table->string('title')->nullable();
             $table->string('status')->default('pending');
-            $table->string('transaction_type'); // Add this line
+            $table->string('transaction_type');
             $table->timestamps();
-
+    
             $table->foreign('user_id')
                   ->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('requirement_id')
-                  ->references('id')->on('clearance_requirements')->onDelete('cascade');
-            $table->foreign('uploaded_clearance_id')
-                  ->references('id')->on('uploaded_clearances')->onDelete('cascade');
         });
     }
 

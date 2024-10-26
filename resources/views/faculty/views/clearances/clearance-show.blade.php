@@ -56,6 +56,11 @@
             margin-right: 4px;
         }
     </style>
+
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-100"></div>
+
+    <!-- Clearance Details -->
     <div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">
         <h2 class="text-3xl mb-6 text-black border-b-2 border-black pb-2">
             <span>Clearance Checklist:</span>
@@ -286,6 +291,20 @@
         </div>
     </div>
 @endif
+    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
+            <h3 class="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete this file?</p>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closeSingleFileDeleteModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                    Cancel
+                </button>
+                <button id="confirmSingleFileDeleteButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
     
     <footer class="bg-gray-800 py-6 mt-12">
         <div class="container mx-auto text-center text-white">
@@ -331,7 +350,7 @@
             const uploadLoader = document.getElementById('uploadLoader');
 
             if (fileInput.files.length === 0) {
-                alert('Please select at least one file to upload.');
+                showNotification('Please select at least one file to upload.', 'error');
                 return;
             }
 
@@ -363,16 +382,16 @@
                     }, 1500);
                 } else {
                     if (data.errors) {
-                        alert(JSON.stringify(data.errors));
+                        showNotification(JSON.stringify(data.errors), 'error');
                     } else {
-                        alert(data.message || 'Failed to upload files.');
+                        showNotification(data.message || 'Failed to upload files.', 'error');
                     }
                 }
             })
             .catch(error => {
                 uploadLoader.classList.add('hidden');
                 console.error('Error uploading files:', error);
-                alert('An error occurred while uploading the files.');
+                showNotification('An error occurred while uploading the files.', 'error');
             });
         });
 
@@ -417,16 +436,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
+                    showNotification(data.message, 'success');
                     // Reload the page to reflect changes
                     location.reload();
                 } else {
-                    alert(data.message || 'Failed to delete the file.');
+                    showNotification(data.message || 'Failed to delete the file.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error deleting file:', error);
-                alert('An error occurred while deleting the file.');
+                showNotification('An error occurred while deleting the file.', 'error');
             });
             closeDeleteConfirmationModal();
         }
@@ -493,7 +512,7 @@
                         deleteButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded', 'mt-2');
                         deleteButton.innerText = 'Delete';
                         deleteButton.onclick = function() {
-                            deleteSingleFile(sharedClearanceId, requirementId, file.id);
+                            openSingleFileDeleteModal(sharedClearanceId, requirementId, file.id);
                         };
 
                         fileCard.appendChild(fileIcon);
@@ -505,12 +524,12 @@
                     // Show the modal
                     document.getElementById('viewFilesModal').classList.remove('hidden');
                 } else {
-                    alert(data.message || 'Failed to fetch uploaded files.');
+                    showNotification(data.message || 'Failed to fetch uploaded files.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error fetching uploaded files:', error);
-                alert('An error occurred while fetching the uploaded files.');
+                showNotification('An error occurred while fetching the uploaded files.', 'error');
             });
         }
 
@@ -528,11 +547,27 @@
          * @param {number} requirementId
          * @param {number} fileId
          */
-        function deleteSingleFile(sharedClearanceId, requirementId, fileId) {
-            if (!confirm('Are you sure you want to delete this file?')) {
-                return;
-            }
+        let currentFileId;
+        let currentSharedClearanceId;
+        let currentRequirementId;
 
+        function openSingleFileDeleteModal(sharedClearanceId, requirementId, fileId) {
+            currentFileId = fileId;
+            currentSharedClearanceId = sharedClearanceId;
+            currentRequirementId = requirementId;
+            document.getElementById('singleFileDeleteModal').classList.remove('hidden');
+        }
+
+        function closeSingleFileDeleteModal() {
+            document.getElementById('singleFileDeleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmSingleFileDeleteButton').onclick = function() {
+            deleteSingleFile(currentSharedClearanceId, currentRequirementId, currentFileId);
+            closeSingleFileDeleteModal();
+        };
+
+        function deleteSingleFile(sharedClearanceId, requirementId, fileId) {
             fetch(`/faculty/clearances/${sharedClearanceId}/upload/${requirementId}/delete/${fileId}`, {
                 method: 'DELETE',
                 headers: {
@@ -544,16 +579,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
+                    showNotification(data.message, 'success');
                     // Refresh the file list in the modal
                     viewFilesModal(sharedClearanceId, requirementId);
                 } else {
-                    alert(data.message || 'Failed to delete the file.');
+                    showNotification(data.message || 'Failed to delete the file.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error deleting file:', error);
-                alert('An error occurred while deleting the file.');
+                showNotification('An error occurred while deleting the file.', 'error');
             });
         }
 
@@ -598,4 +633,56 @@
                 window.location.reload();
             }
         });
+
+        function confirmDelete(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Perform the delete action
+                    axios.delete(url)
+                        .then(response => {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            );
+                            // Optionally, refresh the page or update the UI
+                        })
+                        .catch(error => {
+                            Swal.fire(
+                                'Error!',
+                                'There was a problem deleting the file.',
+                                'error'
+                            );
+                        });
+                }
+            });
+        }
     </script>
+
+<script>
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        
+        // Set the background color based on the type
+        notification.className = `fixed bottom-4 right-4 p-3 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50 ${
+            type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`;
+
+        notification.classList.remove('hidden');
+
+        // Hide notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 3000);
+    }
+</script>
+    
