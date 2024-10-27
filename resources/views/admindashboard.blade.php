@@ -79,18 +79,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                 </a>
-
-                {{-- <a href="{{route('admin.clearance.manage')}}" class="bg-orange-500 text-white p-4 rounded-lg shadow relative hover:bg-orange-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
-                    <div>
-                        <h3 class="text-lg font-bold">Share Clearances</h3>
-                        <p class="text-2xl"></p>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 absolute top-2 right-2 opacity-50 transition-transform duration-300 ease-in-out transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                    </svg>
-                </a> --}}
-
-                <!-- Add more cards as needed -->
             </div>
 
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -250,8 +238,43 @@
             </script>
         </div>
     </div>
-    <div class="py-12">
+    <div class="py-0">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+             <!-- Managed Users Section -->
+             <div class="mt-8 bg-white p-6 rounded-lg shadow-lg border border-gray-200 relative">
+                <h3 class="text-lg font-bold mb-4">Users You Manage</h3>
+                <p class="text-sm text-gray-600 mb-4">Click on a user to view and check their clearance details.</p>
+                <button class="absolute top-4 right-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Generate Report
+                </button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($managedUsers as $user)
+                        <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 bg-gray-100 rounded-lg shadow hover:bg-gray-200 transition duration-300">
+                            <img src="{{ $user->profile_picture ? $user->profile_picture : asset('images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            <div>
+                                <h4 class="text-lg font-semibold">{{ $user->name }}</h4>
+                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
+                                <p class="text-sm 
+                                    @if($user->clearances_status == 'complete')
+                                        text-green-500
+                                    @elseif($user->clearances_status == 'pending')
+                                        text-yellow-500
+                                    @elseif($user->clearances_status == 'return')
+                                        text-red-500
+                                    @else
+                                        text-gray-500
+                                    @endif
+                                ">
+                                    {{ $user->clearances_status }}
+                                </p>
+                              
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Add New Content Here -->
             
             {{-- 

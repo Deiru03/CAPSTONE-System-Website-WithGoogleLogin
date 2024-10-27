@@ -44,6 +44,22 @@ class AdminController extends Controller
         //////////////////////// College Counts //////////////////////////
         $collegeCount = Department::count();
 
+        //////////////////////// Admin Management Counts //////////////////////////
+        $adminManagementCounts = DB::table('admin_faculty')
+            ->select('admin_id', DB::raw('count(faculty_id) as managed_count'))
+            ->groupBy('admin_id')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                $adminName = User::find($item->admin_id)->name;
+                return [$adminName => $item->managed_count];
+            });
+
+        //////////////////////// Users Managed by Current Admin //////////////////////////
+        $adminId = Auth::id();
+        $managedUsers = User::whereHas('managingAdmins', function($query) use ($adminId) {
+            $query->where('admin_id', $adminId);
+        })->get(['id', 'name', 'profile_picture', 'clearances_status', 'email']);
+
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
         }
@@ -51,7 +67,7 @@ class AdminController extends Controller
         return view('admindashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
-         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount' ));
+         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount', 'managedUsers'));
     }
 
     public function clearances(Request $request): View
