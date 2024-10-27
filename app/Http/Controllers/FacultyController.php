@@ -15,6 +15,12 @@ class FacultyController extends Controller
 {
 
     //////////////////////////////////////////////// Views Controller ////////////////////////////////////////////////  
+
+    public function home(): View
+    {
+        return view('faculty.home');
+    }
+
     public function dashboard(): View
     {
         $user = Auth::user();

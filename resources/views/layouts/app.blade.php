@@ -49,20 +49,17 @@
                     {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
                     <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
                 </div> 
-                <div class="mt-auto p-4">
-                    <div class="flex flex-col items-center">
+                <a href="{{ route('faculty.home') }}" class="block hover:bg-gray-700 rounded-lg transition duration-300 ease-in-out">
+                    <div class="flex flex-col items-center p-4">
                         <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-16 h-16 mb-3">
-                        <p class="text-sm text-gray-400 text-center">
+                        <p class="text-sm text-gray-400 text-center group-hover:text-indigo-300 transition duration-150 ease-in-out">
                             Welcome to the OMSC Faculty Dashboard
                         </p>
-                        <p class="text-xs text-gray-500 mt-2 text-center">
+                        <p class="text-xs text-gray-500 mt-2 text-center group-hover:text-indigo-300 transition duration-150 ease-in-out">
                             Manage clearances, view reports, and access files with ease.
                         </p>
-                        {{-- <a href="{{ route('profile.edit') }}" class="mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out">
-                            Edit Profile
-                        </a> --}}
                     </div>
-                </div>
+                </a>
                 <nav class="mt-5">
                     <!-- Dashboard -->
                     <a href="{{ route('dashboard') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('faculty.dashboard') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">

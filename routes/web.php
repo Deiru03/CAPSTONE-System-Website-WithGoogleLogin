@@ -21,6 +21,18 @@ Route::get('/', function () {
 Route::get('auth/google', [GoogleAuthController::class, 'redirectGoogle'])->name('google.login');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'callbackGoogle'])->name('google.callback');
 
+Route::get('/homepage', function () {
+    if (Auth::check()) {
+        if (Auth::user()->user_type === 'Admin') {
+            return redirect()->route('admin.home');
+        } else {
+            return redirect()->route('faculty.home');
+        }
+    }
+    return view('homepage');
+})->middleware(['auth', 'verified'])->name('homepage'); 
+
+
 Route::get('/dashboard', function () {
     if (Auth::check()) {
         if (Auth::user()->user_type === 'Admin') {
@@ -32,6 +44,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard'); 
 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -40,15 +53,18 @@ Route::middleware('auth')->group(function () {
 /////////////////////////////////////////////// Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
 Route::middleware(['Admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/homepage', [AdminController::class, 'home'])->name('admin.home');
 });
 
 Route::middleware(['Faculty'])->group(function () {
     Route::get('/faculty', [FacultyController::class, 'dashboard'])->name('faculty.dashboard');
+    Route::get('/faculty/homepage', [FacultyController::class, 'home'])->name('faculty.home');
 });
 /////////////////////////////////////////////// End of Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
 
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(function () {
+    Route::get('/homepage', [AdminController::class, 'home'])->name('admin.home');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/clearances', [AdminController::class, 'clearances'])->name('admin.views.clearances');
     Route::get('/submitted-reports', [AdminController::class, 'submittedReports'])->name('admin.views.submittedReports');
@@ -112,6 +128,7 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
 /////////////////////////////////////////////// End of Admin Routes ////////////////////////////////////////////////
 /////////////////////////////////////////////// Faculty Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(function () {
+    Route::get('/homepage', [FacultyController::class, 'home'])->name('faculty.home');
     Route::get('/dashboard', [FacultyController::class, 'dashboard'])->name('faculty.dashboard');
     Route::get('/clearances', [FacultyController::class, 'clearances'])->name('faculty.views.clearances');
     Route::get('/submitted-reports', [FacultyController::class, 'submittedReports'])->name('faculty.views.submittedReports');

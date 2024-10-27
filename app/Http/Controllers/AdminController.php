@@ -20,6 +20,11 @@ use App\Models\ClearanceFeedback;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
+    public function home(): View
+    {
+        return view('admin.home');
+    }
+
     public function dashboard(): View
     {
         //////////////////////// Clearance Counts //////////////////////////

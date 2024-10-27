@@ -54,18 +54,17 @@
                     <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
                 </div> 
                 <div class="mt-auto p-2">
-                    <div class="flex flex-col items-center">
-                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-16 h-16 mb-3">
-                        <p class="text-sm text-gray-400 text-center">
-                            Welcome to the OMSC Admin Dashboard
-                        </p>
-                        <p class="text-xs text-gray-500 mt-2 text-center">
-                            Manage clearances, analyze reports, and oversee system files.
-                        </p>
-                        {{-- <a href="{{ route('profile.edit') }}" class="mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out">
-                            Edit Profile
-                        </a> --}}
-                    </div>
+                    <a href="{{ route('admin.home') }}" class="block hover:bg-gray-700 rounded-lg transition duration-300 ease-in-out">
+                        <div class="flex flex-col items-center p-4">
+                            <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-16 h-16 mb-3">
+                            <p class="text-sm text-gray-400 text-center group-hover:text-indigo-300 transition duration-150 ease-in-out">
+                                Welcome to the OMSC Admin Dashboard
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2 text-center group-hover:text-indigo-300 transition duration-150 ease-in-out">
+                                Manage clearances, analyze reports, and oversee system files.
+                            </p>
+                        </div>
+                    </a>
                 </div>
                 <nav class="mt-2">
                     <!-- Dashboard -->
