@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         $request->user()->clearances_status = 'pending';
         $request->user()->checked_by = 'System';
-        $request->user()->program = $request->input('program');
+        //$request->user()->program = $request->input('program');
         $request->user()->position = $request->input('position');
         $request->user()->units = $request->input('units');
         $request->user()->department_id = $request->input('department_id');

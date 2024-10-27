@@ -82,14 +82,14 @@
                         </div>
 
                         <div>
-                            <x-input-label for="program" :value="__('Program ID')" />
-                            <x-text-input id="program" name="program" type="text" class="mt-1 block w-full" :value="old('program', $user->program_id)" required autocomplete="program" />
-                            <x-input-error class="mt-2" :messages="$errors->get('program')" />
+                            <x-input-label for="user_id" :value="__('User ID #:')" />
+                            <x-text-input id="user_id" name="user_id" type="text" class="mt-1 block w-full" :value="old('user_id', $user->id)" disabled readonly />
+                            <p class="text-sm text-gray-600 mt-2">{{ __('User ID cannot be edited.') }}</p>
                         </div>
 
                         <div>
                             <x-input-label for="department_id" :value="__('Department')" />
-                            <select id="department_id" name="department_id" class="mt-1 block w-full" required>
+                            <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="" disabled>Select a department</option>
                                 @foreach($departments as $department)
                                     <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
@@ -99,7 +99,7 @@
                         </div>
                         <div>
                             <x-input-label for="program_id" :value="__('Program')" />
-                            <select id="program_id" name="program_id" class="mt-1 block w-full" required>
+                            <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="" disabled>Select a program</option>
                                 @foreach($departments as $department)
                                     @foreach($department->programs as $program)

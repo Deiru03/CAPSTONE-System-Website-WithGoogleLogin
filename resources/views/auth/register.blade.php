@@ -27,7 +27,7 @@
             <!-- Units -->
             <div>
                 <x-input-label for="units" :value="__('Units')" class="text-xs font-medium text-gray-700" />
-                <x-text-input id="units" class="mt-1 block w-full text-sm" type="number" name="units" :value="old('units')" autocomplete="units" />
+                <x-text-input id="units" class="mt-1 block w-full text-sm" type="number" name="units" :value="old('units')"  />
             </div>
         </div>
 
