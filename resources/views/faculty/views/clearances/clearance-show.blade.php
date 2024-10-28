@@ -140,104 +140,121 @@
                 </thead>
                 <tbody>
                     @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
-                        <td class="border-t px-3 py-2 hidden">{{ $requirement->id }}</td>
-                        <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
-                        <td class="border-t px-3 py-2">
-                            @php
-                                $feedback = $userClearance->sharedClearance->clearance->requirements
-                                        ->where('id', $requirement->id)
-                                        ->first()
-                                        ->feedback
-                                        ->where('user_id', $userClearance->user_id)
-                                        ->first();
-                                $hasUpload = $userClearance->uploadedClearanceFor($requirement->id);
-                            @endphp
-                            @if($hasUpload)
-                                @if($feedback)
-                                    @if($feedback->signature_status == 'Signed')
+                        @if(!$requirement->is_archived)
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="border-t px-3 py-2 hidden">{{ $requirement->id }}</td>
+                                <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
+                                <td class="border-t px-3 py-2">
+                                    @php
+                                        $feedback = $userClearance->sharedClearance->clearance->requirements
+                                                ->where('id', $requirement->id)
+                                                ->first()
+                                                ->feedback
+                                                ->where('user_id', $userClearance->user_id)
+                                                ->where('is_archived', false)
+                                                ->first();
+
+                                        $uploadedFiles = App\Models\UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
+                                            ->where('requirement_id', $requirement->id)
+                                            ->where('user_id', $userClearance->user_id)
+                                            ->get();
+
+                                        $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
+                                        $hasOnlyArchivedUploads = $uploadedFiles->count() > 0 && $uploadedFiles->where('is_archived', false)->count() == 0;
+                                    @endphp
+
+                                    @if($hasNonArchivedUpload)
+                                        @if($feedback)
+                                            @if($feedback->signature_status == 'Signed')
+                                                <div class="flex items-center justify-center space-x-2 text-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-900">Signed</span>
+                                                </div>
+                                            @elseif($feedback->signature_status == 'Return')
+                                                <div class="flex items-center justify-center space-x-2 text-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-900">Return</span>
+                                                </div>
+                                            @else
+                                                <div class="flex items-center justify-center space-x-2 text-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-900">On Check</span>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div class="flex items-center justify-center space-x-2 text-center">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-900">Uploaded</span>
+                                            </div>
+                                        @endif
+                                    @elseif($hasOnlyArchivedUploads)
                                         <div class="flex items-center justify-center space-x-2 text-center">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-900">Signed</span>
-                                        </div>
-                                    @elseif($feedback->signature_status == 'Return')
-                                        <div class="flex items-center justify-center space-x-2 text-center">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-900">Return</span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Upload</span>
                                         </div>
                                     @else
                                         <div class="flex items-center justify-center space-x-2 text-center">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-900">On Check</span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Upload</span>
                                         </div>
                                     @endif
-                                @else
-                                    <div class="flex items-center justify-center space-x-2 text-center">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-900">Uploaded</span>
-                                    </div>
-                                @endif
-                            @else
-                                <div class="flex items-center justify-center space-x-2 text-center">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Upload</span>
-                                </div>
-                            @endif
-                        </td>
-                        <td class="border-t px-3 py-2">
-                            @php
-                                $feedback = $userClearance->sharedClearance->clearance->requirements
-                                    ->where('id', $requirement->id)
-                                    ->first()
-                                    ->feedback
-                                    ->where('user_id', $userClearance->user_id)
-                                    ->first();
-                            @endphp
+                                </td>
+                                <td class="border-t px-3 py-2">
+                                    @php
+                                        $feedback = $userClearance->sharedClearance->clearance->requirements
+                                            ->where('id', $requirement->id)
+                                            ->first()
+                                            ->feedback
+                                            ->where('user_id', $userClearance->user_id)
+                                            ->where('is_archived', false)
+                                            ->first();
+                                    @endphp
 
-                            @if($feedback && !empty($feedback->message))
-                                <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
-                            @else
-                                <p class="text-gray-400 italic">No comments yet.</p>
-                            @endif
-                        </td>
-                        <td class="border-t px-3 py-2">
-                            @if($userClearance->uploadedClearanceFor($requirement->id))
-                                <div class="flex justify-center space-x-1">
-                                    <div class="flex space-x-1">
-                                        <button 
-                                            onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-blue-500 hover:bg-blue-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                            </svg>
-                                            <span>Upload</span>
-                                        </button>
-                                        <button 
-                                            onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-red-500 hover:bg-red-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                            <span>Delete</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex justify-center space-x-1">
-                                        <button style="width: 108px;"
-                                            onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                            class="bg-green-500 hover:bg-green-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            <span>View Uploads</span>
-                                        </button>
-                                    </div>
-                            @else
-                                <div class="flex justify-center">
-                                    <button 
-                                        onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                        class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
-                                        Upload
-                                    </button>
-                                </div>
-                            @endif
-                        </td>
-                    </tr>
+                                    @if($feedback && !empty($feedback->message))
+                                        <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
+                                    @else
+                                        <p class="text-gray-400 italic">No comments yet.</p>
+                                    @endif
+                                </td>
+                                <td class="border-t px-2 py-1">
+                                    @if($hasNonArchivedUpload)
+                                        <div class="flex justify-center">
+                                            <div class="flex justify-center">
+                                                <button 
+                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                    class="bg-blue-500 hover:bg-blue-700 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                    </svg>
+                                                    Upload
+                                                </button>
+                                            </div>
+                                            <button 
+                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                class="bg-red-500 hover:bg-red-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                        <div class="p-1 flex justify-center space-x-1">
+                                            <button style="width: 108px;"
+                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                class="bg-green-500 hover:bg-green-800 text-white px-1 py-0 rounded-full transition-colors duration-200 text-xs font-semibold flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                <span>View Uploads</span>
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div class="flex justify-center">
+                                            <button 
+                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
+                                                Upload
+                                            </button>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>

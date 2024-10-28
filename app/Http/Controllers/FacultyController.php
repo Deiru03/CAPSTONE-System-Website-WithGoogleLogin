@@ -81,6 +81,7 @@ class FacultyController extends Controller
         // Fetch all uploaded clearances for the authenticated user
         $uploadedFiles = UploadedClearance::where('user_id', $user->id)
             ->with('requirement')
+            ->where('is_archived', false)
             ->select('id', 'shared_clearance_id', 'requirement_id', 'user_id', 'file_path', 'created_at', 'updated_at')
             ->get();
 

@@ -86,21 +86,23 @@
                 @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
                     @php
                         $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
-                        $uploadedFile = $userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->first();
+                        $uploadedFile = $userClearance->uploadedClearances
+                            ->where('user_id', $userClearance->user->id)
+                            ->where('requirement_id', $requirement->id)
+                            ->sortByDesc('created_at')
+                            ->first();
                         $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Return' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-4 py-4 text-sm text-gray-900">{{ $requirement->requirement }}</td>
                         <td class="px-4 py-4">
-                            @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id) as $uploaded)
-                                @if($uploaded->requirement_id == $requirement->id)
-                                    <div class="flex items-center justify-start space-x-3">
-                                        <span class="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full shadow-md"></span>
-                                        <a href="{{ asset('storage/' . $uploaded->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 hover:underline text-sm font-medium transition duration-300">
-                                            {{ basename($uploaded->file_path) }}
-                                        </a>
-                                    </div>
-                                @endif
+                            @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->where('is_archived', false)->sortByDesc('created_at') as $uploaded)
+                                <div class="flex items-center justify-start space-x-3">
+                                    <span class="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full shadow-md"></span>
+                                    <a href="{{ asset('storage/' . $uploaded->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 hover:underline text-sm font-medium transition duration-300">
+                                        {{ basename($uploaded->file_path) }}
+                                    </a>
+                                </div>
                             @endforeach
                         </td>
                         <td class="px-4 py-4 text-center">

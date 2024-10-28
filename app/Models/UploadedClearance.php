@@ -17,6 +17,12 @@ class UploadedClearance extends Model
         'status',
         'is_archived', // Added Line On 28-10-2024
     ];
+
+    // Check if the user has uploaded a file for a specific requirement
+    public function uploadedClearanceFor($requirementId)
+    {
+        return $this->uploadedClearances()->where('requirement_id', $requirementId)->exists();
+    }
     
     /**
      * Get the shared clearance associated with the upload.

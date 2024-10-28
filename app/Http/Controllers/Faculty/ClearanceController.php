@@ -25,6 +25,11 @@ class ClearanceController extends Controller
 
         // Get all shared clearances with their associated clearance data
         $sharedClearances = SharedClearance::with('clearance')->get();
+        $sharedClearances = SharedClearance::with('clearance')
+        ->whereHas('clearance', function ($query) {
+            $query->where('is_archived', false);
+        })
+        ->get();
 
         // Get user_clearances to map shared_clearance_id to user_clearance_id
         $userClearances = UserClearance::where('user_id', $user->id)
@@ -97,16 +102,18 @@ class ClearanceController extends Controller
     {
         $user = Auth::user();
         $userInfo = User::getAll();
-
         // Confirm that the user has copied this clearance
         $userClearance = UserClearance::where('id', $id)
             ->where('user_id', $user->id)
-            ->with('sharedClearance.clearance.requirements')
+            ->with(['sharedClearance.clearance.requirements' => function ($query) {
+                $query->where('is_archived', false);
+            }])
             ->firstOrFail();
 
         // Fetch already uploaded clearances by the user for this shared clearance
         $uploadedClearances = UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
             ->where('user_id', $user->id)
+            ->where('is_archived', false)
             ->pluck('requirement_id')
             ->toArray();
 
@@ -207,6 +214,7 @@ class ClearanceController extends Controller
             $uploadedClearances = UploadedClearance::where('shared_clearance_id', $sharedClearanceId)
                 ->where('requirement_id', $requirementId)
                 ->where('user_id', $user->id)
+                ->where('is_archived', false)
                 ->get();
     
             $deletedFiles = [];
@@ -328,6 +336,7 @@ class ClearanceController extends Controller
             $uploadedFiles = UploadedClearance::where('shared_clearance_id', $sharedClearanceId)
                 ->where('requirement_id', $requirementId)
                 ->where('user_id', $user->id)
+                ->where('is_archived', false)
                 ->get();
 
             $files = $uploadedFiles->map(function($file) {
