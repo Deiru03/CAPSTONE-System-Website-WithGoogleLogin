@@ -66,19 +66,51 @@
             <span>Clearance Checklist:</span>
             <span class="font-bold">{{ $userClearance->sharedClearance->clearance->document_name }}</span>
         </h2>
-        <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
-            <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
-                <span class="font-semibold">Description:</span>
-                <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->description }}</span>
-            </p>
-            <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
-                <span class="font-semibold">Units:</span>
-                <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->units }}</span>
-            </p>
-            <p class="text-gray-700">
-                <span class="font-semibold">Type:</span>
-                <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->type }}</span>
-            </p>
+        <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Description:</span>
+                    <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->description }}</span>
+                </p>
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Units:</span>
+                    <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->units }}</span>
+                </p>
+                <p class="text-gray-700">
+                    <span class="font-semibold">Type:</span>
+                    <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->type }}</span>
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Name:</span>
+                    <span class="font-bold ml-2">{{ Auth::user()->name }}</span>
+                </p>
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Email:</span>
+                    <span class="font-bold ml-2">{{ Auth::user()->email }}</span>
+                </p>
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Position:</span>
+                    <span class="font-bold ml-2">{{ Auth::user()->position }}</span>
+                </p>
+                <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
+                    <span class="font-semibold">Units:</span>
+                    <span class="font-bold ml-2">{{ Auth::user()->units == 0 ? 'N/A' : Auth::user()->units }}</span>
+                </p>
+                <p class="text-gray-700">
+                    <span class="font-semibold">Clearance Status:</span>
+                    <span class="font-bold ml-2 {{ Auth::user()->clearances_status == 'complete' ? 'text-green-600' : 'text-yellow-600' }}">
+                        {{ Auth::user()->clearances_status == 'complete' ? 'Checklist Complete' : (Auth::user()->clearances_status ?? 'Pending') }}
+                    </span>
+                </p>
+            </div>
+            <div class="col-span-2 text-center text-gray-600 italic -mt-8 flex items-center justify-center gap-2">
+                <span>Scroll down to see more requirements and details</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 animate-bounce">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                </svg>
+            </div>
         </div>
 
         <h3 class="text-2xl font-semibold mt-8 mb-4 text-indigo-600">Requirements</h3>

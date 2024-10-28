@@ -9,6 +9,7 @@ use App\Models\UploadedClearance;
 use App\Models\ClearanceRequirement;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -95,6 +96,7 @@ class ClearanceController extends Controller
     public function show($id)
     {
         $user = Auth::user();
+        $userInfo = User::getAll();
 
         // Confirm that the user has copied this clearance
         $userClearance = UserClearance::where('id', $id)
