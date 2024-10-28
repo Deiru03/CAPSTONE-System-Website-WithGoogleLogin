@@ -14,7 +14,8 @@ class UploadedClearance extends Model
         'requirement_id',
         'user_id',
         'file_path',
-        'status'
+        'status',
+        'is_archived', // Added Line On 28-10-2024
     ];
     
     /**

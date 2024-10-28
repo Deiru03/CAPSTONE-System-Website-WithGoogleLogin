@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\UserClearance;
 use App\Models\Clearance;
 use App\Models\ClearanceRequirement;
 use App\Models\SharedClearance;
 use App\Models\ClearanceFeedback;
-use Illuminate\Support\Facades\Auth;
+use App\Models\UploadedClearance;
 use App\Models\User;
 class ClearanceController extends Controller
 {
@@ -410,5 +411,23 @@ class ClearanceController extends Controller
             'success' => true,
             'message' => 'Shared clearance removed successfully.',
         ]);
+    }
+
+    /////////////////////////////////// Archive Methods ////////////////////////////////////////////////
+    public function archiveClearances(Request $request)
+    {
+        $ids = $request->input('ids'); // Array of clearance IDs to archive
+
+        try {
+            DB::transaction(function () use ($ids) {
+                UploadedClearance::whereIn('shared_clearance_id', $ids)->update(['is_archived' => true]);
+                ClearanceFeedback::whereIn('requirement_id', $ids)->update(['is_archived' => true]);
+            });
+
+            return response()->json(['success' => true, 'message' => 'Clearances archived successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Archiving Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to archive clearances.'], 500);
+        }
     }
 }

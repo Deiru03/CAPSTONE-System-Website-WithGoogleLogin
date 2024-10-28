@@ -228,17 +228,18 @@
                         </div>
                     </div>
                 </main>
+                <footer class="bg-white py-6 mt-12">
+                    <div class="container mx-auto text-center text-gray-800">
+                        <p class="text-sm">&copy; 2024 OMSCS IQA ClearVault.</p>
+                        <div class="flex justify-center space-x-4 mt-4">
+                            <a href="#" class="hover:text-indigo-400">Privacy Policy</a>
+                            <a href="#" class="hover:text-indigo-400">Terms of Service</a>
+                            <a href="#" class="hover:text-indigo-400">Contact Us</a>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
-        <footer class="bg-white py-6 mt-12">
-            <div class="container mx-auto text-center text-gray-800">
-                <p class="text-sm">&copy; 2024 OMSCS IQA ClearVault.</p>
-                <div class="flex justify-center space-x-4 mt-4">
-                    <a href="#" class="hover:text-indigo-400">Privacy Policy</a>
-                    <a href="#" class="hover:text-indigo-400">Terms of Service</a>
-                    <a href="#" class="hover:text-indigo-400">Contact Us</a>
-                </div>
-            </div>
-        </footer>
+        
     </body>
 </html>

@@ -13,6 +13,7 @@ class UserClearance extends Model
         'shared_clearance_id',
         'user_id',
         'is_active',
+        'is_archived', // Added Line On 28-10-2024
     ];
 
     /**

@@ -94,10 +94,16 @@ class FacultyController extends Controller
 
         return view('faculty.views.submitted-reports', compact('reports'));
     }
-
+    
     public function archive(): View
     {
-        return view('faculty.views.archive');
+        $user = Auth::user();
+        $archivedClearances = UploadedClearance::where('user_id', $user->id)
+            ->where('is_archived', true)
+            ->with('requirement')
+            ->get();
+
+        return view('faculty.views.archive', compact('archivedClearances'));
     }
 
     public function test(): View
