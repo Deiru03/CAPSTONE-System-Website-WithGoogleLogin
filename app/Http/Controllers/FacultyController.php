@@ -24,7 +24,7 @@ class FacultyController extends Controller
     public function dashboard(): View
     {
         $user = Auth::user();
-        $showProfileModal = empty($user->program_id) || empty($user->department_id) || empty($user->position) || empty($user->units);
+        $showProfileModal = empty($user->program_id) || empty($user->department_id) || empty($user->position);
 
         // Fetch the user's current active clearance data
         $userClearance = UserClearance::with(['sharedClearance.clearance.requirements', 'uploadedClearances'])

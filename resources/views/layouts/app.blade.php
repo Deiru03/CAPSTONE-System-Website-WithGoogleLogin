@@ -204,18 +204,18 @@
                 <!-- Page Content -->
                 <main>
                     {{ $slot }} <!-- This is where the content will be injected -->
+                    <footer class="bg-white py-6 mt-12">
+                        <div class="container mx-auto text-center text-gray-800">
+                            <p class="text-sm">&copy; 2024 OMSCS IQA ClearVault.</p>
+                            <div class="flex justify-center space-x-4 mt-4">
+                                <a href="#" class="hover:text-indigo-400">Privacy Policy</a>
+                                <a href="#" class="hover:text-indigo-400">Terms of Service</a>
+                                <a href="#" class="hover:text-indigo-400">Contact Us</a>
+                            </div>
+                        </div>
+                    </footer>
                 </main>
             </div>
         </div>
-        <footer class="bg-gray-800 py-6 mt-12">
-            <div class="container mx-auto text-center text-white">
-                <p class="text-sm">&copy; 2023 Faculty Management System. All rights reserved.</p>
-                <div class="flex justify-center space-x-4 mt-4">
-                    <a href="#" class="hover:text-indigo-400">Privacy Policy</a>
-                    <a href="#" class="hover:text-indigo-400">Terms of Service</a>
-                    <a href="#" class="hover:text-indigo-400">Contact Us</a>
-                </div>
-            </div>
-        </footer>
     </body>
 </html>
