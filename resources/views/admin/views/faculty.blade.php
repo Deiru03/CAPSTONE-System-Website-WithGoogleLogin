@@ -189,7 +189,7 @@
                                 <td class="px-2 py-3 whitespace-nowrap">{{ $member->name }}</td>
                                 <td class="px-2 py-3 whitespace-nowrap">{{ $member->email }}</td>
                                 <td class="px-2 py-3 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->program->name ?? 'N/A' }}</td>
+                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->program_name ?? '' }}</td>
                                 <td class="px-2 py-3 whitespace-nowrap text-center">{{ $member->units }}</td>
                                 <td class="px-2 py-3 whitespace-nowrap">{{ $member->position }}</td>
                                 <td class="px-2 py-3 whitespace-nowrap">
@@ -417,7 +417,6 @@
                     <div class="w-1/2 pr-2 flex flex-col h-full">
                         <h4 class="text-base font-medium mb-1 text-gray-700">Available Faculty</h4>
                         <div class="flex justify-between mb-2">
-                            <button onclick="selectAll('unselectedFaculty')" class="px-2 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">Select All</button>
                             <button onclick="deselectAll('unselectedFaculty')" class="px-2 py-1 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300 ease-in-out">Deselect All</button>
                         </div>
                         <div id="unselectedFaculty" class="border rounded-lg p-2 flex-grow overflow-y-auto bg-gray-50 shadow-inner"></div>

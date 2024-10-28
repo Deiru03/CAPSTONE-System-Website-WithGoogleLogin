@@ -27,7 +27,7 @@ class ClearanceController extends Controller
         $sharedClearances = SharedClearance::with('clearance')->get();
         $sharedClearances = SharedClearance::with('clearance')
         ->whereHas('clearance', function ($query) {
-            $query->where('is_archived', false);
+            
         })
         ->get();
 

@@ -14,6 +14,8 @@ use App\Models\SharedClearance;
 use App\Models\ClearanceFeedback;
 use App\Models\UploadedClearance;
 use App\Models\User;
+use App\Models\Department;
+use App\Models\Program;
 class ClearanceController extends Controller
 {
     // Display the clearance management page
@@ -191,7 +193,15 @@ class ClearanceController extends Controller
                 ->with('error', 'This user does not have a clearance copy yet.');
         }
 
-        return view('admin.views.clearances.user-clearance-details', compact('userClearance'));
+        $user = User::with(['college', 'program'])->find($userClearance->user_id);
+        $college = Department::find($user->department_id);
+        $program = Program::find($user->program_id);
+
+        if (!$user) {
+            abort(404, 'User not found.');
+        }
+
+        return view('admin.views.clearances.user-clearance-details', compact('userClearance', 'user', 'college', 'program'));
     }
     
     public function checkClearances(Request $request)
@@ -460,6 +470,60 @@ class ClearanceController extends Controller
             return response()->json(['success' => true, 'message' => 'User clearances reset successfully.']);
         } catch (\Exception $e) {
             Log::error('Resetting User Clearances Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to reset user clearances.'], 500);
+        }
+    }
+
+    public function resetSpecificUserClearance($userId)
+    {
+        try {
+            DB::transaction(function () use ($userId) {
+                // Archive all feedback and uploaded files for this user
+                ClearanceFeedback::where('user_id', $userId)->update([
+                    'is_archived' => true,
+                    'signature_status' => 'On Check' // Reset signature status
+                ]);
+
+                UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);
+
+                // Reset user clearance status to pending in the users table
+                User::where('id', $userId)->update(['clearances_status' => 'Pending']);
+            });
+
+            return response()->json(['success' => true, 'message' => 'User clearance reset successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Resetting User Clearance Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to reset user clearance.'], 500);
+        }
+    }
+
+    public function resetSelected(Request $request)
+    {
+        $userIds = $request->input('user_ids', []);
+    
+        if (empty($userIds)) {
+            return response()->json(['success' => false, 'message' => 'No users selected.']);
+        }
+    
+        try {
+            DB::transaction(function () use ($userIds) {
+                foreach ($userIds as $userId) {
+                    // Archive all feedback and uploaded files for this user
+                    ClearanceFeedback::where('user_id', $userId)->update([
+                        'is_archived' => true,
+                        'signature_status' => 'On Check' // Reset signature status
+                    ]);
+    
+                    UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);
+    
+                    // Reset user clearance status to pending in the users table
+                    User::where('id', $userId)->update(['clearances_status' => 'Pending']);
+                }
+            });
+    
+            return response()->json(['success' => true, 'message' => 'Selected user clearances reset successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Resetting User Clearance Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to reset user clearances.'], 500);
         }
     }

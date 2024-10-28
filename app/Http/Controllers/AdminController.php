@@ -171,6 +171,11 @@ class AdminController extends Controller
         }
 
         $faculty = $query->paginate(30);
+
+        foreach ($faculty as $member) {
+            $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
+        }
+
         $departments = Department::all();
         $programs = Program::all();
 

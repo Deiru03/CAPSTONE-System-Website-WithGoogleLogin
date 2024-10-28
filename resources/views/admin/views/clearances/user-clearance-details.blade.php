@@ -9,6 +9,11 @@
     <div id="notification" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg transform transition-all duration-500 -translate-y-full opacity-0 z-50">
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
+    
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
+    </div>
   
     {{-- Display User ID and Name --}}
     <div class="mb-8 p-6 flex items-center space-x-8 border border-gray-300">
@@ -40,11 +45,11 @@
                     </div>
                     <div>
                         <span class="font-semibold text-gray-900">College:</span>
-                        {{-- <span>{{ $userClearance->user->college }}</span> --}}
+                        <span>{{ $college->name ?? 'N/A' }}</span>
                     </div>
                     <div>
                         <span class="font-semibold text-gray-900">Program:</span>
-                        <span>{{ $userClearance->user->program }}</span>
+                        <span>{{ $program->name ?? 'N/A' }}</span>
                     </div>
                 </div>
             </div>
@@ -69,6 +74,78 @@
             </div>
         </div>
     </div>
+    
+    <!-- Reset Button -->
+    <button id="resetButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2 border-2 border-red-600 hover:border-red-800">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+        </svg>
+        <span>Reset User Clearances</span>
+    </button>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h3 id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></h3>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeConfirmationModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">Cancel</button>
+                <button id="confirmResetButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('resetButton').addEventListener('click', function() {
+            const clearanceStatus = '{{ $userClearance->user->clearances_status }}';
+            const message = clearanceStatus === 'Complete'
+                ? 'The clearance is complete. Are you sure you want to reset?'
+                : 'The clearance is not complete. Are you sure you want to reset?';
+    
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+        });
+    
+        document.getElementById('confirmResetButton').addEventListener('click', function() {
+            showLoading();
+
+            fetch('{{ route('admin.clearance.resetSpecific', ['userId' => $userClearance->user->id]) }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    showNotification('User clearance reset successfully.');
+                    location.reload();
+                } else {
+                    showNotification('Failed to reset user clearance.', false);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                showNotification('An error occurred.', false);
+            });
+
+            closeConfirmationModal();
+        });
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+    
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+        }
+    </script>
 
     <h3 class="text-3xl font-bold mb-6 text-gray-800 hidden">{{ $userClearance->sharedClearance->clearance->document_name }}</h3> 
     <div class="overflow-x-auto shadow-md rounded-lg">
@@ -143,7 +220,7 @@
        
 
     <!-- Add this modal at the end of your Blade file -->
-    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
+    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-10">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
             <h3 class="text-2xl font-bold mb-6 text-gray-800">Provide Feedback</h3>
             <form id="feedbackForm">
@@ -171,10 +248,7 @@
         </div>
     </div>
 
-    <!-- Loading overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
-    </div>
+    
 
     <script>
         function openFeedbackModal(requirementId) {
