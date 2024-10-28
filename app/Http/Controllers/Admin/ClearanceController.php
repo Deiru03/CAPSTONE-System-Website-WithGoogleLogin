@@ -279,18 +279,20 @@ class ClearanceController extends Controller
             'signature_status' => 'required|in:On Check,Signed,Return',
         ]);
     
-        $feedback = ClearanceFeedback::updateOrCreate(
-            [
-                'requirement_id' => $validatedData['requirement_id'],
-                'user_id' => $validatedData['user_id'],
-            ],
-            [
-                'message' => $validatedData['message'],
-                'signature_status' => $validatedData['signature_status'],
-            ]
-        );
+        // Find the feedback record
+        $feedback = ClearanceFeedback::firstOrNew([
+            'requirement_id' => $validatedData['requirement_id'],
+            'user_id' => $validatedData['user_id'],
+        ]);
     
-        // Update clearance status if all requirements are signed
+        // Update the fields
+        $feedback->message = $validatedData['message'];
+        $feedback->signature_status = $validatedData['signature_status'];
+        $feedback->is_archived = false; // Set to false
+        $feedback->save();
+    
+        Log::info('Feedback updated:', $feedback->toArray());
+    
         app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
     
         return response()->json([
@@ -421,13 +423,44 @@ class ClearanceController extends Controller
         try {
             DB::transaction(function () use ($ids) {
                 UploadedClearance::whereIn('shared_clearance_id', $ids)->update(['is_archived' => true]);
-                ClearanceFeedback::whereIn('requirement_id', $ids)->update(['is_archived' => true]);
+                ClearanceFeedback::whereIn('requirement_id', $ids)->update(['is_archived' => true, 'signature_status' => 'On Check']);
             });
 
             return response()->json(['success' => true, 'message' => 'Clearances archived successfully.']);
         } catch (\Exception $e) {
             Log::error('Archiving Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to archive clearances.'], 500);
+        }
+    }
+
+    /////////////////////////////////// User Clearance Reset ////////////////////////////////////////////////
+    public function resetUserClearances()
+    {
+        $adminId = Auth::id();
+
+        try {
+            DB::transaction(function () use ($adminId) {
+                // Get all users managed by the current admin
+                $userIds = User::whereHas('managingAdmins', function($q) use ($adminId) {
+                    $q->where('admin_id', $adminId);
+                })->pluck('id');
+
+                // Archive all feedback and uploaded files for these users
+                ClearanceFeedback::whereIn('user_id', $userIds)->update([
+                    'is_archived' => true,
+                    'signature_status' => 'On Check' // Reset signature status
+                ]);
+
+                UploadedClearance::whereIn('user_id', $userIds)->update(['is_archived' => true]);
+
+                // Reset user clearance status to pending
+                User::whereIn('id', $userIds)->update(['clearances_status' => 'pending']);
+            });
+
+            return response()->json(['success' => true, 'message' => 'User clearances reset successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Resetting User Clearances Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to reset user clearances.'], 500);
         }
     }
 }

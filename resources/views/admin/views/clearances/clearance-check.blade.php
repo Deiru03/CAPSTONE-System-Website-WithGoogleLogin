@@ -71,6 +71,9 @@
                     </button>
                 </div>
             </form>
+            <button id="resetButton" class="bg-red-500 hover:bg-red-700  text-white font-bold py-2 px-4 rounded ml-2 transition duration-300 ease-in-out transform hover:scale-105">
+                Reset User Clearances
+            </button>
             <button type="button" id="searchRequirementsBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded ml-2 transition duration-300 ease-in-out transform hover:scale-105">
                 Search Requirements
             </button>
@@ -168,5 +171,33 @@
                 modal.classList.add('hidden');
             }
         }
+    </script>
+
+    <!-- Reset Functions Script -->
+    <script>
+        document.getElementById('resetButton').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all user clearances?')) {
+                fetch('{{ route('admin.clearance.reset') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User clearances reset successfully.');
+                        location.reload();
+                    } else {
+                        alert('Failed to reset user clearances.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                });
+            }
+        });
     </script>
 </x-admin-layout>
