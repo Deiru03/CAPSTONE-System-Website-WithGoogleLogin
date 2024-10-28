@@ -300,6 +300,11 @@ class ClearanceController extends Controller
         $feedback->signature_status = $validatedData['signature_status'];
         $feedback->is_archived = false; // Set to false
         $feedback->save();
+        
+        // Update user's last_clearance_update timestamp
+        User::where('id', $validatedData['user_id'])->update([
+            'last_clearance_update' => now()
+        ]);
     
         Log::info('Feedback updated:', $feedback->toArray());
     

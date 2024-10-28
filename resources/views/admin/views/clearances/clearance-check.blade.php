@@ -110,6 +110,7 @@
             </div>
         </div>
 
+        <!-- User Clearances -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
             <div class="col-span-full mb-3 border-b border-gray-300 pb-2 flex justify-between items-center">
                 <h3 class="text-lg font-semibold text-gray-700">User Clearances</h3>
@@ -141,8 +142,33 @@
                         @endif
                     </p>
                     <p class="text-xs text-gray-500 mb-2">
-                        @if($user->userClearances->isNotEmpty() && $user->userClearances->first()->uploadedClearances->isNotEmpty())
-                            Recent: {{ $user->userClearances->first()->uploadedClearances->first()->created_at->format('m/d/Y') }}
+                        @if($user->userClearances->isNotEmpty())
+                            @php
+                                $userClearance = $user->userClearances->first();
+                                $latestUpload = $userClearance->uploadedClearances
+                                    ->where('is_archived', false)
+                                    ->sortByDesc('created_at')
+                                    ->first();
+                                
+                                $hasComplied = false;
+                                if ($latestUpload) {
+                                    $feedback = $latestUpload->requirement->feedback
+                                        ->where('user_id', $user->id)
+                                        ->where('is_archived', false)
+                                        ->first();
+                                    $hasComplied = $feedback && 
+                                        $feedback->signature_status == 'Return' && 
+                                        $latestUpload->created_at > $feedback->updated_at;
+                                }
+                            @endphp
+                            @if($latestUpload)
+                                Recent: {{ $latestUpload->created_at->format('m/d/Y') }}
+                                @if($hasComplied)
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800 ml-1">Complied</span>
+                                @endif
+                            @else
+                                Recent: N/A
+                            @endif
                         @else
                             Recent: N/A
                         @endif

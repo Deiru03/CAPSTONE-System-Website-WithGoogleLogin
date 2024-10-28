@@ -250,23 +250,65 @@
                 </button>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($managedUsers as $user)
-                        <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 bg-gray-100 rounded-lg shadow hover:bg-gray-200 transition duration-300">
+                        @php
+                            $userClearance = $user->userClearances->first();
+                            $latestUpload = $userClearance ? $userClearance->uploadedClearances
+                                ->where('is_archived', false)
+                                ->sortByDesc('created_at')
+                                ->first() : null;
+                            
+                            $hasComplied = false;
+                            if ($latestUpload) {
+                                $feedback = $latestUpload->requirement->feedback
+                                    ->where('user_id', $user->id)
+                                    ->where('is_archived', false)
+                                    ->first();
+                                $hasComplied = $feedback && 
+                                    $feedback->signature_status == 'Return' && 
+                                    $latestUpload->created_at > $feedback->updated_at;
+                            }
+                        @endphp
+                        <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 rounded-lg shadow hover:bg-gray-100 transition duration-300
+                            @if($hasComplied)
+                                bg-blue-50
+                            @elseif($user->clearances_status == 'complete')
+                                bg-green-50
+                            @elseif($user->clearances_status == 'pending') 
+                                bg-yellow-50
+                            @elseif($user->clearances_status == 'return')
+                                bg-red-50
+                            @else
+                                bg-gray-50
+                            @endif">
                             <img src="{{ $user->profile_picture ? $user->profile_picture : asset('images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
                             <div>
                                 <h4 class="text-lg font-semibold">{{ $user->name }}</h4>
                                 <p class="text-sm text-gray-500">{{ $user->email }}</p>
-                                <p class="text-sm 
-                                    @if($user->clearances_status == 'complete')
-                                        text-green-500
+                                <p class="text-sm font-medium
+                                    @if($hasComplied)
+                                        text-blue-600
+                                    @elseif($user->clearances_status == 'complete')
+                                        text-green-600
                                     @elseif($user->clearances_status == 'pending')
-                                        text-yellow-500
+                                        text-yellow-600
                                     @elseif($user->clearances_status == 'return')
-                                        text-red-500
+                                        text-red-600
                                     @else
-                                        text-gray-500
+                                        text-gray-600
                                     @endif
                                 ">
-                                    {{ $user->clearances_status }}
+                                    @if($hasComplied)
+                                        Return Complied
+                                    @else
+                                        {{ $user->clearances_status }}
+                                    @endif
+                                </p>
+                                <p class="text-xs text-gray-500 mb-2">
+                                    @if($latestUpload)
+                                        Recent: {{ $latestUpload->created_at->format('m/d/Y') }}
+                                    @else
+                                        Recent: N/A
+                                    @endif
                                 </p>
                               
                             </div>
