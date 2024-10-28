@@ -12,8 +12,6 @@ class SubmittedReport extends Model
     protected $fillable = [
         'user_id',
         'admin_id', // Added column on Oct 29, 2024
-        'requirement_name',
-        'uploaded_clearance_name',
         'title',
         'transaction_type',
         'status',
