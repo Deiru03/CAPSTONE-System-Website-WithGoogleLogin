@@ -190,6 +190,11 @@ class AdminController extends Controller
         return view ('admin.views.my-files');
     }
 
+    public function archive(): View
+    {
+        return view ('admin.views.archive');
+    }
+
     public function profileEdit(): View
     {
         $user = Auth::user();

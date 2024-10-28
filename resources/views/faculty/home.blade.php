@@ -59,11 +59,14 @@
         </div>
     </div>
     <div class="min-h-screen flex flex-col items-center justify-start pt-48 relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-8 z-10">
-            <div class="bg-white bg-opacity-80 rounded-full p-0 shadow-lg">
+        <!-- Logo -->
+        <a href="{{ url('/') }}" class="absolute top-0 left-1/2 transform -translate-x-1/2 mt-8 z-10">
+            <div class="bg-white bg-opacity-80 rounded-full p-0 shadow-lg transition-transform duration-300 hover:scale-105">
                 <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="h-32 w-32">
             </div>
-        </div>
+        </a>
+
+        <!-- Welcome Message -->
         <a href="{{ route('dashboard') }}" class="block relative z-10 text-center mb-12">
             <div class="cursor-pointer">
                 <h1 class="text-6xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
@@ -76,7 +79,8 @@
         </a>
         <div class="h-24"></div>
     </div>
-
+            
+    <!-- Quick Actions -->
     <div class="flex justify-center items-center max-w-4xl w-full mx-auto relative z-20 -mt-72">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="backdrop-blur-md bg-white/10 p-6 rounded-lg shadow-lg border border-white/20">
