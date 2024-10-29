@@ -15,10 +15,10 @@
 
         /* Sticky header styles */
         .sticky-header {
-        position: sticky;
-        top: 0;
-        background-color: rgb(228, 250, 255); /* Background color to cover content below */
-        z-index: 0; /* Ensure it stays above other content */
+            position: sticky;
+            top: 0;
+            background-color: rgb(228, 250, 255); /* Background color to cover content below */
+            z-index: 1; /* Ensure it stays above other content */
         }
 
         /* Ensure the table has a defined height */
@@ -145,10 +145,10 @@
                         <p>Here you can manage Faculty members.</p>
                     </div>
                     <div>
-                        <button onclick="window.location='{{ route('admin.facultyReport.all') }}'" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                            Generate All Faculty Report
+                        <button onclick="openReportOptionsModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                            Generate Report
                         </button>
-                        <button onclick="window.location='{{ route('admin.facultyReport.managed') }}'" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2">
+                        <button onclick="window.location='{{ route('admin.facultyReport.managed') }}'" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded ml-2">
                             Generate Managed Faculty Report
                         </button>
                     </div>
@@ -179,46 +179,48 @@
             <!-- Faculty Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full border border-gray-300">
                 <div class="table-container overflow-y-auto" style="max-height: 490px;">
-                    <table class="w-full text-sm">
+                    <table class="w-full text-xs"> <!-- Changed from text-sm to text-xs -->
                         <thead class="bg-gray-200 sticky-header">
                             <tr>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Managed By</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Managed By</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200"> 
+                        <tbody class="divide-y divide-gray-500"> 
                             @foreach ($faculty as $member)
                             <tr>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->id }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->name }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->email }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->program_name ?? '' }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap text-center">{{ $member->units }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">{{ $member->position }}</td>
-                                <td class="px-2 py-3 whitespace-nowrap">
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->id }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->name }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->email }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->program_name ?? '' }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->units }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->position }}</td>
+                                <td class="px-1 py-2 whitespace-nowrap">
                                     {{ $member->managingAdmins->pluck('name')->join(', ') ?? 'N/A' }}
                                 </td>
-                                <td class="px-2 py-3 whitespace-nowrap text-center">{{ $member->user_type }}</td>
-                                <td class="py-2 px-2 border-b">
-                                    <button onclick="openEditModal({{ $member->id }})" class="text-blue-500 flex items-center text-xs">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->user_type }}</td>
+                                <td class="py-2 px-1 border-b flex space-x-2 justify-center">
+                                    <button 
+                                        onclick="openEditModal({{ $member->id }})" 
+                                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                         </svg>
                                         Edit
                                     </button>
                                     <button 
                                         onclick="openDeleteModal({{ $member->id }}, '{{ addslashes($member->name) }}')" 
-                                        class="text-red-500 ml-2 flex items-center text-xs">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        class="bg-red-100 hover:bg-red-200 text-red-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 000 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
                                         </svg>
                                         Dispose
@@ -234,8 +236,6 @@
                 </div>
             </div>
   
-
-        <!-- Edit Modal -->
         <!-- Edit Modal -->
         <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
@@ -354,7 +354,6 @@
         </div>
     
         <!-- Delete Modal -->
-        <!-- Delete Modal -->
         <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
@@ -393,7 +392,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Assign Faculty -->
         <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
@@ -454,8 +452,60 @@
             </div>
         </div>
         
+        <!-- Report Options Modal -->
+        <div id="reportOptionsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Generate Report Options</h3>
+                <form id="reportOptionsForm" method="POST" action="{{ route('admin.facultyReport.generate') }}">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                            <select name="department" id="department" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="">All Departments</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="program" class="block text-sm font-medium text-gray-700">Program</label>
+                            <select name="program" id="program" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="">All Programs</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
+                            <select name="position" id="position" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="">All Positions</option>
+                                <option value="Permanent">Permanent</option>
+                                <option value="Temporary">Temporary</option>
+                                <option value="Part-Timer">Part-Timer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button type="button" onclick="closeReportOptionsModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Generate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     <!-- Script for Assign Faculty -->
+    <script>
+        function openReportOptionsModal() {
+            document.getElementById('reportOptionsModal').classList.remove('hidden');
+        }
+    
+        function closeReportOptionsModal() {
+            document.getElementById('reportOptionsModal').classList.add('hidden');
+        }
+    </script>
+
     <script>
         function getInitials(name) {
             return name.split(' ').map(word => word[0]).join('').toUpperCase();

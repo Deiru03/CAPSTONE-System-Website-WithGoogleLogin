@@ -64,7 +64,7 @@ Route::middleware(['Faculty'])->group(function () {
 
 /////////////////////////////////////////////// DomPDF Routes ////////////////////////////////////////////////
 Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
-Route::get('/admin/faculty-report/all', [AdminController::class, 'generateAllFacultyReport'])->name('admin.facultyReport.all');
+Route::post('/admin/faculty-report/generate', [AdminController::class, 'generateFacultyReport'])->name('admin.facultyReport.generate');
 Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');
 
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////

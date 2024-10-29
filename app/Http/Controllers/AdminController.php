@@ -242,7 +242,7 @@ class AdminController extends Controller
             })
             ->get();
 
-        $pdf = Pdf::loadView('admin.views.reports.admin', compact('users'));
+        $pdf = Pdf::loadView('admin.views.reports.admin-generate', compact('users'));
 
         SubmittedReport::create([
             'admin_id' => Auth::id(),
@@ -266,7 +266,7 @@ class AdminController extends Controller
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
         }
     
-        $pdf = Pdf::loadView('admin.views.reports.faculty', compact('faculty'));
+        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty'));
     
         SubmittedReport::create([
             'admin_id' => Auth::id(),
@@ -279,25 +279,37 @@ class AdminController extends Controller
         return $pdf->download('managed-faculty-report.pdf');
     }
     
-    public function generateAllFacultyReport()
+    public function generateFacultyReport(Request $request)
     {
-        $faculty = User::where('user_type', 'Faculty')->get();
+        $query = User::with(['department', 'program']);
     
-        foreach ($faculty as $member) {
-            $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
+        if ($request->filled('department')) {
+            $query->where('department_id', $request->department);
         }
     
-        $pdf = Pdf::loadView('admin.views.reports.faculty', compact('faculty'));
+        if ($request->filled('program')) {
+            $query->where('program_id', $request->program);
+        }
     
+        if ($request->filled('position')) {
+            $query->where('position', $request->position);
+        }
+    
+        $faculty = $query->get(); // Use $faculty here
+    
+        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty'));
+    
+        $departmentName = $request->filled('department') ? Department::find($request->department)->name : 'All';
+        $programName = $request->filled('program') ? Program::find($request->program)->name : 'All';
+        
         SubmittedReport::create([
             'admin_id' => Auth::id(),
             'user_id' => null,
-            'title' => 'Admin '. Auth::user()->name .' Report Generated for all Faculty',
-            'transaction_type' => 'Generated Report',
+            'title' => Auth::user()->name . ' Report Generated for ' . $departmentName . ', ' . $programName . ', ' . ($request->position ?? 'All') . ' Faculty',
+            'transaction_type' => 'Generated Report', 
             'status' => 'Completed',
         ]);
-    
-        return $pdf->download('all-faculty-report.pdf');
+        return $pdf->download('custom-report.pdf');
     }
 
     /////////////////////////////////////////////// Clearance Controller /////////////////////////////////////////////////

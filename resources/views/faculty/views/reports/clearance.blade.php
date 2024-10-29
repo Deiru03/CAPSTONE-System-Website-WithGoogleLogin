@@ -40,6 +40,8 @@
         }
         .form-group {
             margin: 20px 0;
+            display: flex;
+            align-items: center;
         }
         .label {
             color: #666;

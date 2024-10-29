@@ -176,7 +176,7 @@
                     <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs px-2 py-1 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1">View</span>
                 </a>
             @empty
-                <p class="text-center text-gray-600 col-span-full">No clearances available.</p>
+                <p class="text-center text-gray-600 col-span-full">No clearances to check available.</p>
             @endforelse
         </div>
     </div>

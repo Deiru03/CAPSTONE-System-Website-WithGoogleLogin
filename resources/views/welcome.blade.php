@@ -14,7 +14,20 @@
         <style>
             /* Glitter cursor styles */
             * {
-                cursor: none;
+                cursor: default;
+                /* Common cursor values:
+                default - Default arrow cursor
+                pointer - Hand cursor for clickable elements 
+                text - I-beam cursor for text
+                move - Move cursor for draggable elements
+                not-allowed - Circle with slash for disabled elements
+                wait - Loading/hourglass cursor
+                crosshair - Precise selection cursor
+                help - Question mark cursor
+                zoom-in - Magnifying glass with plus
+                zoom-out - Magnifying glass with minus
+                grab - Open hand for draggable elements
+                grabbing - Closed hand for actively dragging */
             }
 
             .glitter-cursor {

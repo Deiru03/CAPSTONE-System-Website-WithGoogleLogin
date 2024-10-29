@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Faculty Report</title>
+    <title>Faculty Generated Report</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -45,7 +45,7 @@
     </style>
 </head>
 <body>
-    <h1>Faculty Report</h1>
+    <h1>Faculty Generated Report</h1>
     <table>
         <thead>
             <tr>

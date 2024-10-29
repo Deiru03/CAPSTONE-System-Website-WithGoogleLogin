@@ -74,7 +74,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach ($clearance as $user)
-                        <tr class="hover:bg-gray-50" data-id="{{ $user->id }}">
+                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{{ route('admin.clearances.show', $user->id) }}'">
                             <td class="py-2 px-3 text-sm">{{ $user->id }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->name }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->email }}</td>
