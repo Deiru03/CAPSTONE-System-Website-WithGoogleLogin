@@ -10,7 +10,7 @@ class CreateSubmittedReportsTable extends Migration
     {
         Schema::create('submitted_reports', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('admin_id')->nullable();
             $table->string('title')->nullable();
             $table->string('status')->nullable();

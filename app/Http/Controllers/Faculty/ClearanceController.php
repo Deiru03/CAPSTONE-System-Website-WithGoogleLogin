@@ -71,8 +71,15 @@ class ClearanceController extends Controller
             'shared_clearance_id' => $id,
             'user_id' => $user->id,
             'is_active' => true,
+            
         ]);
 
+        SubmittedReport::create([
+            'user_id' => Auth::id(),
+            'title' => 'Copied a clearance for ' . $sharedClearance->clearance->name,
+            'transaction_type' => 'Aquired Checklist',
+            'status' => 'Completed',
+        ]);
         return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copied and set as active successfully.');
     }
     public function removeCopy($id)
@@ -87,6 +94,13 @@ class ClearanceController extends Controller
     
             // Delete the user's clearance copy
             $userClearance->delete();
+
+            SubmittedReport::create([
+                'user_id' => Auth::id(),
+                'title' => 'Removed a clearance copy for ' . $userClearance->sharedClearance->clearance->name,
+                'transaction_type' => 'Removed Checklist',
+                'status' => 'Completed',
+            ]);
     
             return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy removed successfully.');
         } catch (\Exception $e) {
@@ -149,6 +163,7 @@ class ClearanceController extends Controller
     
         if ($request->hasFile('files')) {
             try {
+                $uploadedFiles = [];
                 foreach ($request->file('files') as $file) {
                     $originalName = $file->getClientOriginalName();
                     $path = $file->storeAs('uploads/faculty_clearances', $originalName, 'public');
@@ -159,19 +174,26 @@ class ClearanceController extends Controller
                         'user_id' => $user->id,
                         'file_path' => $path,
                     ]);
-    
-                    $requirement = ClearanceRequirement::findOrFail($requirementId);
-                    $requirementName = $requirement->requirement;
-    
-                    SubmittedReport::create([
-                        'user_id' => Auth::id(),
-                        'requirement_name' => $requirementName,
-                        'uploaded_clearance_name' => $originalName,
-                        'title' => 'Uploaded a file for requirement: ' . $requirementName,
-                        'transaction_type' => 'Upload',
-                        'status' => 'Okay',
-                    ]);
+
+                    $uploadedFiles[] = $originalName;
                 }
+    
+                $requirement = ClearanceRequirement::findOrFail($requirementId);
+                $requirementName = $requirement->requirement;
+                $fileCount = count($uploadedFiles);
+
+                // Truncate requirement name if longer than 100 characters
+                if (strlen($requirementName) > 100) {
+                    $requirementName = substr($requirementName, 0, 100) . '...';
+                }
+    
+                // Create single report for all uploaded files
+                SubmittedReport::create([
+                    'user_id' => Auth::id(),
+                    'title' => "Uploaded {$fileCount} file(s) for requirement: {$requirementName}",
+                    'transaction_type' => 'Upload',
+                    'status' => 'Okay',
+                ]);
     
                 return response()->json([
                     'success' => true,
@@ -182,8 +204,6 @@ class ClearanceController extends Controller
 
                 SubmittedReport::create([
                     'user_id' => Auth::id(),
-                    'requirement_name' => $requirementName,
-                    'uploaded_clearance_name' => $originalName,
                     'title' => 'Failed to upload files',
                     'transaction_type' => 'Upload',
                     'status' => 'Failed',
@@ -236,13 +256,18 @@ class ClearanceController extends Controller
     
             $requirement = ClearanceRequirement::findOrFail($requirementId);
             $requirementName = $requirement->requirement;
+            $fileCount = count($deletedFiles);
+
+            // Truncate requirement name if longer than 100 characters
+            if (strlen($requirementName) > 100) {
+                $requirementName = substr($requirementName, 0, 100) . '...';
+            }
     
             // Log the deletion in SubmittedReport
             SubmittedReport::create([
                 'user_id' => Auth::id(),
-                'requirement_name' => $requirementName,
-                'uploaded_clearance_name' => implode(', ', array_column($deletedFiles, 'file_name')),
-                'title' => 'Deleted files for requirement: ' . $requirementName,
+                'admin_id' => null,
+                'title' => "Deleted {$fileCount} file(s) for requirement: {$requirementName}",
                 'transaction_type' => 'Delete',
                 'status' => 'Okay',
             ]);
@@ -259,8 +284,6 @@ class ClearanceController extends Controller
 
             SubmittedReport::create([
                 'user_id' => Auth::id(),
-                'requirement_name' => 'Unknown',
-                'uploaded_clearance_name' => 'Unknown',
                 'title' => 'Failed to delete files',
                 'transaction_type' => 'Delete',
                 'status' => 'Failed',
@@ -296,13 +319,17 @@ class ClearanceController extends Controller
             $requirement = ClearanceRequirement::findOrFail($requirementId);
             $requirementName = $requirement->requirement;
 
+            // Truncate requirement name if longer than 100 characters
+            if (strlen($requirementName) > 100) {
+                $requirementName = substr($requirementName, 0, 100) . '...';
+            }
+
             SubmittedReport::create([
                 'user_id' => Auth::id(),
-                'requirement_name' => $requirementName,
-                'uploaded_clearance_name' => basename($uploadedClearance->file_path),
-                'title' => 'Deleted a file for requirement: ' . $requirementName,
+                'admin_id' => null,
+                'title' => "Deleted file for requirement: {$requirementName}",
                 'transaction_type' => 'Delete',
-                'status' => 'Completed',
+                'status' => 'Okay',
             ]);
 
             return response()->json([
@@ -311,6 +338,14 @@ class ClearanceController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Deleting Single File Error: '.$e->getMessage());
+
+            SubmittedReport::create([
+                'user_id' => Auth::id(),
+                'admin_id' => null,
+                'title' => 'Failed to delete file',
+                'transaction_type' => 'Delete', 
+                'status' => 'Failed',
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -354,30 +389,10 @@ class ClearanceController extends Controller
         } catch (\Exception $e) {
             Log::error('Fetching Uploaded Files Error: '.$e->getMessage());
 
-            SubmittedReport::create([
-                'user_id' => Auth::id(),
-                'requirement_name' => 'Unknown',
-                'uploaded_clearance_name' => 'Unknown',
-                'title' => 'Failed to fetch uploaded files',
-                'transaction_type' => 'Fetch',
-                'status' => 'Failed',
-            ]); 
-
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch uploaded files.',
             ], 500);
         }
     }
-
-        // Single File Delete
-        /**
-     * Delete a specific uploaded clearance file.
-     *
-     * @param  int  $sharedClearanceId
-     * @param  int  $requirementId
-     * @param  int  $fileId
-     * @return \Illuminate\Http\JsonResponse
-     */
-    
 }

@@ -13,6 +13,7 @@ use App\Models\ClearanceRequirement;
 use App\Models\SharedClearance;
 use App\Models\ClearanceFeedback;
 use App\Models\UploadedClearance;
+use App\Models\SubmittedReport;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Program;
@@ -54,6 +55,14 @@ class ClearanceController extends Controller
                     'document_name' => $clearance->document_name,
                 ],
             ]);
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => $clearance->document_name,
+                'transaction_type' => 'Created Clearance Checklist',
+                'status' => 'Completed',
+            ]);
         } catch (\Exception $e) {
             Log::error('Error creating clearance: ' . $e->getMessage());
             return response()->json([
@@ -90,6 +99,14 @@ class ClearanceController extends Controller
                 'success' => true,
                 'clearance' => $clearance
             ]);
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => $clearance->document_name,
+                'transaction_type' => 'Edited Clearance Checklist',
+                'status' => 'Completed',
+            ]);
         } else {
             return response()->json([
                 'success' => false,
@@ -114,6 +131,14 @@ class ClearanceController extends Controller
             'description' => 'nullable|string',
             'units' => 'nullable|integer',
             'type' => 'required|in:Permanent,Part-Timer,Temporary',
+        ]);
+
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => $clearance->document_name,
+            'transaction_type' => 'Edited Clearance Checklist',
+            'status' => 'Completed',
         ]);
 
         $clearance->update($request->all());
@@ -151,6 +176,14 @@ class ClearanceController extends Controller
                 'success' => true,
                 'message' => 'Clearance shared successfully.',
             ]);
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => $clearance->document_name,
+                'transaction_type' => 'Shared Clearance Checklist',
+                'status' => 'Completed',
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -174,6 +207,14 @@ class ClearanceController extends Controller
         }
 
         $clearance->delete();
+
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => $clearance->document_name,
+            'transaction_type' => 'Deleted Clearance Checklist',
+            'status' => 'Completed',
+        ]);
 
         return response()->json([
             'success' => true,
@@ -424,6 +465,15 @@ class ClearanceController extends Controller
 
         $sharedClearance->delete();
 
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => 'Removed shared clearance checklist: ' . $sharedClearance->clearance->document_name,
+            'transaction_type' => 'Remove Shared' . "\n" .
+                                'Clearance Checklist',
+            'status' => 'Completed',
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Shared clearance removed successfully.',
@@ -460,6 +510,8 @@ class ClearanceController extends Controller
                     $q->where('admin_id', $adminId);
                 })->pluck('id');
 
+                $user = User::findOrFail($userIds);
+
                 // Archive all feedback and uploaded files for these users
                 ClearanceFeedback::whereIn('user_id', $userIds)->update([
                     'is_archived' => true,
@@ -470,6 +522,15 @@ class ClearanceController extends Controller
 
                 // Reset user clearance status to pending
                 User::whereIn('id', $userIds)->update(['clearances_status' => 'pending']);
+
+                SubmittedReport::create([
+                    'admin_id' => Auth::id(),
+                    'user_id' => $userIds,
+                    'title' => 'Reset user clearances checklist' . "\n" .
+                                'for ' . $user->name,
+                    'transaction_type' => 'Reset Checklist',
+                    'status' => 'Completed',
+                ]);
             });
 
             return response()->json(['success' => true, 'message' => 'User clearances reset successfully.']);
@@ -483,6 +544,9 @@ class ClearanceController extends Controller
     {
         try {
             DB::transaction(function () use ($userId) {
+                // Get user details first
+                $user = User::findOrFail($userId);
+
                 // Archive all feedback and uploaded files for this user
                 ClearanceFeedback::where('user_id', $userId)->update([
                     'is_archived' => true,
@@ -493,6 +557,14 @@ class ClearanceController extends Controller
 
                 // Reset user clearance status to pending in the users table
                 User::where('id', $userId)->update(['clearances_status' => 'Pending']);
+
+                SubmittedReport::create([
+                    'admin_id' => Auth::id(),
+                    'user_id' => $userId,
+                    'title' => 'Reset user clearances checklist of ' . $user->name,
+                    'transaction_type' => 'Reset Checklist',
+                    'status' => 'Completed',
+                ]);
             });
 
             return response()->json(['success' => true, 'message' => 'User clearance reset successfully.']);
@@ -512,6 +584,9 @@ class ClearanceController extends Controller
     
         try {
             DB::transaction(function () use ($userIds) {
+
+                $user = User::findOrFail($userIds);
+                
                 foreach ($userIds as $userId) {
                     // Archive all feedback and uploaded files for this user
                     ClearanceFeedback::where('user_id', $userId)->update([
@@ -523,6 +598,14 @@ class ClearanceController extends Controller
     
                     // Reset user clearance status to pending in the users table
                     User::where('id', $userId)->update(['clearances_status' => 'Pending']);
+
+                    SubmittedReport::create([
+                        'admin_id' => Auth::id(),
+                        'user_id' => $userId,
+                        'title' => 'Reset user clearances checklist of ' . $user->name,
+                        'transaction_type' => 'Reset Checklist',
+                        'status' => 'Completed',
+                    ]);
                 }
             });
     

@@ -29,23 +29,21 @@
                     <table class="min-w-full bg-white">
                         <thead>
                             <tr>
+                                <th class="py-2 px-4 border-b">User</th>
                                 <th class="py-2 px-4 border-b">Title</th>
-                                <th class="py-2 px-4 border-b">Submitted By</th>
-                                <th class="py-2 px-4 border-b">Requirement Name</th>
-                                <th class="py-2 px-4 border-b">Uploaded Clearance Name</th>
                                 <th class="py-2 px-4 border-b">Transaction Type</th>
                                 <th class="py-2 px-4 border-b">Status</th>
+                                <th class="py-2 px-4 border-b">Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($reports as $report)
                                 <tr>
+                                    <td class="py-2 px-4 border-b">{{ $report->admin_name }}</td>
                                     <td class="py-2 px-4 border-b">{{ $report->title }}</td>
-                                    <td class="py-2 px-4 border-b">{{ $report->user->name }}</td>
-                                    <td class="py-2 px-4 border-b">{{ $report->requirement_name }}</td>
-                                    <td class="py-2 px-4 border-b">{{ $report->uploaded_clearance_name }}</td>
                                     <td class="py-2 px-4 border-b">{{ $report->transaction_type }}</td>
                                     <td class="py-2 px-4 border-b">{{ $report->status }}</td>
+                                    <td class="py-2 px-4 border-b">{{ $report->created_at->format('Y-m-d H:i:s') }}</td>
                                 </tr>
                                 @endforeach
                         </tbody>

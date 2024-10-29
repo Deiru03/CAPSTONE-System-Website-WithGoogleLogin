@@ -106,7 +106,12 @@ class AdminController extends Controller
 
     public function submittedReports(): View
     {
-        $reports = SubmittedReport::with('user')->get();
+        $reports = SubmittedReport::with('user')
+        ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
+        ->select('submitted_reports.*', 'admins.name as admin_name')
+        ->whereNotNull('submitted_reports.admin_id')
+        ->get();
+
         return view('admin.views.submitted-reports', compact('reports'));
     }
 
