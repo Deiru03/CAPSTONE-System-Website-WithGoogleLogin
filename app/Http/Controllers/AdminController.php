@@ -17,6 +17,7 @@ use App\Models\Program;
 use App\Models\SubmittedReport;
 use App\Models\UserClearance;
 use App\Models\UploadedClearance;
+use Barryvdh\DomPDF\Facade\Pdf;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -109,6 +110,7 @@ class AdminController extends Controller
         ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
         ->select('submitted_reports.*', 'admins.name as admin_name')
         ->whereNotNull('submitted_reports.admin_id')
+        ->orderBy('submitted_reports.created_at', 'desc')
         ->get();
 
         return view('admin.views.submitted-reports', compact('reports'));
@@ -226,6 +228,77 @@ class AdminController extends Controller
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
+    ////////////////////////////////////////////// DomPDF Controller or Generate Report /////////////////////////////////////////////////
+
+    public function generateReport()
+    {
+        // Get the current admin's ID
+        $adminId = Auth::id();
+
+        // Get only users managed by this admin
+        $users = User::with('managingAdmins')
+            ->whereHas('managingAdmins', function($query) use ($adminId) {
+                $query->where('admin_id', $adminId);
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('admin.views.reports.admin', compact('users'));
+
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => 'Admin '. Auth::user()->name .' Report Generated',
+            'transaction_type' => 'Generated Report',
+            'status' => 'Completed',
+        ]);
+
+        return $pdf->download('users-report.pdf');
+    }
+
+    public function generateManagedFacultyReport()
+    {
+        $adminId = Auth::id();
+        $faculty = User::whereHas('managingAdmins', function($query) use ($adminId) {
+            $query->where('admin_id', $adminId);
+        })->get();
+    
+        foreach ($faculty as $member) {
+            $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
+        }
+    
+        $pdf = Pdf::loadView('admin.views.reports.faculty', compact('faculty'));
+    
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => 'Admin '. Auth::user()->name .' Report Generated for Managed Faculty',
+            'transaction_type' => 'Generated Report',
+            'status' => 'Completed',
+        ]);
+    
+        return $pdf->download('managed-faculty-report.pdf');
+    }
+    
+    public function generateAllFacultyReport()
+    {
+        $faculty = User::where('user_type', 'Faculty')->get();
+    
+        foreach ($faculty as $member) {
+            $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
+        }
+    
+        $pdf = Pdf::loadView('admin.views.reports.faculty', compact('faculty'));
+    
+        SubmittedReport::create([
+            'admin_id' => Auth::id(),
+            'user_id' => null,
+            'title' => 'Admin '. Auth::user()->name .' Report Generated for all Faculty',
+            'transaction_type' => 'Generated Report',
+            'status' => 'Completed',
+        ]);
+    
+        return $pdf->download('all-faculty-report.pdf');
+    }
 
     /////////////////////////////////////////////// Clearance Controller /////////////////////////////////////////////////
 
@@ -243,6 +316,7 @@ class AdminController extends Controller
 
             $user = User::find($userId);
             $user->clearances_status = $allSigned ? 'complete' : 'pending';
+            $user->last_clearance_update = now(); // Update the last_clearance_update column
             $user->save();
         }
     }

@@ -207,7 +207,7 @@
                         </td>
                         <td class="px-4 py-4">
                             @if($feedback && !$feedback->is_archived && !empty($feedback->message) && $uploadedFile && !$uploadedFile->is_archived)
-                                <p class="text-yellow-800"><strong>Feedback: {{ $feedback->message }}</strong></p>
+                                <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
                             @else
                                 <p class="text-gray-400 italic">No comments yet.</p>
                             @endif

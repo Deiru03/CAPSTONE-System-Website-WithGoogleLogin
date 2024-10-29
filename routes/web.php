@@ -62,6 +62,11 @@ Route::middleware(['Faculty'])->group(function () {
 });
 /////////////////////////////////////////////// End of Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
 
+/////////////////////////////////////////////// DomPDF Routes ////////////////////////////////////////////////
+Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
+Route::get('/admin/faculty-report/all', [AdminController::class, 'generateAllFacultyReport'])->name('admin.facultyReport.all');
+Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');
+
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(function () {
     Route::get('/homepage', [AdminController::class, 'home'])->name('admin.home');

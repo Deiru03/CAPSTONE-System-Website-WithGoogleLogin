@@ -139,8 +139,20 @@
 
 
             <div class="p-6 text-gray-900">
-                <h2 class="text-2xl font-bold mb-4">Faculty Management</h2>
-                <p>Here you can manage Faculty members.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold">Faculty Management</h2>
+                        <p>Here you can manage Faculty members.</p>
+                    </div>
+                    <div>
+                        <button onclick="window.location='{{ route('admin.facultyReport.all') }}'" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                            Generate All Faculty Report
+                        </button>
+                        <button onclick="window.location='{{ route('admin.facultyReport.managed') }}'" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2">
+                            Generate Managed Faculty Report
+                        </button>
+                    </div>
+                </div>
                 <!-- Add your Faculty management content here -->
                 <div class="flex justify-between items-center mb-4">
                     <form method="GET" action="{{ route('admin.views.faculty') }}" class="flex items-center w-4/5">
