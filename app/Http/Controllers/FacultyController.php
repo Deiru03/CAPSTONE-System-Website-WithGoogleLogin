@@ -10,6 +10,7 @@ use App\Models\UploadedClearance;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
 use App\Models\ClearanceFeedback;
+use App\Models\Program;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacultyController extends Controller
@@ -121,6 +122,10 @@ class FacultyController extends Controller
     public function generateClearanceReport()
     {
         $user = Auth::user();
+    
+        // Fetch program name using the same logic we used before
+        $user->program_name = Program::find($user->program_id)->name ?? 'N/A';
+        
         $userClearance = UserClearance::with('sharedClearance.clearance')->where('user_id', $user->id)->first();
 
         $pdf = Pdf::loadView('faculty.views.reports.clearance', compact('user', 'userClearance'));
