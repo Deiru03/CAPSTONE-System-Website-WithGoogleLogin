@@ -10,6 +10,7 @@ use App\Models\UploadedClearance;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
 use App\Models\ClearanceFeedback;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacultyController extends Controller
 {
@@ -71,7 +72,9 @@ class FacultyController extends Controller
             // Fetch the user clearance data
         $userClearance = UserClearance::with('sharedClearance.clearance')->where('user_id', Auth::id())->first();
 
-        return view('faculty.views.clearances', compact('userClearance'));
+        $userInfo = Auth::user();
+
+        return view('faculty.views.clearances', compact('userClearance', 'userInfo'));
     }
 
     public function myFiles(): View
@@ -113,4 +116,23 @@ class FacultyController extends Controller
     }       
     
 /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////  
+
+/////////////////////////////////////////////// PDF Controller or Generating slip PDF //////////////////////////////////////////////////  
+    public function generateClearanceReport()
+    {
+        $user = Auth::user();
+        $userClearance = UserClearance::with('sharedClearance.clearance')->where('user_id', $user->id)->first();
+
+        $pdf = Pdf::loadView('faculty.views.reports.clearance', compact('user', 'userClearance'));
+
+        SubmittedReport::create([
+            'admin_id' => null,
+            'user_id' => Auth::id(),
+            'title' => 'Generated Clearance Completion Slip',
+            'transaction_type' => 'Slip Generated',
+            'status' => 'Completed',
+        ]);
+
+        return $pdf->download('clearance-report.pdf');
+    }
 }

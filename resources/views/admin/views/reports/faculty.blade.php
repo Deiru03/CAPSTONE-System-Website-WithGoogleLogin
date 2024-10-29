@@ -25,7 +25,7 @@
         th, td {
             border: 2px solid #ddd;
             padding: 3px;
-            text-align: left;
+            text-align: center;
             font-size: 11px;
             height: 15px; /* Added fixed height for rows */
             line-height: 15px; /* Added to vertically center content */

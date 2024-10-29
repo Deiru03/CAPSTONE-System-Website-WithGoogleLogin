@@ -12,6 +12,42 @@
 
         <!-- Styles -->
         <style>
+            /* Glitter cursor styles */
+            * {
+                cursor: none;
+            }
+
+            .glitter-cursor {
+                width: 20px;
+                height: 20px;
+                background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+            }
+
+            .glitter-trail {
+                width: 10px;
+                height: 10px;
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                animation: glitterFade 1s ease-out forwards;
+            }
+
+            @keyframes glitterFade {
+                0% {
+                    opacity: 0.5;
+                    transform: scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(0.1);
+                }
+            }
+
             body {
                 background: linear-gradient(45deg, #1e3a8a, #3b82f6, #e0f7fa);
                 background-size: 400% 400%;
@@ -174,6 +210,7 @@
         </style>
     </head>
     <body>
+        <div class="glitter-cursor"></div>
         <div class="floating-items">
             <li class="floating-item">📚</li>
             <li class="floating-item">🎓</li>
@@ -193,9 +230,45 @@
             </div>
             <div class="container">
                 <div class="header">
-                    <h1>IQA ClearVault</h1>
-                    <p>Occidental Mindoro State College's secure vault for Institutional Quality Assurance data banking and clearance management</p>
+                    <h1 class="animate-title">IQA ClearVault</h1>
+                    <p class="animate-text">Occidental Mindoro State College's secure vault for Institutional Quality Assurance data banking and clearance checklists management</p>
                 </div>
+
+                <style>
+                    .animate-title {
+                        opacity: 0;
+                        transform: translateY(-20px);
+                        animation: fadeInDown 1s ease forwards;
+                    }
+
+                    .animate-text {
+                        opacity: 0;
+                        transform: translateY(20px);
+                        animation: fadeInUp 1s ease 0.5s forwards;
+                    }
+
+                    @keyframes fadeInDown {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+
+                    @keyframes fadeInUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                </style>
                 @if (Route::has('login'))
                     <div class="button-container">
                         @auth
@@ -217,5 +290,36 @@
         <footer>
             Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
         </footer>
+
+        <script>
+            // Create glitter cursor effect
+            const cursor = document.querySelector('.glitter-cursor');
+            let trails = [];
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+
+                // Create trail
+                const trail = document.createElement('div');
+                trail.className = 'glitter-trail';
+                trail.style.left = e.clientX - 5 + 'px';
+                trail.style.top = e.clientY - 5 + 'px';
+                document.body.appendChild(trail);
+                trails.push(trail);
+
+                // Remove old trails
+                if (trails.length > 20) {
+                    trails[0].remove();
+                    trails.shift();
+                }
+
+                // Remove trail after animation
+                setTimeout(() => {
+                    trail.remove();
+                    trails = trails.filter(t => t !== trail);
+                }, 1000);
+            });
+        </script>
     </body>
 </html>

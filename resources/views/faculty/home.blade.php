@@ -70,10 +70,10 @@
         <a href="{{ route('dashboard') }}" class="block relative z-10 text-center mb-12">
             <div class="cursor-pointer">
                 <h1 class="text-6xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
-                    Welcome to OMSC Faculty Dashboard
+                    Welcome to OMSC IQA ClearVault
                 </h1>
                 <p class="text-2xl text-white shadow-text bg-black bg-opacity-20 inline-block px-6 py-3 rounded-lg transform hover:translate-y-1 transition-transform duration-300">
-                    Manage your clearances, reports, and files with ease
+                    Manage your clearances Checklists, reports, and files with ease
                 </p>
             </div>
         </a>
@@ -95,7 +95,7 @@
             <div class="backdrop-blur-md bg-white/10 p-6 rounded-lg shadow-lg border border-white/20">
                 <h2 class="text-2xl font-semibold text-white mb-4">About Us</h2>
                 <p class="text-white">
-                    OMSC Faculty Dashboard is Occidental Mindoro State College's secure platform for faculty members to manage clearances, submit reports, and access important files. We provide efficient tools to streamline your academic responsibilities.
+                    OMSC IQA ClearVault is Occidental Mindoro State College's secure platform for faculty members to manage clearances, submit reports, and access important files. We provide efficient tools to streamline your academic responsibilities.
                 </p>
             </div>
         </div>

@@ -145,6 +145,9 @@ Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(fun
     Route::get('/archive', [FacultyController::class, 'archive'])->name('faculty.views.archive');
     Route::get('/test', [FacultyController::class, 'test'])->name('faculty.views.test');
 
+    //////////////////////// Generate Clearance Slip //////////////////////
+    Route::get('/faculty/clearance-report', [FacultyController::class, 'generateClearanceReport'])->name('faculty.generateClearanceReport');
+
     // Clearance Controls & Routes
     Route::get('/clearances/view-checklists', [FacultyClearanceController::class, 'index'])->name('faculty.clearances.index');
     
