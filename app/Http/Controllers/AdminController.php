@@ -16,7 +16,6 @@ use App\Models\Department;
 use App\Models\Program;
 use App\Models\SubmittedReport;
 use App\Models\UserClearance;
-use App\Models\ClearanceFeedback;
 use App\Models\UploadedClearance;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
@@ -203,13 +202,20 @@ class AdminController extends Controller
 
     public function archive(): View
     {
-        $user = Auth::user();
-        $archivedClearances = UploadedClearance::where('user_id', $user->id)
-            ->where('is_archived', true)
-            ->with('requirement')
-            ->get();
-
-        return view('admin.views.archive', compact('archivedClearances'));
+        try {
+            // Fetch all archived clearances
+            $archivedClearances = UploadedClearance::where('is_archived', true)
+                ->with(['requirement', 'user']) // Eager load relationships
+                ->get();
+    
+            return view('admin.views.archive', compact('archivedClearances'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching archived clearances: ' . $e->getMessage());
+            return view('admin.views.archive', [
+                'archivedClearances' => collect(), // Pass an empty collection
+                'error' => 'Failed to load archived clearances.'
+            ]);
+        }
     }
 
     public function profileEdit(): View

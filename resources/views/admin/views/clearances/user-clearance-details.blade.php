@@ -162,12 +162,17 @@
             <tbody class="divide-y divide-gray-200">
                 @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
                     @php
+                        // Get the feedback for the current requirement and user
                         $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
+                        
+                        // Get the most recent uploaded file for the current requirement and user
                         $uploadedFile = $userClearance->uploadedClearances
                             ->where('user_id', $userClearance->user->id)
                             ->where('requirement_id', $requirement->id)
                             ->sortByDesc('created_at')
                             ->first();
+                        
+                        // Determine if the requirement is complied based on feedback and upload dates
                         $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Return' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
@@ -176,7 +181,8 @@
                             @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->where('is_archived', false)->sortByDesc('created_at') as $uploaded)
                                 <div class="flex items-center justify-start space-x-3">
                                     <span class="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full shadow-md"></span>
-                                    <a href="{{ asset('storage/' . $uploaded->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 hover:underline text-sm font-medium transition duration-300">
+                                    <!-- Update the link to use the viewFile function for previewing -->
+                                    <a href="#" data-path="{{ $uploaded->file_path }}" class="file-link text-indigo-600 hover:text-indigo-800 hover:underline text-sm font-medium transition duration-300">
                                         {{ basename($uploaded->file_path) }}
                                     </a>
                                 </div>
@@ -243,11 +249,26 @@
                     <button type="button" onclick="closeFeedbackModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">Cancel</button>
                     <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Save</button>
                 </div>
-            </form>
-            
+            </form> 
         </div>
     </div>
 
+     <!-- Preview Modal -->
+     <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
+                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 p-4 overflow-auto">
+                <iframe id="previewFrame" class="w-full h-full border-0" src=""></iframe>
+            </div>
+        </div>
+    </div>
     
 
     <script>
@@ -314,6 +335,38 @@
                 hideLoading();
                 console.error('Error:', error);
                 showNotification('An error occurred.');
+            });
+        });
+
+        function viewFile(path, filename) {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            const previewFileName = document.getElementById('previewFileName');
+            
+            const url = `{{ asset('storage') }}/${path}`;
+            previewFrame.src = url;
+            previewFileName.textContent = filename;
+            
+            previewModal.classList.remove('hidden');
+            previewModal.classList.add('flex');
+        }
+
+        function closePreviewModal() {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            
+            previewModal.classList.add('hidden');
+            previewModal.classList.remove('flex');
+            previewFrame.src = '';
+        }
+
+        // Update the link to use viewFile function
+        document.querySelectorAll('.file-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const path = this.getAttribute('data-path');
+                const filename = this.textContent;
+                viewFile(path, filename);
             });
         });
     </script>
