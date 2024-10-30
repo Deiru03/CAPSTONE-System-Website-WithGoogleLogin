@@ -273,9 +273,9 @@
                     <label for="uploadFiles" class="block text-sm font-medium text-gray-700">Select Files</label>
                     <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
                         <p class="text-gray-500">Drag & drop files here or click to select files</p>
-                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden">
+                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
                     </div>
-                    <p class="mt-1 text-sm text-gray-500">You can upload multiple files. Allowed types: PDF, DOC, DOCX, JPG, PNG. Max size per file: 100mb.</p>
+                    <p class="mt-1 text-sm text-gray-500">You can upload multiple files. Allowed types: PDF<!-- DOC, DOCX, JPG, PNG.-->. Max size per file: 100mb.</p>
                 </div>
                 <div id="uploadNotification" class="hidden bg-green-100 text-green-700 p-2 rounded"></div>
                 <div id="uploadLoader" class="hidden">Uploading...</div>
@@ -392,9 +392,17 @@
                 return;
             }
 
+            const files = fileInput.files;
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type !== 'application/pdf') {
+                    showNotification('Only PDF files are allowed.', 'error');
+                    return;
+                }
+            }
+
             const formData = new FormData();
-            for (let i = 0; i < fileInput.files.length; i++) {
-                formData.append('files[]', fileInput.files[i]);
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);
             }
 
             uploadLoader.classList.remove('hidden');
