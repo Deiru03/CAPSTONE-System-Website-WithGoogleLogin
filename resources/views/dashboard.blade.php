@@ -151,10 +151,33 @@
                         </div>
                     </div>
                 </div>
-
                 <script>
                     function closeModal() {
                         document.getElementById('profileModal').style.display = 'none';
+                    }
+                </script>
+            @endif
+                   
+            <!-- Notification for No Active Clearance -->
+            @if($noActiveClearance)
+                <div id="clearanceModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+                    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md mx-auto transform transition-all duration-300 ease-in-out hover:scale-105">
+                        <h3 class="text-2xl font-bold mb-6 text-red-600">No Active Clearance</h3>
+                        <p class="mb-6 text-gray-600 leading-relaxed">You currently do not have an active clearance. Please contact your administrator.</p>
+                        <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button onclick="closeClearanceModal()" class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md">
+                                Close
+                            </button>
+                            <a href="{{ route('faculty.views.clearances') }}" class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md">
+                                Get A Copy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function closeClearanceModal() {
+                        document.getElementById('clearanceModal').style.display = 'none';
                     }
                 </script>
             @endif

@@ -252,6 +252,29 @@
                                 {{ __('Profile Updated Successfully') }}
                             </p>
                         @endif
+
+                        @if ($noActiveClearance && $user->user_type !== 'admin')
+                            <p
+                                x-data="{ show: true }"
+                                x-show="show"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 transform scale-90"
+                                x-transition:enter-end="opacity-100 transform scale-100"
+                                x-transition:leave="transition ease-in duration-300"
+                                x-transition:leave-start="opacity-100 transform scale-100"
+                                x-transition:leave-end="opacity-0 transform scale-90"
+                                x-init="setTimeout(() => show = false, 7000)"
+                                class="text-sm text-red-600 bg-red-100 px-4 py-2 rounded-full font-semibold"
+                            >
+                                <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                {{ __('No active clearance found. Please contact your administrator or ') }}
+                                <a href="{{ route('faculty.views.clearances') }}" class="text-blue-600 hover:text-blue-800 underline">
+                                    {{ __('click here to get a copy of your clearance') }}
+                                </a>.
+                            </p>
+                        @endif
                     </div>
                 </div>
             

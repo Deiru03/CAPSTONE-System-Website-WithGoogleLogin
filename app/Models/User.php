@@ -69,6 +69,11 @@ class User extends Authenticatable
         return $this->hasMany(UserClearance::class);
     }
 
+    public function clearances()
+    {
+        return $this->hasMany(UserClearance::class);
+    }
+
     public function uploadedClearances()
     {
         return $this->hasMany(UploadedClearance::class);

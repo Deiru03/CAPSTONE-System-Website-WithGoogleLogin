@@ -17,9 +17,16 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $departments = Department::with('programs')->get();
+        $user = $request->user();
+
+        // check if user has no active clearance
+        $noActiveClearance = !$user->clearances()->where('is_active', true)->exists();
+
+
         return view('profile.edit', [
             'user' => $request->user(),
             'departments' => $departments,
+            'noActiveClearance' => $noActiveClearance,
         ]);
     }
 
@@ -41,7 +48,8 @@ class ProfileController extends Controller
 
         $request->user()->clearances_status = 'pending';
         $request->user()->checked_by = 'System';
-        //$request->user()->program = $request->input('program');
+        $program = \App\Models\Program::find($request->input('program_id'));
+        $request->user()->program = $program ? $program->name : null;
         $request->user()->position = $request->input('position');
         $request->user()->units = $request->input('units');
         $request->user()->department_id = $request->input('department_id');

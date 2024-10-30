@@ -34,6 +34,8 @@ class FacultyController extends Controller
             ->where('is_active', true) // Ensure only active clearance is fetched
             ->first();
 
+        $noActiveClearance = !$userClearance;
+
         $userFeedbackReturn = ClearanceFeedback::where('user_id', $user->id)
             ->where('signature_status', 'return')
             ->count();
@@ -62,6 +64,7 @@ class FacultyController extends Controller
 
         return view('dashboard', compact(
             'showProfileModal',
+            'noActiveClearance',
             'totalRequirements',
             'uploadedRequirements',
             'missingRequirements',

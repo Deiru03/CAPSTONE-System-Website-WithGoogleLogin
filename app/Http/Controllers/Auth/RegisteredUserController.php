@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'user_type' => ['required', 'string', 'in:Admin,Faculty'],
             'units' => ['nullable', 'integer'],
-           // 'program' => ['nullable', 'string'],
+            'program' => ['nullable', 'string'],
             'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
             'department_id' => ['required', 'exists:departments,id'],
             'program_id' => ['required', 'exists:programs,id'],
@@ -48,10 +48,10 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type,
             'units' => $request->units,
-           // 'program' => $request->program,
             'position' => $request->position,
             'department_id' => $request->department_id,
             'program_id' => $request->program_id,
+            'program' => \App\Models\Program::find($request->program_id)->name,
         ]);
 
         event(new Registered($user));

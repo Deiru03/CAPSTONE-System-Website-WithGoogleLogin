@@ -9,6 +9,23 @@
             <div class="p-6">
                 <h2 class="text-3xl font-bold mb-6 text-indigo-700 border-b-2 border-indigo-200 pb-2">Shared Clearances</h2>
 
+                <!-- User Info Section -->
+                <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-indigo-600 mb-4">Your Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-600"><span class="font-semibold">Name:</span> {{ Auth::user()->name }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Managed by:</span> {{ Auth::user()->checked_by }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600"><span class="font-semibold">Position:</span> {{ Auth::user()->position }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Units:</span> {{ Auth::user()->units }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Program:</span> {{ Auth::user()->program }}</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Recommendations Section -->
                 @if($recommendations->isNotEmpty())
                     <div class="mb-6">
@@ -67,7 +84,28 @@
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($sharedClearances as $sharedClearance)
                                 @php
-                                    $isRecommended = $sharedClearance->clearance->units == Auth::user()->units || $sharedClearance->clearance->type == Auth::user()->position;
+                                    $userPosition = Auth::user()->position;
+                                    $userUnits = Auth::user()->units;
+                                    
+                                    $isRecommended = false;
+                                    
+                                    // For permanent/temporary teachers
+                                    if (($userPosition == 'Permanent' || $userPosition == 'Temporary') && 
+                                        $sharedClearance->clearance->type == $userPosition) {
+                                        $isRecommended = true;
+                                    }
+                                    
+                                    // For part-timers with 12 units and above
+                                    if ($userPosition == 'Part-Timer' && $userUnits >= 12 && 
+                                        $sharedClearance->clearance->units >= 12) {
+                                        $isRecommended = true;
+                                    }
+                                    
+                                    // For part-timers with 9 units and below
+                                    if ($userPosition == 'Part-Timer' && $userUnits <= 9 && 
+                                        $sharedClearance->clearance->units <= 9) {
+                                        $isRecommended = true;
+                                    }
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
                                     <td class="px-4 py-3 whitespace-nowrap">{{ $sharedClearance->clearance->id }}</td>
