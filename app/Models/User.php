@@ -31,6 +31,7 @@ class User extends Authenticatable
         'checked_by', // Added date 10/19/2024 // department id
         'department_id', // Added date 10/19/2024 // department id
         'program_id', // Added date 10/19/2024 // program id
+        'admin_id_registered', // Added date 10/30/2024 // admin id registered
     ];
 
     /**

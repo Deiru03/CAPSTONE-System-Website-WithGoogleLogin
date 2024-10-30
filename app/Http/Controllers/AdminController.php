@@ -19,6 +19,7 @@ use App\Models\UserClearance;
 use App\Models\UploadedClearance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
+use App\Models\AdminId;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -237,17 +238,49 @@ class AdminController extends Controller
         }
     }
 
+    public function adminIdManagement(): View
+    {
+        $adminIds = AdminId::all();
+        return view('admin.views.admin-id-management', compact('adminIds'));
+    }
+
     public function profileEdit(): View
     {
         $user = Auth::user();
         $departments = Department::with('programs')->get();
-        
+
         $noActiveClearance = true;
 
         return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance'));
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
+    /////////////////////////////////////////////// Admin ID Management Controller /////////////////////////////////////////////////
+    public function createAdminId(Request $request)
+    {
+        $request->validate([
+            'admin_id' => 'required|unique:admin_ids,admin_id',
+        ]);
+    
+        AdminId::create([
+            'admin_id' => $request->input('admin_id'),
+        ]);
+    
+        return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID created successfully.');
+    }
+
+    public function deleteAdminId($id)
+    {
+        $adminId = AdminId::findOrFail($id);
+        if ($adminId->is_assigned) {
+            return redirect()->route('admin.adminIdManagement')->withErrors(['error' => 'Cannot delete an assigned Admin ID.']);
+        }
+        $adminId->delete();
+
+        return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID deleted successfully.');
+    }
+
+    
     ////////////////////////////////////////////// DomPDF Controller or Generate Report /////////////////////////////////////////////////
 
     public function generateReport()

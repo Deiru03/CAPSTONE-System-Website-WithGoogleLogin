@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Models\AdminId;
 class RegisteredUserController extends Controller
 {
     /**
@@ -40,7 +41,20 @@ class RegisteredUserController extends Controller
             'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
             'department_id' => ['required', 'exists:departments,id'],
             'program_id' => ['required', 'exists:programs,id'],
+            'admin_id' => ['required_if:user_type,Admin', 'nullable', 'exists:admin_ids,admin_id'],
+        ], [
+            'admin_id.required_if' => 'The Admin ID is required when registering as an Admin.',
+            'admin_id.exists' => 'The provided Admin ID does not exist.',
         ]);
+
+        if ($request->user_type === 'Admin') {
+            $adminId = AdminId::where('admin_id', $request->admin_id)->first();
+            if ($adminId->is_assigned) {
+                return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
+            }
+            $adminId->is_assigned = true;
+            $adminId->save();
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -52,6 +66,7 @@ class RegisteredUserController extends Controller
             'department_id' => $request->department_id,
             'program_id' => $request->program_id,
             'program' => \App\Models\Program::find($request->program_id)->name,
+            'admin_id_registered' => $request->admin_id,
         ]);
 
         event(new Registered($user));

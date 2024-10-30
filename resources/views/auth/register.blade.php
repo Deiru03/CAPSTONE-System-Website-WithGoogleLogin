@@ -2,16 +2,41 @@
     <form method="POST" action="{{ route('register') }}" class="w-full bg-white p-1 rounded-lg ">
         @csrf
 
+        @if ($errors->any())
+        <div class="mb-4 p-4 rounded-md bg-red-50 border border-red-200">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <ul class="list-disc pl-5 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <h2 class="text-2xl font-semibold mb-4 text-center text-gray-800">Create an Account</h2>
 
         <div class="grid grid-cols-3 gap-3 mb-4">
             <!-- User Type -->
             <div>
                 <x-input-label for="user_type" :value="__('User Type')" class="text-xs font-medium text-gray-700" />
-                <select id="user_type" name="user_type" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
+                <select id="user_type" name="user_type" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" onchange="toggleAdminIdField()">
                     <option value="Faculty" selected>Faculty</option>
                     <option value="Admin">Admin</option>
                 </select>
+                @error('user_type')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Position -->
@@ -22,12 +47,27 @@
                     <option value="Temporary">Temporary</option>
                     <option value="Part-Timer">Part-Timer</option>
                 </select>
+                @error('position')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Units -->
             <div>
                 <x-input-label for="units" :value="__('Units')" class="text-xs font-medium text-gray-700" />
                 <x-text-input id="units" class="mt-1 block w-full text-sm" type="number" name="units" :value="old('units')"  />
+                @error('units')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+             <!-- Admin ID (conditionally displayed) -->
+             <div id="admin_id_field" style="display: none;">
+                <x-input-label for="admin_id" :value="__('Admin ID')" class="text-xs font-medium text-gray-700" />
+                <x-text-input id="admin_id" class="mt-1 block w-full text-sm" type="text" name="admin_id" :value="old('admin_id')" />
+                @error('admin_id')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -36,10 +76,16 @@
             <div>
                 <x-input-label for="name" :value="__('Name')" class="text-xs font-medium text-gray-700" />
                 <x-text-input id="name" class="mt-1 block w-full text-sm" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                @error('name')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <x-input-label for="email" :value="__('Email')" class="text-xs font-medium text-gray-700" />
                 <x-text-input id="email" class="mt-1 block w-full text-sm" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -53,12 +99,18 @@
                         <option value="{{ $department->id }}">{{ $department->name }}</option>
                     @endforeach
                 </select>
+                @error('department_id')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <x-input-label for="program_id" :value="__('Program')" class="text-xs font-medium text-gray-700" />
                 <select id="program_id" name="program_id" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" required>
                     <option value="" disabled selected>Select a program</option>
                 </select>
+                @error('program_id')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -66,23 +118,61 @@
         <div class="grid grid-cols-2 gap-3 mb-4">
             <div class="relative">
                 <x-input-label for="password" :value="__('Password')" class="text-xs font-medium text-gray-700" />
-                <x-text-input id="password" class="mt-1 block w-full text-sm pr-10" type="password" name="password" required autocomplete="new-password" />
-                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-5" onclick="togglePasswordVisibility('password')">
-                    <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </button>
+                <div class="relative" x-data="{ show: false }">
+                    <x-text-input id="password" 
+                        class="mt-1 block w-full text-sm pr-10"
+                        x-bind:type="show ? 'text' : 'password'"
+                        name="password"
+                        required 
+                        autocomplete="new-password" />
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <button type="button" @click="show = !show" class="focus:outline-none">
+                            <template x-if="!show">
+                                <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </template>
+                            <template x-if="show">
+                                <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div class="relative">
                 <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-xs font-medium text-gray-700" />
-                <x-text-input id="password_confirmation" class="mt-1 block w-full text-sm pr-10" type="password" name="password_confirmation" required autocomplete="new-password" />
-                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-5" onclick="togglePasswordVisibility('password_confirmation')">
-                    <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </button>
+                <div class="relative" x-data="{ show: false }">
+                    <x-text-input id="password_confirmation"
+                        class="mt-1 block w-full text-sm pr-10"
+                        x-bind:type="show ? 'text' : 'password'"
+                        name="password_confirmation"
+                        required 
+                        autocomplete="new-password" />
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <button type="button" @click="show = !show" class="focus:outline-none">
+                            <template x-if="!show">
+                                <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </template>
+                            <template x-if="show">
+                                <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+                @error('password_confirmation')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -142,5 +232,13 @@
                 });
             }
         });
+
+
+        function toggleAdminIdField() {
+            const userType = document.getElementById('user_type').value;
+            const adminIdField = document.getElementById('admin_id_field');
+            adminIdField.style.display = userType === 'Admin' ? 'block' : 'none';
+        }
+        toggleAdminIdField();
     </script>
 </x-guest-layout>
