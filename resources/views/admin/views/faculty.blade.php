@@ -6,6 +6,19 @@
     </x-slot>
     <script src="{{ asset('js/faculty.js') }}"></script>
 
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+        <div class="flex items-center">
+            <div id="notificationIcon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
+            <div id="notificationMessage" class="text-sm font-medium"></div>
+        </div>
+    </div>
+    
     <style>
         /* Set a maximum height for the modal content and enable overflow scrolling */
         .modal-content {
@@ -675,6 +688,38 @@
                 notification.classList.add('hidden');
             }, 3000);
         }
+
+        function showNotificationModern(message, type) {
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notificationMessage');
+            const notificationIcon = document.getElementById('notificationIcon');
+
+            notificationMessage.textContent = message;
+
+            // Reset classes
+            notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
+            notificationIcon.innerHTML = '';
+
+            if (type === 'success') {
+                notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            }
+
+            notification.classList.remove('hidden', 'translate-x-full');
+            notification.classList.add('translate-x-0');
+
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                    notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
+                }, 500);
+            }, 1100);
+        }
     </script>
 
     <!-- Script for Filtering Faculty -->
@@ -754,7 +799,7 @@
                     closeDeleteModal();
 
                     // Show success alert
-                    alert(data.message);
+                    showNotificationModern(data.message, 'success');
 
                     // Auto-reload after 3 seconds
                     setTimeout(() => {
@@ -762,7 +807,7 @@
                     }, 3000);
                 } else {
                     // Show error alert
-                    alert(data.message);
+                    showNotificationModern(data.message, 'error');
                 }
             })
             .catch(error => {
@@ -772,7 +817,7 @@
                 }
 
                 console.error('There was a problem with the delete operation:', error);
-                alert('An error occurred while deleting.');
+                showNotificationModern('An error occurred while deleting.', 'error');
             });
         });
 
@@ -834,12 +879,12 @@
                     document.getElementById('editForm').action = `/admin/faculty/edit`;
                     document.getElementById('editModal').classList.remove('hidden');
                 } else {
-                    alert('Failed to fetch faculty data.');
+                    showNotificationModern('Failed to fetch faculty data.', 'error');
                 }
             })
             .catch(error => {
                 console.error('There was a problem fetching faculty data:', error);
-                alert('An error occurred while fetching faculty data.');
+                showNotificationModern('An error occurred while fetching faculty data.', 'error');
             });
         }
 
@@ -888,7 +933,7 @@
                     closeEditModal();
 
                     // Show success alert
-                    alert(data.message);
+                    showNotificationModern(data.message, 'success');
 
                     // Auto-reload after 3 seconds
                     setTimeout(() => {
@@ -896,7 +941,7 @@
                     }, 3000);
                 } else {
                     // Show error alert
-                    alert(data.message);
+                    showNotificationModern(data.message, 'error');
                 }
             })
             .catch(error => {
@@ -906,7 +951,7 @@
                 }
 
                 console.error('There was a problem with the edit operation:', error);
-                alert('An error occurred while editing.');
+                showNotificationModern('An error occurred while editing.', 'error');
             });
         });
     </script>

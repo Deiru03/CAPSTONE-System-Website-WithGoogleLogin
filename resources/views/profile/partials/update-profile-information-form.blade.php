@@ -32,6 +32,14 @@
         </p>
     </header>
 
+    <!-- Notification -->
+    <div id="notification" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+        <div class="flex items-center">
+            <div id="notificationIcon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
+            <div id="notificationMessage" class="text-sm font-medium"></div>
+        </div>
+    </div>
+
     <div class="profile-container" style="max-width: 1200px; margin: 0 auto;">
         <div class="profile-form">
             <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -149,6 +157,29 @@
                             <x-input-label for="units" :value="__('Units')" />
                             <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
                             <x-input-error class="mt-2" :messages="$errors->get('units')" />
+                            <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
+                                {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const positionSelect = document.getElementById('position');
+                                    const unitsInput = document.getElementById('units');
+                                    const unitsWarning = document.getElementById('units-warning');
+
+                                    function checkPosition() {
+                                        if (positionSelect.value === 'Part-Timer') {
+                                            unitsWarning.classList.remove('hidden');
+                                            unitsInput.setAttribute('required', 'required');
+                                        } else {
+                                            unitsWarning.classList.add('hidden');
+                                            unitsInput.removeAttribute('required');
+                                        }
+                                    }
+
+                                    positionSelect.addEventListener('change', checkPosition);
+                                    checkPosition(); // Check initial state
+                                });
+                            </script>
                         </div>
                     </div>
 
@@ -201,7 +232,7 @@
                             </svg>
                             {{ __('Save Changes') }}
                         </x-primary-button>
-
+            
                         @if (session('status') === 'profile-updated')
                             <p
                                 x-data="{ show: true }"
@@ -223,6 +254,49 @@
                         @endif
                     </div>
                 </div>
+            
+                <!-- Script for Notification -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        @if (session('status') === 'profile-updated')
+                            showNotificationModern('{{ __('Profile updated successfully.') }}', 'success');
+                        @elseif ($errors->any())
+                            showNotificationModern('{{ __('There was an error updating the profile.') }}', 'error');
+                        @endif
+                    });
+            
+                    function showNotificationModern(message, type) {
+                        const notification = document.getElementById('notification');
+                        const notificationMessage = document.getElementById('notificationMessage');
+                        const notificationIcon = document.getElementById('notificationIcon');
+            
+                        notificationMessage.textContent = message;
+            
+                        // Reset classes
+                        notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
+                        notificationIcon.innerHTML = '';
+            
+                        if (type === 'success') {
+                            notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                        } else if (type === 'error') {
+                            notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
+                            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                        }
+            
+                        notification.classList.remove('hidden', 'translate-x-full');
+                        notification.classList.add('translate-x-0');
+            
+                        setTimeout(() => {
+                            notification.classList.remove('translate-x-0');
+                            notification.classList.add('translate-x-full');
+                            setTimeout(() => {
+                                notification.classList.add('hidden');
+                                notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
+                            }, 500);
+                        }, 1100);
+                    }
+                </script>
             </form>
         </div>
     </div>
