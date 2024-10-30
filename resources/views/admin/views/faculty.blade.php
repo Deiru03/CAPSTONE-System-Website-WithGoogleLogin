@@ -10,15 +10,15 @@
     <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
     </div>
-
+    
     <!-- Notification -->
-    <div id="notification" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+    <div id="notificationModern" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
         <div class="flex items-center">
             <div id="notificationIcon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
             <div id="notificationMessage" class="text-sm font-medium"></div>
         </div>
     </div>
-    
+
     <style>
         /* Set a maximum height for the modal content and enable overflow scrolling */
         .modal-content {
@@ -36,7 +36,7 @@
 
         /* Ensure the table has a defined height */
         .table-container {
-            max-height: 400px; /* Adjust as needed */
+            max-height: 500px; /* Adjust as needed */
             overflow-y: auto; /* Enable vertical scrolling */
         }
            /* Add sticky header styles for the modal */
@@ -191,7 +191,7 @@
             
             <!-- Faculty Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full border border-gray-300">
-                <div class="table-container overflow-y-auto" style="max-height: 490px;">
+                <div class="table-container overflow-y-auto" style="max-height: 600px;">
                     <table class="w-full text-xs"> <!-- Changed from text-sm to text-xs -->
                         <thead class="bg-gray-200 sticky-header">
                             <tr>
@@ -456,10 +456,15 @@
                     </div>
                 </div>
                 
-                <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50"></div>
+                <div id="notification" class="hidden fixed bottom-4 right-4 p-4 bg-gradient-to-r from-green-50 to-green-100 text-green-800 rounded-xl shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 border border-green-200 z-50 flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="font-medium"></span>
+                </div>
         
                 <div class="flex justify-end mt-4">
-                    <button onclick="updateFaculty()" class="px-4 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">Save</button>
+                    {{-- <button onclick="updateFaculty()" class="px-4 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">Save</button> --}}
                     <button onclick="closeManageModal()" class="ml-2 px-4 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Close</button>
                 </div>
             </div>
@@ -640,7 +645,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Faculty updated successfully!');
+                    showNotification('Faculty updated successfully!', 'success');
                     deselectAll('selectedFaculty');
                     deselectAll('unselectedFaculty');
                 } else {
@@ -678,19 +683,52 @@
 
     <!-- Script for Notification -->
     <script>
-        function showNotification(message) {
+        function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.classList.remove('hidden');
+            const notificationContent = notification.querySelector('span');
             
-            // Hide notification after 3 seconds
+            // Set message
+            notificationContent.textContent = message;
+            
+            // Add appropriate styling based on type
+            notification.className = 'fixed bottom-4 right-4 p-4 rounded-xl shadow-xl transition-all duration-500 ease-in-out transform hover:scale-105 border z-50 flex items-center space-x-3';
+            
+            if (type === 'success') {
+                notification.classList.add('bg-gradient-to-r', 'from-green-50', 'to-green-100', 'text-green-800', 'border-green-200');
+            } else if (type === 'error') {
+                notification.classList.add('bg-gradient-to-r', 'from-red-50', 'to-red-100', 'text-red-800', 'border-red-200');
+            } else if (type === 'warning') {
+                notification.classList.add('bg-gradient-to-r', 'from-yellow-50', 'to-yellow-100', 'text-yellow-800', 'border-yellow-200');
+            }
+            
+            // Show notification with smooth slide-in animation
+            notification.classList.remove('hidden');
+            notification.style.transform = 'translateX(100%)';
+            notification.style.opacity = '0';
+            
+            requestAnimationFrame(() => {
+                notification.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+                notification.style.transform = 'translateX(0)';
+                notification.style.opacity = '1';
+            });
+            
+            // Hide with smooth fade-out animation
             setTimeout(() => {
-                notification.classList.add('hidden');
+                notification.style.transition = 'transform 0.5s ease-in, opacity 0.5s ease-in';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                    notification.style.transform = '';
+                    notification.style.opacity = '';
+                    notification.style.transition = '';
+                }, 500);
             }, 3000);
         }
 
         function showNotificationModern(message, type) {
-            const notification = document.getElementById('notification');
+            const notification = document.getElementById('notificationModern');
             const notificationMessage = document.getElementById('notificationMessage');
             const notificationIcon = document.getElementById('notificationIcon');
 

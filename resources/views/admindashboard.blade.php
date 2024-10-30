@@ -57,7 +57,7 @@
 
             <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Example Card 1 -->
-                <a href="" class="bg-emerald-500 text-white p-4 rounded-lg shadow relative hover:bg-emerald-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
+                <a href="{{ route('admin.profile.edit') }}" class="bg-emerald-500 text-white p-4 rounded-lg shadow relative hover:bg-emerald-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Profile</h3>
                         <p class="text-2xl"></p>
