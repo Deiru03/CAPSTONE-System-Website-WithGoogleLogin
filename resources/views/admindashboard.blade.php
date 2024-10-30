@@ -26,11 +26,11 @@
                 <!-- Clearance Card -->
                 <a href="{{ route('admin.views.clearances') }}" class="bg-purple-500 text-white p-4 rounded-lg shadow relative hover:bg-purple-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
-                        <h3 class="text-lg font-bold">Checklist Created</h3>
-                        <p class="text-2xl">{{ $clearanceChecklist }}</p>
+                        <h3 class="text-lg font-bold">Check My Faculty</h3>
+                        <p class="text-2xl">{{ $managedFacultyCount }}</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 absolute top-2 right-2 opacity-50 transition-transform duration-300 ease-in-out transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </a>
                 <!-- My Files Card -->
@@ -83,7 +83,7 @@
 
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Clearance Status -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Clearance Status</h3>
                     <div class="h-32">
                         <canvas id="clearanceStatusChart"></canvas>
@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- Faculty Status -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Faculty Status</h3>
                     <div class="h-32">
                         <canvas id="facultyStatusChart"></canvas>
@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- User Type Distribution -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">User Types</h3>
                     <div class="h-32">
                         <canvas id="userTypeChart"></canvas>
@@ -121,7 +121,7 @@
                 </div>
 
                 <!-- Overall Analytics -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Overall Analytics</h3>
                     <div class="h-32">
                         <canvas id="overallAnalyticsChart"></canvas>

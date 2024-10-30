@@ -111,9 +111,9 @@
         <p class="status">
             <span class="label">STATUS:</span>
             <br>
-            <input type="checkbox" {{ $userClearance->clearance_status === 'complete' ? 'checked' : '' }}> ACCOMPLISHED
+            <input type="checkbox" {{ $user->clearances_status === 'complete' ? 'checked' : '' }}> ACCOMPLISHED
             <br>
-            <input type="checkbox" {{ $userClearance->clearance_status !== 'pending' ? 'checked' : '' }}> NOT ACCOMPLISH
+            <input type="checkbox" {{ $user->clearances_status === 'pending' ? 'checked' : '' }}> NOT ACCOMPLISH
         </p>
         <p class="footer">
             <span class="label">DATE:</span> ______________________

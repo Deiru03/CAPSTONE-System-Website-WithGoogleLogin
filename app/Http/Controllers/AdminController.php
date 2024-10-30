@@ -307,6 +307,10 @@ class AdminController extends Controller
         }
     
         $faculty = $query->get(); // Use $faculty here
+
+        foreach ($faculty as $member) {
+            $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
+        }
     
         $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty'));
     

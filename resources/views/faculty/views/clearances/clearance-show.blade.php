@@ -273,7 +273,7 @@
                     <label for="uploadFiles" class="block text-sm font-medium text-gray-700">Select Files</label>
                     <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
                         <p class="text-gray-500">Drag & drop files here or click to select files</p>
-                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
+                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf, image/*, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                     </div>
                     <p class="mt-1 text-sm text-gray-500">You can upload multiple files. Allowed types: PDF<!-- DOC, DOCX, JPG, PNG.-->. Max size per file: 100mb.</p>
                 </div>
@@ -394,7 +394,7 @@
 
             const files = fileInput.files;
             for (let i = 0; i < files.length; i++) {
-                if (files[i].type !== 'application/pdf') {
+                if (files[i].type !== 'application/pdf' && files[i].type !== 'image/*' && files[i].type !== 'application/msword' && files[i].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                     showNotification('Only PDF files are allowed.', 'error');
                     return;
                 }

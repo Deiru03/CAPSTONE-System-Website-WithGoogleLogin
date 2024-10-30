@@ -49,6 +49,7 @@ class FacultyController extends Controller
             // Filter uploaded clearances to only include those for the current active clearance
             $currentUploadedClearances = UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
                 ->where('user_id', $user->id)
+                ->where('is_archived', false)
                 ->get();
 
             $uploadedRequirements = $currentUploadedClearances->unique('requirement_id')->count();
