@@ -18,6 +18,7 @@ use App\Models\SubmittedReport;
 use App\Models\UserClearance;
 use App\Models\UploadedClearance;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -61,6 +62,8 @@ class AdminController extends Controller
             $query->where('admin_id', $adminId);
         })->get(['id', 'name', 'profile_picture', 'clearances_status', 'email']);
 
+        $managedFacultyCount = $managedUsers->count();
+
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
         }
@@ -68,7 +71,8 @@ class AdminController extends Controller
         return view('admindashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
-         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount', 'managedUsers'));
+         'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
+         'managedUsers', 'managedFacultyCount'));
     }
 
     public function clearances(Request $request): View
@@ -193,8 +197,15 @@ class AdminController extends Controller
         $departments = Department::with('programs')->get();
         $programs = Program::all();
         $faculty = User::all();
+        $users = User::all(); // Fetch all users
 
-        return view('admin.views.college', compact('departments', 'programs', 'faculty'));
+        return view('admin.views.college', compact('departments', 'programs', 'faculty', 'users'));
+    }
+
+    public function editDepartment($id): View
+    {
+        $department = Department::findOrFail($id);
+        return view('admin.views.colleges.edit-department', compact('department'));
     }
 
     public function myFiles(): View
@@ -332,33 +343,6 @@ class AdminController extends Controller
             $user->save();
         }
     }
-   
-    /////////////////////////////////////////////// Departments and Programs Controller /////////////////////////////////////////////////
-    public function destroyCollegeProgram($id)
-    {
-        try {
-            $program = Program::findOrFail($id);
-            $program->delete();
-
-            return response()->json(['success' => true, 'message' => 'Program deleted successfully.']);
-        } catch (\Exception $e) {
-            Log::error('Error deleting program: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to delete program.'], 500);
-        }
-    }
-
-    public function destroyCollegeDepartment($id)
-    {
-        try {
-            $department = Department::findOrFail($id);
-            $department->delete();
-
-            return response()->json(['success' => true, 'message' => 'Department deleted successfully.']);
-        } catch (\Exception $e) {
-            Log::error('Error deleting department: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to delete department.'], 500);
-        }
-    }
 
     /////////////////////////////////////////////// Admin Faculty Assigned or Managed /////////////////////////////////////////////////
     public function assignFaculty(Request $request)
@@ -494,6 +478,82 @@ class AdminController extends Controller
             return redirect()->route('admin.views.college')->with('error', 'Failed to add programs.');
         }
     }
+
+    public function destroyCollegeProgram($id)
+    {
+        try {
+            $program = Program::findOrFail($id);
+            $program->delete();
+
+            return response()->json(['success' => true, 'message' => 'Program deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting program: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete program.'], 500);
+        }
+    }
+
+    public function destroyCollegeDepartment($id)
+    {
+        try {
+            $department = Department::findOrFail($id);
+            $department->delete();
+
+            return response()->json(['success' => true, 'message' => 'Department deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting department: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete department.'], 500);
+        }
+    }
+
+    public function updateDepartment(Request $request, $id): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'new_programs' => 'array',
+            'remove_programs' => 'array',
+        ]);
+    
+        try {
+            $department = Department::findOrFail($id);
+            $data = $request->only('name', 'description');
+    
+            if ($request->hasFile('profile_picture')) {
+                $filePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+                $data['profile_picture'] = $filePath;
+            }
+    
+            $department->update($data);
+    
+            if ($request->filled('new_programs')) {
+                foreach ($request->new_programs as $programName) {
+                    $department->programs()->create(['name' => $programName]);
+                }
+            }
+    
+            if ($request->filled('remove_programs')) {
+                $department->programs()->whereIn('id', $request->remove_programs)->delete();
+            }
+    
+            return redirect()->route('admin.views.college')->with('success', 'Department updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.views.college')->with('error', 'Failed to update department.');
+        }
+    }
+    
+    public function removeProgram($programId): JsonResponse
+    {
+        try {
+            $program = Program::findOrFail($programId);
+            $program->delete();
+    
+            return response()->json(['success' => true, 'message' => 'Program removed successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to remove program.'], 500);
+        }
+    }
+
 
     /////////////////////////////////////////////// Edit Faculty /////////////////////////////////////////////////
     public function getFacultyData($id)

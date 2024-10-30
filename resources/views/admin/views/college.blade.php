@@ -26,6 +26,195 @@
             </div>
         </div>
 
+            <!-- Analytics Section -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+            <!-- Department Distribution -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-4">Department Distribution</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Programs per Department -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-4">Programs per Department</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="programsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- User Positions -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-4">Faculty Positions</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="positionsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Users per Program -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-4">Users per Program</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="usersProgramChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get departments data
+                const departments = @json($departments);
+                const programs = @json($programs);
+                const users = @json($users);
+                
+                // Prepare data for department chart
+                const departmentNames = departments.map(dept => {
+                    const userCount = users.filter(user => user.department_id === dept.id).length;
+                    return `${dept.name} (${userCount} users)`;
+                });
+                const programCounts = departments.map(dept => dept.programs.length);
+                
+                // Department Distribution Chart
+                new Chart(document.getElementById('departmentChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: departmentNames,
+                        datasets: [{
+                            data: programCounts,
+                            backgroundColor: [
+                                '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
+                                '#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Programs per Department Chart
+                new Chart(document.getElementById('programsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: departments.map(dept => {
+                            const userCount = users.filter(user => user.department_id === dept.id).length;
+                            return `${dept.name} (${userCount} users)`;
+                        }),
+                        datasets: [{
+                            label: 'Number of Programs',
+                            data: programCounts,
+                            backgroundColor: '#4F46E5',
+                            borderColor: '#4338CA',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+
+                // Positions Distribution Chart
+                new Chart(document.getElementById('positionsChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Dean', 'Program Head', 'Permanent', 'Part-Timer', 'Temporary'],
+                        datasets: [{
+                            data: [
+                                {{ $users->where('position', 'Dean')->count() }},
+                                {{ $users->where('position', 'Program Head')->count() }},
+                                {{ $users->where('position', 'Permanent')->count() }},
+                                {{ $users->where('position', 'Part-Timer')->count() }},
+                                {{ $users->where('position', 'Temporary')->count() }}
+                            ],
+                            backgroundColor: [
+                                '#DC2626', // Red for Dean
+                                '#2563EB', // Blue for Program Head
+                                '#059669', // Green for Faculty
+                                '#7C3AED', // Purple for Part Time
+                                '#F59E0B'  // Yellow for Temporary
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Users per Program Chart
+                const programData = programs.map(program => ({
+                    name: program.name,
+                    userCount: users.filter(user => user.program_id === program.id).length
+                }));
+
+                new Chart(document.getElementById('usersProgramChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: programData.map(p => p.name),
+                        datasets: [{
+                            label: 'Number of Users',
+                            data: programData.map(p => p.userCount),
+                            backgroundColor: '#10B981',
+                            borderColor: '#059669',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+
         <!-- Departments List -->
         <div class="bg-white shadow-md border border-gray-200 rounded-lg overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
@@ -46,19 +235,25 @@
                                 <p class="text-sm text-gray-600 group-hover:text-indigo-400 transition-colors duration-300">{{ $department->programs->count() }} programs</p>
                             </div>
                         </div>
-                        <div class="space-y-3">
-                            <button onclick="openDepartmentModal('{{ $department->id }}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <div class="flex space-x-2">
+                            <button onclick="openDepartmentModal('{{ $department->id }}')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
-                                View Programs
+                                <span class="ml-1">View</span>
                             </button>
-                            <button onclick="openConfirmModal('removeDepartment', '{{ $department->id }}')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <button onclick="openConfirmModal('removeDepartment', '{{ $department->id }}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
-                                Remove
+                                <span class="ml-1">Remove</span>
+                            </button>
+                            <button onclick="window.location.href='{{ route('admin.editDepartment', $department->id) }}'" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                <span class="ml-1">Edit</span>
                             </button>
                         </div>
                     </div>
@@ -201,59 +396,6 @@
                 </div>
             </div>
         </div>
-
-
-
-        <!-- Add Program Modal -->
-        {{-- <div id="programModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
-            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
-                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Program
-                </h3>
-                <form action="{{ route('admin.programs.store') }}" method="POST" class="space-y-6">
-                    @csrf
-                    <div class="space-y-4">
-                        <div class="relative">
-                            <label for="program_name" class="block text-sm font-medium text-gray-700 mb-1">Program Name</label>
-                            <input type="text" name="name" id="program_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
-                        </div>
-                        <div class="relative">
-                            <label for="department_id" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                            <select name="department_id" id="department_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
-                                <option value="" disabled selected>Select Department</option>
-                                @foreach($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-end space-x-4">
-                        <button type="button" onclick="closeModal('programModal')" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add Program
-                        </button>
-                    </div>
-                </form>
-                <div id="programNotification" class="hidden mt-4 text-green-600 bg-green-100 p-3 rounded-lg border border-green-200"></div>
-                
-                <!-- Loader for Program Modal -->
-                <div id="programLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
-                    <div class="loader border-t-4 border-green-500 border-solid rounded-full animate-spin h-12 w-12"></div>
-                </div>
-            </div>
-        </div> --}}
 
         <!-- Department Programs Modal -->
         <div id="departmentProgramsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
@@ -552,4 +694,6 @@
             entry.remove();
         }
     </script>
+
+
 </x-admin-layout>
