@@ -1,4 +1,9 @@
 <x-admin-layout>
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
+    </div>
+    
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Departments and Programs') }}
@@ -262,7 +267,7 @@
         </div>
 
         <!-- Add Department Modal -->
-        <div id="departmentModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div id="departmentModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-10 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -315,7 +320,7 @@
                 <div id="departmentNotification" class="hidden mt-4 text-blue-600 bg-blue-100 p-3 rounded-lg border border-blue-200"></div>
                 
                 <!-- Loader for Department Modal -->
-                <div id="departmentLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+                <div id="departmentLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl z-20">
                     <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-12 w-12"></div>
                 </div>
             </div>
@@ -333,7 +338,7 @@
         </script>
 
         <!-- Add Program Modal -->
-        <div id="programModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div id="programModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-10 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -398,7 +403,7 @@
         </div>
 
         <!-- Department Programs Modal -->
-        <div id="departmentProgramsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div id="departmentProgramsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-5 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-green-500 to-indigo-600"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center" id="departmentName">
@@ -436,7 +441,7 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div id="confirmModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div id="confirmModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-20 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-400 to-orange-500"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -507,6 +512,15 @@
     </div> --}}
 
     <script>
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }        
+
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
         }
@@ -515,6 +529,7 @@
             document.getElementById(modalId).classList.add('hidden');
         }
         function openDepartmentModal(departmentId) {
+            showLoading();
             const department = @json($departments->keyBy('id'));
             const departmentData = department[departmentId];
             
@@ -538,6 +553,7 @@
                 programsList.appendChild(li);
             });
 
+            hideLoading();
             openModal('departmentProgramsModal');
         }
 
@@ -574,6 +590,7 @@
         }
 
         function openConfirmModal(action, id) {
+            showLoading();
             const confirmModal = document.getElementById('confirmModal');
             const confirmMessage = document.getElementById('confirmMessage');
             const confirmButton = document.getElementById('confirmButton');
@@ -586,6 +603,7 @@
                 confirmButton.onclick = () => removeDepartment(id);
             }
 
+            hideLoading();
             openModal('confirmModal');
         }
 
@@ -593,6 +611,7 @@
             closeModal('confirmModal');
             const confirmButton = document.getElementById('confirmButton');
             confirmButton.disabled = true; // Disable the button to prevent multiple clicks
+            showLoading();
 
             fetch(`/admin/admin/programs/${programId}`, {
                 method: 'DELETE',
@@ -608,15 +627,18 @@
                     showNotification('Program removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
+                        hideLoading();
                     }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove program.', 'error');
+                    hideLoading();
                 }
             })
             .catch(error => {
                 confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the program.', 'error');
+                hideLoading();
             });
         }
         function closeDepartmentProgramsModal() {
@@ -627,6 +649,7 @@
             closeModal('confirmModal');
             const confirmButton = document.getElementById('confirmButton');
             confirmButton.disabled = true; // Disable the button to prevent multiple clicks
+            showLoading();
 
             fetch(`/admin/admin/admin/departments/${departmentId}`, {
                 method: 'DELETE',
@@ -642,12 +665,15 @@
                     showNotification('Department removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
+                        hideLoading();
                     }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove department.', 'error');
+                    hideLoading();
                 }
             })
             .catch(error => {
+                hideLoading();
                 confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the department.', 'error');

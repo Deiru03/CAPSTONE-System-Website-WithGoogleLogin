@@ -204,8 +204,14 @@ class AdminController extends Controller
 
     public function editDepartment($id): View
     {
-        $department = Department::findOrFail($id);
-        return view('admin.views.colleges.edit-department', compact('department'));
+        $department = Department::with('programs.users')->findOrFail($id);
+        $department1 = Department::with('programs.users')->findOrFail($id);
+        $departments = Department::with('programs')->get();
+
+        $users = User::all();
+        
+        $programs = Program::where('department_id', $id)->get();
+        return view('admin.views.colleges.edit-department', compact('department', 'programs', 'departments','department1', 'users'));
     }
 
     public function myFiles(): View

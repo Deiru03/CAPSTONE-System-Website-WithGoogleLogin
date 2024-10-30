@@ -4,8 +4,7 @@
             {{ __('Edit Department') }}
         </h2>
     </x-slot>
-    <div class="container mx-auto p-8">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-white rounded-lg overflow-hidden">
             <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
                 <div class="flex items-center mb-4">
                     <div class="relative group">
@@ -21,11 +20,11 @@
                         <label for="profile_picture" class="absolute inset-0 cursor-pointer flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 rounded-full">
                             <span class="text-white text-sm">Change</span>
                         </label>
-                        <input type="file" id="profile_picture" name="profile_picture" class="hidden" accept="image/*">
                     </div>
                     <div>
-                        <h2 class="text-3xl font-bold text-white">Edit Department Details</h2>
-                        <p class="text-blue-100 mt-2">Update information for {{ $department->name }}</p>
+                        <h2 class="text-3xl font-bold text-white">{{ $department->name }}</h2>
+                        <h3 class="text-2xl font-bold text-white mt-2">Edit Department Details</h3>
+                        <p class="text-blue-100 mt-2">Update information for <strong>{{ $department->name }}</strong></p>
                     </div>
                 </div>
                 <div class="mt-2 bg-yellow-50 rounded-lg p-3">
@@ -36,10 +35,74 @@
                 </div>
             </div>
 
+            <div class="container mx-auto px-4 py-8">
+                <div class="mb-8 flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Department Analytics</h2>
+                </div>
+        
+                <!-- Analytics Section -->
+                <div class="mt-8">
+                    <!-- Users per Program -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-indigo-200 w-full">
+                        <h3 class="text-lg font-bold mb-4">Users per Program</h3>
+                        <div class="relative" style="height: 250px;">
+                            <canvas id="usersProgramChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const programs = @json($department->programs);
+
+                        // Calculate users per program
+                        const programData = programs.map(program => ({
+                            name: program.name,
+                            userCount: program.users.length
+                        }));
+
+                        new Chart(document.getElementById('usersProgramChart'), {
+                            type: 'bar',
+                            data: {
+                                labels: programData.map(p => p.name),
+                                datasets: [{
+                                    label: 'Number of Users',
+                                    data: programData.map(p => p.userCount),
+                                    backgroundColor: '#10B981',
+                                    borderColor: '#059669',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            stepSize: 1
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+            </div>
+
             <form action="{{ route('admin.updateDepartment', $department->id) }}" method="POST" enctype="multipart/form-data" class="p-6">
                 @csrf
                 @method('PUT')
                 
+                <!-- Hidden file input moved inside form -->
+                <input type="file" id="profile_picture" name="profile_picture" class="hidden" accept="image/*">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2 md:col-span-1">
                         <div class="mb-6">
@@ -79,7 +142,11 @@
                                     <div class="p-4 bg-yellow-50 border-b border-yellow-100">
                                         <p class="text-sm text-yellow-700">
                                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                                            Note: Checking a checkbox will mark that program for deletion. Uncheck to keep the program.
+                                            Note: Checking a checkbox will mark that program for deletion. <strong>Uncheck</strong> to keep the program.
+
+                                            <br class="ml-2">
+                                            <i class="fas fa-exclamation-triangle mr-2 text-red-700"></i>
+                                            <span class="text-red-700">Caution: do not press <strong>"Enter" or "Tab"</strong> key while adding a program. it will disrupt the process.</span>
                                         </p>
                                     </div>
                                     <ul class="divide-y divide-gray-200" id="program-list">
@@ -121,7 +188,6 @@
                 </div>
             </form>
         </div>
-    </div>
 
     <script>
         document.getElementById('profile_picture').addEventListener('change', function(e) {
