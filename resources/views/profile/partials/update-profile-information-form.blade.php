@@ -253,7 +253,7 @@
                             </p>
                         @endif
 
-                        @if ($noActiveClearance && $user->user_type !== 'admin')
+                        @if ($noActiveClearance && $user->user_type !== 'Admin')
                             <p
                                 x-data="{ show: true }"
                                 x-show="show"

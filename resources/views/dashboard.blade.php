@@ -61,6 +61,26 @@
             <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-2xl font-bold mb-6 text-indigo-800 border-b-2 border-indigo-200 pb-2">Clearance Status Overview</h3>
+
+                     <!-- Completion Rate Bar -->
+                     <div class="">
+                        <h4 class="font-semibold text-lg mb-4 text-gray-700">Completion Rate</h4>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div class="bg-green-500 h-4 rounded-full" style="width: {{ $completionRate }}%;"></div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <p class="text-sm text-gray-600">{{ $completionRate }}% completed</p>
+                            @if($completionRate == 100)
+                                <a href="{{ route('faculty.generateClearanceReport') }}" class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    Generate Clearance Slip
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-xl shadow-md">
                             <h4 class="font-semibold text-lg mb-4 text-gray-700">Requirements Breakdown</h4>

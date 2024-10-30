@@ -44,6 +44,7 @@ class FacultyController extends Controller
         $uploadedRequirements = 0;
         $missingRequirements = 0;
         $returnedDocuments = 0;
+        $completionRate = 0; // Initialize completion rate
 
         if ($userClearance) {
             $totalRequirements = $userClearance->sharedClearance->clearance->requirements->count();
@@ -60,6 +61,12 @@ class FacultyController extends Controller
                 ->where('user_id', $user->id)
                 ->where('signature_status', 'return')
                 ->count();
+
+            // Calculate completion rate
+            if ($totalRequirements > 0) {
+                $completionRate = ($uploadedRequirements / $totalRequirements) * 100;
+                $completionRate = number_format($completionRate, 2); // Format to two decimal places
+            }
         }
 
         return view('dashboard', compact(
@@ -69,7 +76,8 @@ class FacultyController extends Controller
             'uploadedRequirements',
             'missingRequirements',
             'returnedDocuments',
-            'userFeedbackReturn'
+            'userFeedbackReturn',
+            'completionRate' // Pass formatted completion rate to the view
         ));
     }
     public function clearances(): View

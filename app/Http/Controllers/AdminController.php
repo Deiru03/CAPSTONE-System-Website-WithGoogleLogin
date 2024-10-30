@@ -241,7 +241,10 @@ class AdminController extends Controller
     {
         $user = Auth::user();
         $departments = Department::with('programs')->get();
-        return view ('admin.profile.edit', compact('user', 'departments'));
+        
+        $noActiveClearance = true;
+
+        return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance'));
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
