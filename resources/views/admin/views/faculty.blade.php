@@ -5,11 +5,6 @@
         </h2>
     </x-slot>
     <script src="{{ asset('js/faculty.js') }}"></script>
-
-    <!-- Loading overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
-    </div>
     
     <!-- Notification -->
     <div id="notificationModern" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">

@@ -1,8 +1,4 @@
 <x-admin-layout>
-    <!-- Loading overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
-    </div>
     
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -511,15 +507,7 @@
         </div>
     </div> --}}
 
-    <script>
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }        
+    <script>       
 
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -529,7 +517,6 @@
             document.getElementById(modalId).classList.add('hidden');
         }
         function openDepartmentModal(departmentId) {
-            showLoading();
             const department = @json($departments->keyBy('id'));
             const departmentData = department[departmentId];
             
@@ -553,7 +540,6 @@
                 programsList.appendChild(li);
             });
 
-            hideLoading();
             openModal('departmentProgramsModal');
         }
 
@@ -590,7 +576,6 @@
         }
 
         function openConfirmModal(action, id) {
-            showLoading();
             const confirmModal = document.getElementById('confirmModal');
             const confirmMessage = document.getElementById('confirmMessage');
             const confirmButton = document.getElementById('confirmButton');
@@ -603,7 +588,6 @@
                 confirmButton.onclick = () => removeDepartment(id);
             }
 
-            hideLoading();
             openModal('confirmModal');
         }
 
@@ -611,7 +595,6 @@
             closeModal('confirmModal');
             const confirmButton = document.getElementById('confirmButton');
             confirmButton.disabled = true; // Disable the button to prevent multiple clicks
-            showLoading();
 
             fetch(`/admin/admin/programs/${programId}`, {
                 method: 'DELETE',
@@ -627,18 +610,15 @@
                     showNotification('Program removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
-                        hideLoading();
                     }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove program.', 'error');
-                    hideLoading();
                 }
             })
             .catch(error => {
                 confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the program.', 'error');
-                hideLoading();
             });
         }
         function closeDepartmentProgramsModal() {
@@ -649,7 +629,6 @@
             closeModal('confirmModal');
             const confirmButton = document.getElementById('confirmButton');
             confirmButton.disabled = true; // Disable the button to prevent multiple clicks
-            showLoading();
 
             fetch(`/admin/admin/admin/departments/${departmentId}`, {
                 method: 'DELETE',
@@ -665,15 +644,12 @@
                     showNotification('Department removed successfully.', 'success');
                     setTimeout(() => {
                         location.reload();
-                        hideLoading();
                     }, 2000); // Delay reload by 3 seconds
                 } else {
                     showNotification('Failed to remove department.', 'error');
-                    hideLoading();
                 }
             })
             .catch(error => {
-                hideLoading();
                 confirmButton.disabled = false; // Re-enable the button
                 console.error('Error:', error);
                 showNotification('An error occurred while removing the department.', 'error');

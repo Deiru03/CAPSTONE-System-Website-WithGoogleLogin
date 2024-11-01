@@ -10,10 +10,10 @@
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
     
-    <!-- Loading overlay -->
+    {{-- <!-- Loading overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
-    </div>
+    </div> --}}
   
     {{-- Display User ID and Name --}}
     <div class="mb-8 p-6 flex items-center space-x-8 border border-gray-300">
@@ -106,7 +106,7 @@
         });
     
         document.getElementById('confirmResetButton').addEventListener('click', function() {
-            showLoading();
+            // showLoading();
 
             fetch('{{ route('admin.clearance.resetSpecific', ['userId' => $userClearance->user->id]) }}', {
                 method: 'POST',
@@ -117,7 +117,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                hideLoading();
+                // hideLoading();
                 if (data.success) {
                     showNotification('User clearance reset successfully.');
                     location.reload();
@@ -126,7 +126,7 @@
                 }
             })
             .catch(error => {
-                hideLoading();
+                // hideLoading();
                 console.error('Error:', error);
                 showNotification('An error occurred.', false);
             });
@@ -134,13 +134,13 @@
             closeConfirmationModal();
         });
 
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
+        // function showLoading() {
+        //     document.getElementById('loadingOverlay').classList.remove('hidden');
+        // }
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
+        // function hideLoading() {
+        //     document.getElementById('loadingOverlay').classList.add('hidden');
+        // }
     
         function closeConfirmationModal() {
             document.getElementById('confirmationModal').classList.add('hidden');
@@ -321,19 +321,19 @@
             }, 5000);
         }
 
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
+        // function showLoading() {
+        //     document.getElementById('loadingOverlay').classList.remove('hidden');
+        // }
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
+        // function hideLoading() {
+        //     document.getElementById('loadingOverlay').classList.add('hidden');
+        // }
 
         document.getElementById('feedbackForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
 
-            showLoading();
+            // showLoading();
 
             fetch('{{ route('admin.clearance.feedback.store') }}', {
                 method: 'POST',
@@ -344,7 +344,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                hideLoading();
+                // hideLoading();
                 if (data.success) {
                     closeFeedbackModal();
                     showNotification('Feedback saved successfully.');
@@ -356,7 +356,7 @@
                 }
             })
             .catch(error => {
-                hideLoading();
+                // hideLoading();
                 console.error('Error:', error);
                 showNotification('An error occurred.');
             });

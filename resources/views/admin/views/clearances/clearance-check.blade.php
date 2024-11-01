@@ -10,10 +10,10 @@
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
 
-    <!-- Loading overlay -->
+    {{-- <!-- Loading overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
-    </div>
+    </div> --}}
 
     <!-- Error Modal -->
     @if(session('error'))
@@ -312,7 +312,6 @@
             const formData = new FormData(form);
             const userIds = formData.getAll('user_ids[]');
 
-            showLoading();
             document.getElementById('confirmationModal').classList.add('hidden');
 
             fetch('{{ route('admin.clearance.resetSelected') }}', {
@@ -325,7 +324,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                hideLoading();
 
                 if (data.success) {
                     showNotification('Selected user clearances reset successfully.', true);
@@ -335,7 +333,6 @@
                 }
             })
             .catch(error => {
-                hideLoading();
                 console.error('Error:', error);
                 showNotification('An error occurred.', false);
             });
@@ -373,13 +370,13 @@
             }, 3000);
         }
 
-        // Loading Overlay Functions
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
+        // // Loading Overlay Functions
+        // function showLoading() {
+        //     document.getElementById('loadingOverlay').classList.remove('hidden');
+        // }
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
+        // function hideLoading() {
+        //     document.getElementById('loadingOverlay').classList.add('hidden');
+        // }
     </script>
 </x-admin-layout>

@@ -226,7 +226,7 @@
             </div>
         </div>
            <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm hidden z-50">
+        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 {{-- backdrop-blur-sm --}} hidden z-50">
             <div class="relative flex flex-col items-center">
                 <!-- Logo Container with Animation -->
                 <div class="w-32 h-32 mb-8 relative animate-bounce">
