@@ -176,7 +176,7 @@
                         $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Return' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
-                        <td class="px-4 py-4 text-sm text-gray-900">{{ $requirement->requirement }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ $requirement->requirement }}</td>
                         <td class="px-4 py-4">
                             @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->where('is_archived', false)->sortByDesc('created_at') as $uploaded)
                                 <div class="flex items-center justify-start space-x-3">
@@ -225,14 +225,24 @@
             
        
 
-    <!-- Add this modal at the end of your Blade file -->
-    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-10">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
-            <h3 class="text-2xl font-bold mb-6 text-gray-800">Provide Feedback</h3>
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Provide Feedback
+            </h3>
             <form id="feedbackForm">
                 @csrf
                 <input type="hidden" name="requirement_id" id="requirementId">
                 <input type="hidden" name="user_id" value="{{ $userClearance->user->id }}">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
+                    <p id="requirementName" class="text-sm text-gray-600 bg-gray-100 p-2 rounded whitespace-pre-line"></p>
+                </div>
                 <div class="mb-6">
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Signature Status</label>
                     <select name="signature_status" id="signatureStatus" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
@@ -245,27 +255,39 @@
                     <label for="feedbackMessage" class="block text-sm font-medium text-gray-700 mb-2">Feedback (Optional)</label>
                     <textarea name="message" id="feedbackMessage" rows="4" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter feedback if needed"></textarea>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeFeedbackModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">Cancel</button>
-                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Save</button>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" onclick="closeFeedbackModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Save
+                    </button>
                 </div>
-            </form> 
+            </form>
+
         </div>
     </div>
 
-     <!-- Preview Modal -->
-     <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
-            <div class="flex justify-between items-center p-4 border-b">
-                <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
-                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+    <!-- Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-3 rounded-2xl shadow-2xl max-w-5xl w-11/12 h-5/6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="previewFileName" class="text-2xl font-bold text-gray-800"></h3>
+                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700 transition duration-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <div class="flex-1 p-4 overflow-auto">
-                <iframe id="previewFrame" class="w-full h-full border-0" src=""></iframe>
+            <div class="flex-1 overflow-auto h-full">
+                <iframe id="previewFrame" class="w-full h-full border-0"></iframe>
             </div>
         </div>
     </div>
@@ -274,9 +296,11 @@
     <script>
         function openFeedbackModal(requirementId) {
             const feedback = @json($userClearance->sharedClearance->clearance->requirements->pluck('feedback', 'id'));
+            const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
             const currentFeedback = feedback[requirementId]?.find(f => f.user_id === {{ $userClearance->user->id }});
 
             document.getElementById('requirementId').value = requirementId;
+            document.getElementById('requirementName').textContent = `Requirement ID: ${requirementId}\n${requirements[requirementId]}`;
             document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'On Check';
             document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
 

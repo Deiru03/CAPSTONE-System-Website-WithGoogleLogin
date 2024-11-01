@@ -112,15 +112,18 @@ class FacultyController extends Controller
         return view('faculty.views.submitted-reports', compact('reports'));
     }
     
-    public function archive(): View
+    public function archive(Request $request): View
     {
         $user = Auth::user();
+        $sortOrder = $request->get('sort', 'desc'); // Default to newest
+
         $archivedClearances = UploadedClearance::where('user_id', $user->id)
             ->where('is_archived', true)
             ->with('requirement')
+            ->orderBy('updated_at', $sortOrder)
             ->get();
 
-        return view('faculty.views.archive', compact('archivedClearances'));
+        return view('faculty.views.archive', compact('archivedClearances', 'sortOrder'));
     }
 
     public function test(): View

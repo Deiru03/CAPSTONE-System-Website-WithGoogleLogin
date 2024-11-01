@@ -262,28 +262,50 @@
     </div>
 
     <!-- Upload Modal -->
-    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-            <h3 class="text-2xl font-semibold mb-4">{{ $userClearance->uploadedClearanceFor($requirement->id) ? 'Replace Files' : 'Upload Files' }} for Requirement ID: <span id="uploadRequirementId"></span></h3>
-            <form id="uploadForm" class="space-y-4">
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                {{ $userClearance->uploadedClearanceFor($requirement->id) ? 'Replace Files' : 'Upload Files' }}
+            </h3>
+            <form id="uploadForm" class="space-y-6">
                 @csrf
                 <input type="hidden" id="uploadUserClearanceId" name="userClearanceId">
                 <input type="hidden" id="uploadRequirementIdInput" name="requirementId">
-                <div>
-                    <label for="uploadFiles" class="block text-sm font-medium text-gray-700">Select Files</label>
-                    <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-                        <p class="text-gray-500">Drag & drop files here or click to select files</p>
-                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf, image/*, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
+                    <div class="flex flex-col space-y-1">
+                        <p class="text-sm text-gray-600">ID: <span id="uploadRequirementId" class="font-medium"></span></p>
+                        <p class="text-sm text-gray-600">Name: <span id="uploadRequirementName" class="font-medium"></span></p>
                     </div>
-                    <p class="mt-1 text-sm text-gray-500">You can upload multiple files. Allowed types: PDF<!-- DOC, DOCX, JPG, PNG.-->. Max size per file: 100mb.</p>
                 </div>
-                <div id="uploadNotification" class="hidden bg-green-100 text-green-700 p-2 rounded"></div>
-                <div id="uploadLoader" class="hidden">Uploading...</div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="closeUploadModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">
+                <div>
+                    <label for="uploadFiles" class="block text-sm font-medium text-gray-700 mb-2">Select Files</label>
+                    <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors duration-300">
+                        <p class="text-gray-500">Drag & drop files here or click to select files</p>
+                        <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 100mb.</p>
+                </div>
+                <div id="uploadNotification" class="hidden bg-green-100 text-green-700 p-3 rounded-lg"></div>
+                <div id="uploadLoader" class="hidden flex items-center justify-center">
+                    <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-8 w-8"></div>
+                    <span class="ml-2">Uploading...</span>
+                </div>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" onclick="closeUploadModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                         Cancel
                     </button>
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
                         Upload
                     </button>
                 </div>
@@ -292,33 +314,75 @@
     </div>
 
     <!-- View Files Modal -->
-    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full relative">
-            <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Uploaded Files for Requirement: <span id="modalRequirementId" class="text-blue-600"></span></h3>
-            {{--}} <h3 class="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Requirement Name: <span id="requirementName" class="text-blue-600"></span></h3> --}}
+    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 to-teal-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                View Uploaded Files
+            </h3>
+            <div class="mb-4 border-b pb-4">
+                <p class="text-gray-600">Requirement ID: <span id="modalRequirementId" class="font-medium text-gray-900"></span></p>
+                <p class="text-gray-600">Requirement Name: <span id="modalRequirementName" class="font-medium text-gray-900"></span></p>
+            </div>
             <div class="max-h-96 overflow-y-auto">
                 <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <!-- Uploaded files will be dynamically inserted here -->
                 </div>
             </div>
-            <div class="mt-6 flex justify-end">
-                <button onclick="closeViewFilesModal()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+            <div class="mt-8 flex justify-end">
+                <button onclick="closeViewFilesModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                     Close
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
+                <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 p-4 overflow-auto">
+                <iframe id="previewFrame" class="w-full h-full border-0" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-            <h3 class="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
-            <p class="text-gray-600 mb-6">Are you sure you want to delete this file?</p>
+    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Confirm Deletion
+            </h3>
+            <p class="text-lg text-gray-600 mb-8">Are you sure you want to delete this file? This action cannot be undone.</p>
             <div class="flex justify-end space-x-4">
-                <button onclick="closeDeleteConfirmationModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                <button onclick="closeDeleteConfirmationModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                     Cancel
                 </button>
-                <button id="confirmDeleteButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                <button id="confirmDeleteButton" class="px-6 py-3 bg-red-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                     Delete
                 </button>
             </div>
@@ -340,15 +404,29 @@
         </div>
     </div>
 @endif
-    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-            <h3 class="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h3>
-            <p class="text-gray-600 mb-6">Are you sure you want to delete this file?</p>
+
+    <!-- Single File Delete Modal -->
+    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Confirm Deletion
+            </h3>
+            <p class="text-lg text-gray-600 mb-8">Are you sure you want to delete this file? This action cannot be undone.</p>
             <div class="flex justify-end space-x-4">
-                <button onclick="closeSingleFileDeleteModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                <button onclick="closeSingleFileDeleteModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                     Cancel
                 </button>
-                <button id="confirmSingleFileDeleteButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300 ease-in-out">
+                <button id="confirmSingleFileDeleteButton" class="px-6 py-3 bg-red-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                     Delete
                 </button>
             </div>
@@ -363,10 +441,13 @@
          * @param {number} requirementId
          */
         function openUploadModal(sharedClearanceId, requirementId) {
+            const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
+            
             document.getElementById('uploadModal').classList.remove('hidden');
             document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
             document.getElementById('uploadRequirementId').innerText = requirementId;
             document.getElementById('uploadRequirementIdInput').value = requirementId;
+            document.getElementById('uploadRequirementName').textContent = requirements[requirementId];
         }
 
         // Function to close the upload modal
@@ -505,7 +586,13 @@
          */
         function viewFilesModal(sharedClearanceId, requirementId) {
             // Set the requirement ID in the modal
+            const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
+            
+            document.getElementById('viewFilesModal').classList.remove('hidden');
             document.getElementById('modalRequirementId').innerText = requirementId;
+            document.getElementById('modalRequirementName').innerText = requirements[requirementId];
+            document.getElementById('modalRequirementId').innerText = requirementId;
+            
 
             // Clear the current list
             const uploadedFilesGrid = document.getElementById('uploadedFilesGrid');
@@ -525,7 +612,9 @@
                     data.files.forEach(file => {
                         const fileCard = document.createElement('div');
                         fileCard.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'flex', 'flex-col', 'items-center', 'justify-between');
+                        fileCard.onclick = () => viewFile(file.url, file.name);
 
+                        // File Icon
                         const fileIcon = document.createElement('i');
                         fileIcon.classList.add('fas', 'fa-file', 'fa-3x', 'mb-2');
 
@@ -548,16 +637,16 @@
                                 fileIcon.classList.add('fa-file-alt', 'text-gray-500');
                         }
 
-                        const fileLink = document.createElement('a');
-                        fileLink.href = file.url;
-                        fileLink.target = '_blank';
-                        fileLink.classList.add('text-blue-500', 'underline', 'truncate', 'w-full', 'text-center');
+                        const fileLink = document.createElement('button');
+                        fileLink.classList.add('text-blue-500', 'underline', 'truncate', 'w-full', 'text-center', 'mb-2');
                         fileLink.innerText = file.name;
+                        fileLink.onclick = () => viewFile(file.url, file.name);
 
                         const deleteButton = document.createElement('button');
                         deleteButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded', 'mt-2');
                         deleteButton.innerText = 'Delete';
                         deleteButton.onclick = function() {
+                            event.stopPropagation();
                             openSingleFileDeleteModal(sharedClearanceId, requirementId, file.id);
                         };
 
@@ -584,6 +673,27 @@
          */
         function closeViewFilesModal() {
             document.getElementById('viewFilesModal').classList.add('hidden');
+        }
+
+        function viewFile(url, filename) {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            const previewFileName = document.getElementById('previewFileName');
+            
+            previewFrame.src = url;
+            previewFileName.textContent = filename;
+            
+            previewModal.classList.remove('hidden');
+            previewModal.classList.add('flex');
+        }
+
+        function closePreviewModal() {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            
+            previewModal.classList.add('hidden');
+            previewModal.classList.remove('flex');
+            previewFrame.src = '';
         }
 
         /**
