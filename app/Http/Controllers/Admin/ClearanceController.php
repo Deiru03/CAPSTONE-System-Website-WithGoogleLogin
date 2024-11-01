@@ -601,10 +601,13 @@ class ClearanceController extends Controller
                     // Reset user clearance status to pending in the users table
                     User::where('id', $userId)->update(['clearances_status' => 'Pending']);
 
+                    // Get the user record for this ID
+                    $currentUser = User::find($userId);
+
                     SubmittedReport::create([
                         'admin_id' => Auth::id(),
                         'user_id' => $userId,
-                        'title' => 'Reset user clearances checklist of ' . $user->name,
+                        'title' => 'Reset user clearances checklist of ' . $currentUser->name,
                         'transaction_type' => 'Reset Checklist',
                         'status' => 'Completed',
                     ]);

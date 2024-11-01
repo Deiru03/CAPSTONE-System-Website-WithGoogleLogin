@@ -21,40 +21,40 @@
                 </div>
 
                 <!-- Reports Table -->
-                <div class="overflow-x-auto shadow-md rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                <div class="max-h-[600px] overflow-y-auto">
+                    <table class="w-full table-fixed divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="w-2/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
+                                {{-- <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> --}}
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($reports as $report)
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 truncate">
                                         {{ $report->admin_name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
                                         {{ $report->title }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
                                         <span class="px-3 py-1 rounded-full text-xs font-medium 
-                                            {{ $report->transaction_type === 'deposit' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
+                                            {{ $report->transaction_type === 'Reset Checklist' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
                                             {{ $report->transaction_type }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    {{-- <td class="px-6 py-4 text-sm">
                                         <span class="px-3 py-1 rounded-full text-xs font-medium
-                                            {{ $report->status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                            {{ $report->status === 'complete' ? 'bg-green-100 text-green-800' : 
                                                 ($report->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                                             {{ $report->status }}
                                         </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    </td> --}}
+                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
                                         {{ $report->created_at->format('M d, Y H:i') }}
                                     </td>
                                 </tr>

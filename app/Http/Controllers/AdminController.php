@@ -20,6 +20,9 @@ use App\Models\UploadedClearance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use App\Models\AdminId;
+use Illuminate\Support\Facades\Storage;
+use App\Services\FileDeletionService;
+
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -280,7 +283,37 @@ class AdminController extends Controller
         return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID deleted successfully.');
     }
 
+
+    ////////////////////////////////////////////// Archive Controller /////////////////////////////////////////////////
     
+    public function deleteArchivedFile(Request $request)
+    {
+        $path = $request->path;
+        Log::info('Deleting file at path: ' . $path);
+    
+        try {
+            // Check if the file exists
+            if (!Storage::disk('local')->exists($path)) {
+                return response()->json(['success' => false, 'message' => 'File does not exist'], 404);
+            }
+    
+            // Delete the file from storage
+            Storage::disk('local')->delete($path);
+    
+            // Delete the record from the database
+            $deleted = UploadedClearance::where('file_path', $path)->delete();
+    
+            if ($deleted) {
+                return response()->json(['success' => true, 'message' => 'File deleted successfully']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Database record not found'], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error deleting file: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error deleting file'], 500);
+        }
+    }
+
     ////////////////////////////////////////////// DomPDF Controller or Generate Report /////////////////////////////////////////////////
 
     public function generateReport()
