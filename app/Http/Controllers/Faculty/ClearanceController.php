@@ -194,6 +194,8 @@ class ClearanceController extends Controller
                     'transaction_type' => 'Upload',
                     'status' => 'Okay',
                 ]);
+
+                session()->flash('success', 'Files uploaded successfully.');
     
                 return response()->json([
                     'success' => true,
@@ -209,6 +211,8 @@ class ClearanceController extends Controller
                     'status' => 'Failed',
                 ]);
 
+
+                session()->flash('error', 'Failed to upload files.');
                 return response()->json([
                     'success' => false,
                     'message' => 'Failed to upload files.',
@@ -216,6 +220,7 @@ class ClearanceController extends Controller
             }
         }
     
+        session()->flash('error', 'No files uploaded.');
         return response()->json([
             'success' => false,
             'message' => 'No files uploaded.',
@@ -273,7 +278,9 @@ class ClearanceController extends Controller
             ]);
     
             DB::commit();
-    
+
+            session()->flash('successDelete', 'All files related to this requirement have been deleted successfully and recorded.');
+            
             return response()->json([
                 'success' => true,
                 'message' => 'All files related to this requirement have been deleted successfully and recorded.',
@@ -288,6 +295,8 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Delete',
                 'status' => 'Failed',
             ]);
+
+            session()->flash('error', 'Failed to delete the files.');
     
             return response()->json([
                 'success' => false,
@@ -332,6 +341,8 @@ class ClearanceController extends Controller
                 'status' => 'Okay',
             ]);
 
+            session()->flash('successDelete', 'File deleted successfully.');
+
             return response()->json([
                 'success' => true,
                 'message' => 'File deleted successfully.',
@@ -346,6 +357,8 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Delete', 
                 'status' => 'Failed',
             ]);
+
+            session()->flash('error', 'Failed to delete the file.');
 
             return response()->json([
                 'success' => false,

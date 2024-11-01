@@ -5,6 +5,11 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <script src="//unpkg.com/alpinejs" defer></script>
+
+        <div id="uploadNotification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+            <div id="notificationIcon" class="inline-block mr-2"></div>
+            <span id="notificationMessage"></span>
+        </div>
 @if(isset($userClearance) && $userClearance)
     <style>
         table {
@@ -278,8 +283,8 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
                     <div class="flex flex-col space-y-1">
-                        <p class="text-sm text-gray-600">ID: <span id="uploadRequirementId" class="font-medium"></span></p>
-                        <p class="text-sm text-gray-600">Name: <span id="uploadRequirementName" class="font-medium"></span></p>
+                        <p class="text-sm text-gray-600">ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
+                        <p class="text-sm text-gray-600">Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
                     </div>
                 </div>
                 <div>
@@ -290,7 +295,6 @@
                     </div>
                     <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 100mb.</p>
                 </div>
-                <div id="uploadNotification" class="hidden bg-green-100 text-green-700 p-3 rounded-lg"></div>
                 <div id="uploadLoader" class="hidden flex items-center justify-center">
                     <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-8 w-8"></div>
                     <span class="ml-2">Uploading...</span>
@@ -325,8 +329,8 @@
                 View Uploaded Files
             </h3>
             <div class="mb-4 border-b pb-4">
-                <p class="text-gray-600">Requirement ID: <span id="modalRequirementId" class="font-medium text-gray-900"></span></p>
-                <p class="text-gray-600">Requirement Name: <span id="modalRequirementName" class="font-medium text-gray-900"></span></p>
+                <p class="text-gray-600">Requirement ID: <strong><span id="modalRequirementId" class="font-medium text-gray-900"></span></strong></p>
+                <p class="text-gray-600">Requirement Name: <strong><span id="modalRequirementName" class="font-medium text-blue-900"></span></strong></p>
             </div>
             <div class="max-h-96 overflow-y-auto">
                 <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -501,6 +505,7 @@
                 uploadLoader.classList.add('hidden');
 
                 if (data.success) {
+                    showNotification(data.message, 'success');
                     uploadNotification.classList.remove('hidden');
                     uploadNotification.innerText = data.message;
                     setTimeout(() => {
@@ -575,6 +580,7 @@
                 showNotification('An error occurred while deleting the file.', 'error');
             });
             closeDeleteConfirmationModal();
+            showNotification('File deleted successfully.', 'success');
         }
 
         // Function to open the view files modal
@@ -825,20 +831,53 @@
 
 <script>
     function showNotification(message, type = 'success') {
-        const notification = document.getElementById('notification');
-        notification.textContent = message;
-        
-        // Set the background color based on the type
-        notification.className = `fixed bottom-4 right-4 p-3 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50 ${
-            type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-        }`;
+        const notification = document.getElementById('uploadNotification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const notificationIcon = document.getElementById('notificationIcon');
 
-        notification.classList.remove('hidden');
+        notificationMessage.textContent = message;
 
-        // Hide notification after 3 seconds
+        // Reset classes
+        notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
+        notificationIcon.innerHTML = '';
+
+        if (type === 'success') {
+            notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        } else if (type === 'error') {
+            notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
+            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        } else if (type === 'successDelete') {
+            notification.classList.add('bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-700', 'z-100');
+            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-7 7-3-3"></path></svg>';
+        }
+
+        notification.classList.remove('hidden', 'translate-x-full');
+        notification.classList.add('translate-x-0');
+
         setTimeout(() => {
-            notification.classList.add('hidden');
+            notification.classList.remove('translate-x-0');
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+                notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700', 'bg-yellow-100', 'border-yellow-500', 'text-yellow-700');
+            }, 500);
         }, 3000);
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('success'))
+            showNotification('{{ session('success') }}', 'success');
+        @endif
+
+        @if(session('successDelete'))
+            showNotification('{{ session('successDelete') }}', 'successDelete');
+        @endif
+
+        @if(session('error'))
+            showNotification('{{ session('error') }}', 'error');
+        @endif
+    });
 </script>
     
