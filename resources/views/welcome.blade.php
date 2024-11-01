@@ -10,6 +10,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
         <!-- Styles -->
         <style>
             /* Glitter cursor styles */
@@ -332,6 +334,94 @@
                     trail.remove();
                     trails = trails.filter(t => t !== trail);
                 }, 1000);
+            });
+        </script>
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 hidden z-50">
+            <div class="flex flex-col items-center">
+                <div class="loader-container">
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                </div>
+                <div class="mt-6 text-white font-semibold text-xl tracking-wider animate-pulse">
+                    Loading<span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .loader-container {
+                position: relative;
+                width: 100px;
+                height: 100px;
+            }
+
+            .loader-ring {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 4px solid transparent;
+                border-top-color: #ffffff;
+                animation: spin 1.5s linear infinite;
+            }
+
+            .loader-ring:nth-child(2) {
+                width: 80%;
+                height: 80%;
+                top: 10%;
+                left: 10%;
+                border-top-color: #60a5fa;
+                animation-duration: 1.8s;
+                animation-direction: reverse;
+            }
+
+            .loader-ring:nth-child(3) {
+                width: 60%;
+                height: 60%;
+                top: 20%;
+                left: 20%;
+                border-top-color: #34d399;
+                animation-duration: 2.1s;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .dot-1, .dot-2, .dot-3 {
+                animation: dots 1.5s infinite;
+                opacity: 0;
+            }
+
+            .dot-2 { animation-delay: 0.5s; }
+            .dot-3 { animation-delay: 1s; }
+
+            @keyframes dots {
+                0%, 100% { opacity: 0; }
+                50% { opacity: 1; }
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+
+                function showLoading() {
+                    loadingSpinner.classList.remove('hidden');
+                }
+
+                function hideLoading() {
+                    loadingSpinner.classList.add('hidden');
+                }
+
+                // Show loading spinner on page unload
+                window.addEventListener('beforeunload', showLoading);
+
+                // Hide loading spinner on page load
+                window.addEventListener('load', hideLoading);
             });
         </script>
     </body>

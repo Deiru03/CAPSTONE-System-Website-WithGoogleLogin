@@ -123,6 +123,113 @@
             </div>
         </div>
     </footer>
+       <!-- Loading Spinner -->
+       <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm hidden z-50">
+        <div class="relative flex flex-col items-center">
+            <!-- Logo Container with Animation -->
+            <div class="w-32 h-32 mb-8 relative animate-bounce">
+                <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-full h-full object-contain animate-pulse">
+                <!-- Spinning ring around logo -->
+                <div class="absolute inset-0 rounded-full border-8 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin"></div>
+            </div>
+
+            <!-- Animated Loading Text -->
+            <div class="text-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-white text-xl font-medium tracking-wider">
+                        <span class="inline-block animate-pulse">C</span>
+                        <span class="inline-block animate-pulse delay-75">l</span>
+                        <span class="inline-block animate-pulse delay-100">e</span>
+                        <span class="inline-block animate-pulse delay-150">a</span>
+                        <span class="inline-block animate-pulse delay-200">r</span>
+                        <span class="inline-block animate-pulse delay-300">V</span>
+                        <span class="inline-block animate-pulse delay-400">a</span>
+                        <span class="inline-block animate-pulse delay-500">u</span>
+                        <span class="inline-block animate-pulse delay-600">l</span>
+                        <span class="inline-block animate-pulse delay-700">t</span>
+                    </span>
+                </div>
+                <div class="mt-2 text-indigo-300 loading-dots">Loading</div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-48 h-1 bg-gray-700 rounded-full mt-4 overflow-hidden">
+                <div class="progress-bar h-full w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 background-animate"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        .background-animate {
+            background-size: 400%;
+            animation: AnimateBackground 3s ease infinite;
+        }
+
+        @keyframes AnimateBackground {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .delay-75 { animation-delay: 75ms; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-150 { animation-delay: 150ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-600 { animation-delay: 600ms; }
+        .delay-700 { animation-delay: 700ms; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            function showLoading() {
+                loadingSpinner.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling while loading
+            }
+
+            function hideLoading() {
+                loadingSpinner.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+
+            // Show loading spinner on page unload
+            window.addEventListener('beforeunload', showLoading);
+
+            // Hide loading spinner on page load
+            window.addEventListener('load', hideLoading);
+
+            // Add loading spinner for all form submissions
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', showLoading);
+            });
+
+            // Add loading spinner for all links that are not "#" or javascript:void(0)
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
+                    link.addEventListener('click', showLoading);
+                }
+            });
+        });
+    </script>
     
 </body>
 
