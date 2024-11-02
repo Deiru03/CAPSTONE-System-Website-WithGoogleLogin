@@ -18,6 +18,8 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'user_type' => ['required', 'string', 'in:Admin,Faculty'],
+            'admin_id' => ['required', 'string', 'exists:admin_ids,admin_id'],
         ];
     }
 }

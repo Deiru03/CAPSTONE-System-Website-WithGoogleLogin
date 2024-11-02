@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Models\AdminId;
 class ProfileController extends Controller
 {
     /**
@@ -35,29 +36,49 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user = $request->user();
+        $user->fill($request->validated());
+    
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
+    
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
             $path = $file->store('profile_pictures', 'public');
-            $request->user()->profile_picture = '/storage/' . $path;
+            $user->profile_picture = '/storage/' . $path;
         }
-
-        $request->user()->clearances_status = 'pending';
-        $request->user()->checked_by = 'System';
+    
+        // Handle admin_id for Admin users
+        if ($request->has('admin_id')) {
+            $request->validate([
+                'admin_id' => ['required', 'exists:admin_ids,admin_id'],
+            ], [
+                'admin_id.exists' => 'The provided Admin ID does not exist.',
+            ]);
+    
+            $adminId = AdminId::where('admin_id', $request->admin_id)->first();
+            if ($adminId->is_assigned && $adminId->admin_id !== $user->admin_id_registered) {
+                return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
+            }
+            
+            $user->user_type = $request->input('user_type');
+            AdminId::where('admin_id', $request->admin_id)->update(['is_assigned' => true]);
+            $user->admin_id_registered = $request->admin_id;
+        }
+    
+        $user->clearances_status = 'pending';
+        $user->checked_by = 'System';
         $program = \App\Models\Program::find($request->input('program_id'));
-        $request->user()->program = $program ? $program->name : null;
-        $request->user()->position = $request->input('position');
-        $request->user()->units = $request->input('units');
-        $request->user()->department_id = $request->input('department_id');
-        $request->user()->program_id = $request->input('program_id');
-
-
-        $request->user()->save();
-
+        
+        $user->program = $program ? $program->name : null;
+        $user->position = $request->input('position');
+        $user->units = $request->input('units');
+        $user->department_id = $request->input('department_id');
+        $user->program_id = $request->input('program_id');
+    
+        $user->save();
+    
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

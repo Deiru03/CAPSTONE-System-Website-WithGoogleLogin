@@ -84,10 +84,34 @@
 
                         <div>
                             <x-input-label for="user_type" :value="__('User Type')" />
-                            <x-text-input id="user_type" name="user_type" type="text" class="mt-1 block w-full" :value="old('user_type', $user->user_type)" required autocomplete="user_type" disabled readonly />
+                            <select id="user_type" name="user_type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
+                                <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
+                            </select>
                             <x-input-error class="mt-2" :messages="$errors->get('user_type')" />
-                            <p class="text-sm text-gray-600 mt-2">{{ __('Only Admin can change your user type.') }}</p>
+                            <p class="text-sm text-gray-600 mt-2">{{ __('You can only change to admin role if you have Admin ID.') }}</p>
                         </div>
+                        
+                        <!-- Admin ID (conditionally displayed) -->
+                        <div id="admin_id_field" class="hidden">
+                            <x-input-label for="admin_id" :value="__('Admin ID')" />
+                            <x-text-input id="admin_id" name="admin_id" type="text" class="mt-1 block w-full" :value="old('admin_id', $user->admin_id_registered)" />
+                            <x-input-error class="mt-2" :messages="$errors->get('admin_id')" />
+                        </div>
+                        
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const userTypeSelect = document.getElementById('user_type');
+                                const adminIdField = document.getElementById('admin_id_field');
+                        
+                                function toggleAdminIdField() {
+                                    adminIdField.style.display = userTypeSelect.value === 'Admin' ? 'block' : 'none';
+                                }
+                        
+                                userTypeSelect.addEventListener('change', toggleAdminIdField);
+                                toggleAdminIdField(); // Initial check on page load
+                            });
+                        </script>
 
                         <div>
                             <x-input-label for="user_id" :value="__('User ID #:')" />
@@ -233,7 +257,7 @@
                             {{ __('Save Changes') }}
                         </x-primary-button>
             
-                        @if (session('status') === 'profile-updated')
+                        @if (session('status') === 'profile-updated' && !$errors->any())
                             <p
                                 x-data="{ show: true }"
                                 x-show="show"
@@ -243,13 +267,33 @@
                                 x-transition:leave="transition ease-in duration-300"
                                 x-transition:leave-start="opacity-100 transform scale-100"
                                 x-transition:leave-end="opacity-0 transform scale-90"
-                                x-init="setTimeout(() => show = false, 2000)"
+                                x-init="setTimeout(() => show = false, 6000)"
                                 class="text-sm text-green-600 bg-green-100 px-4 py-2 rounded-full font-semibold"
                             >
                                 <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
                                 {{ __('Profile Updated Successfully') }}
+                            </p>
+                        @endif
+
+                        @if ($errors->any() && session('status') !== 'profile-updated')
+                            <p
+                                x-data="{ show: true }"
+                                x-show="show"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 transform scale-90"
+                                x-transition:enter-end="opacity-100 transform scale-100"
+                                x-transition:leave="transition ease-in duration-300"
+                                x-transition:leave-start="opacity-100 transform scale-100"
+                                x-transition:leave-end="opacity-0 transform scale-90"
+                                x-init="setTimeout(() => show = false, 6000)"
+                                class="text-sm text-red-600 bg-red-100 px-4 py-2 rounded-full font-semibold"
+                            >
+                                <svg class="w-5 h-5 inline mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                {{ __('There was an error updating the profile.') }}
                             </p>
                         @endif
 
@@ -277,6 +321,15 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Script for Admin ID -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const userType = "{{ $user->user_type }}";
+                        const adminIdField = document.getElementById('admin_id_field');
+                        adminIdField.style.display = userType === 'Admin' ? 'block' : 'none';
+                    });
+                </script>
             
                 <!-- Script for Notification -->
                 <script>
@@ -317,7 +370,7 @@
                                 notification.classList.add('hidden');
                                 notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
                             }, 500);
-                        }, 1100);
+                        }, 2000);
                     }
                 </script>
             </form>
