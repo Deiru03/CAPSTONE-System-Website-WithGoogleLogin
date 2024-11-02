@@ -149,11 +149,18 @@
             </div>
         @endif
 
+        <div id="missingTracker" class="mb-4">
+            <span id="missingCount"></span>
+            <button id="findMissing" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
+                Find Missing
+            </button>
+        </div>
+        
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg text-sm">
                 <thead class="bg-indigo-600 text-white">
                     <tr>
-                        <th class="py-2 px-3 text-left hidden">ID</th>
+                        <th class="py-2 px-3 text-left">ID</th>
                         <th class="py-2 px-3 text-left">Requirement</th>
                         <th class="py-2 px-3 text-center">Check Status</th>
                         <th class="py-2 px-3 text-left">Feedback</th>
@@ -163,8 +170,17 @@
                 <tbody>
                     @foreach($userClearance->sharedClearance->clearance->requirements as $requirement)
                         @if(!$requirement->is_archived)
-                            <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                <td class="border-t px-3 py-2 hidden">{{ $requirement->id }}</td>
+                            @php
+                                $uploadedFiles = App\Models\UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
+                                    ->where('requirement_id', $requirement->id)
+                                    ->where('user_id', $userClearance->user_id)
+                                    ->get();
+                    
+                                $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
+                            @endphp
+                    
+                            <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200" data-uploaded="{{ $hasNonArchivedUpload ? 'true' : 'false' }}">
+                                <td class="border-t px-3 py-2 text-gray-400">{{ $requirement->id }}</td>
                                 <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
                                 <td class="border-t px-3 py-2">
                                     @php
@@ -460,6 +476,31 @@
     </div>
 
     <script>
+        // Find Missing Requirements
+        document.addEventListener('DOMContentLoaded', function() {
+            const requirements = document.querySelectorAll('.requirement-row');
+            const missingCountElement = document.getElementById('missingCount');
+            const findMissingButton = document.getElementById('findMissing');
+
+            let missingCount = 0;
+            requirements.forEach(row => {
+                const isUploaded = row.dataset.uploaded === 'true';
+                if (!isUploaded) {
+                    missingCount++;
+                }
+            });
+
+            missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
+
+            findMissingButton.addEventListener('click', function() {
+                for (let row of requirements) {
+                    if (row.dataset.uploaded !== 'true') {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        break;
+                    }
+                }
+            });
+        });
         /**
          * Function to open the Upload modal.
          *
