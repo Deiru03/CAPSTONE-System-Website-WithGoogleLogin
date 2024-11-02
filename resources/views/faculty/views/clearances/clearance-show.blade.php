@@ -293,11 +293,16 @@
                         <p class="text-gray-500">Drag & drop files here or click to select files</p>
                         <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 100mb.</p>
+                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 1gb.</p>
                 </div>
                 <div id="uploadLoader" class="hidden flex items-center justify-center">
                     <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-8 w-8"></div>
                     <span class="ml-2">Uploading...</span>
+                </div>
+                <div id="uploadProgressContainer" class="hidden mt-4">
+                    <div class="w-full bg-gray-200 rounded-full">
+                        <div id="uploadProgressBar" class="bg-blue-500 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: 0%">0%</div>
+                    </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" onclick="closeUploadModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
@@ -471,6 +476,8 @@
             const fileInput = document.getElementById('uploadFiles');
             const uploadNotification = document.getElementById('uploadNotification');
             const uploadLoader = document.getElementById('uploadLoader');
+            const uploadProgressContainer = document.getElementById('uploadProgressContainer');
+            const uploadProgressBar = document.getElementById('uploadProgressBar');
 
             if (fileInput.files.length === 0) {
                 showNotification('Please select at least one file to upload.', 'error');
@@ -491,40 +498,48 @@
             }
 
             uploadLoader.classList.remove('hidden');
+            uploadProgressContainer.classList.remove('hidden');
             uploadNotification.classList.add('hidden');
 
-            fetch(`/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                uploadLoader.classList.add('hidden');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
+            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
 
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    uploadNotification.classList.remove('hidden');
-                    uploadNotification.innerText = data.message;
-                    setTimeout(() => {
-                        closeUploadModal();
-                        location.reload();
-                    }, 1500);
-                } else {
-                    if (data.errors) {
-                        showNotification(JSON.stringify(data.errors), 'error');
-                    } else {
-                        showNotification(data.message || 'Failed to upload files.', 'error');
-                    }
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    uploadProgressBar.style.width = percentComplete + '%';
+                    uploadProgressBar.textContent = Math.round(percentComplete) + '%';
                 }
-            })
-            .catch(error => {
+            };
+
+            xhr.onload = function() {
                 uploadLoader.classList.add('hidden');
-                console.error('Error uploading files:', error);
+                uploadProgressContainer.classList.add('hidden');
+
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        setTimeout(() => {
+                            closeUploadModal();
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification(response.message || 'Failed to upload files.', 'error');
+                    }
+                } else {
+                    showNotification('An error occurred while uploading the files.', 'error');
+                }
+            };
+
+            xhr.onerror = function() {
+                uploadLoader.classList.add('hidden');
+                uploadProgressContainer.classList.add('hidden');
                 showNotification('An error occurred while uploading the files.', 'error');
-            });
+            };
+
+            xhr.send(formData);
         });
 
         /**
