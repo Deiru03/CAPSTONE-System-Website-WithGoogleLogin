@@ -336,7 +336,7 @@
                 }, 1000);
             });
         </script>
-        <!-- Loading Spinner -->
+        {{-- <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 hidden z-50">
             <div class="flex flex-col items-center">
                 <div class="loader-container">
@@ -423,6 +423,6 @@
                 // Hide loading spinner on page load
                 window.addEventListener('load', hideLoading);
             });
-        </script>
+        </script> --}}
     </body>
 </html>

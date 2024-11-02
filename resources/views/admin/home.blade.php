@@ -132,9 +132,8 @@
                 <!-- Spinning ring around logo -->
                 <div class="absolute inset-0 rounded-full border-8 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin"></div>
             </div>
-
             <!-- Animated Loading Text -->
-            <div class="text-center">
+            <div class="text-center p-6">
                 <div class="flex items-center space-x-2">
                     <span class="text-white text-xl font-medium tracking-wider">
                         <span class="inline-block animate-pulse">C</span>
@@ -149,43 +148,16 @@
                         <span class="inline-block animate-pulse delay-700">t</span>
                     </span>
                 </div>
-                <div class="mt-2 text-indigo-300 loading-dots">Loading</div>
+                <div id="progressText" class="mt-2 text-indigo-300">Loading... 0%</div>
             </div>
-
             <!-- Progress bar -->
-            <div class="w-48 h-1 bg-gray-700 rounded-full mt-4 overflow-hidden">
-                <div class="progress-bar h-full w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 background-animate"></div>
-            </div>
+            <div class="w-64 bg-gray-700 rounded-full h-1 overflow-hidden mt-4">
+                <div id="progressBar" class="w-0 h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 transition-all duration-300 ease-out"></div>
+            </div>     
         </div>
     </div>
 
     <style>
-        .loading-dots::after {
-            content: '';
-            animation: dots 1.5s infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-            80%, 100% { content: ''; }
-        }
-
-        .background-animate {
-            background-size: 400%;
-            animation: AnimateBackground 3s ease infinite;
-        }
-
-        @keyframes AnimateBackground {
-            0%, 100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
         .delay-75 { animation-delay: 75ms; }
         .delay-100 { animation-delay: 100ms; }
         .delay-150 { animation-delay: 150ms; }
@@ -200,37 +172,69 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadingSpinner = document.getElementById('loadingSpinner');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            let progress = 0;
 
-            function showLoading() {
-                loadingSpinner.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling while loading
+            function updateProgress(percent) {
+                progressBar.style.width = `${percent}%`;
+                progressText.textContent = `Loading... ${Math.round(percent)}%`;
             }
 
-            function hideLoading() {
-                loadingSpinner.classList.add('hidden');
-                document.body.style.overflow = ''; // Restore scrolling
+            function simulateProgress() {
+                const interval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += Math.random() * 30;
+                        if (progress > 90) progress = 90;
+                        updateProgress(progress);
+                    }
+                }, 500);
+                return interval;
+            }
+
+            function showLoading() {
+                progress = 0;
+                updateProgress(0);
+                loadingSpinner.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                return simulateProgress();
+            }
+
+            function hideLoading(interval) {
+                clearInterval(interval);
+                progress = 100;
+                updateProgress(100);
+                setTimeout(() => {
+                    loadingSpinner.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 500);
             }
 
             // Show loading spinner on page unload
-            window.addEventListener('beforeunload', showLoading);
-
-            // Hide loading spinner on page load
-            window.addEventListener('load', hideLoading);
+            window.addEventListener('beforeunload', () => {
+                const interval = showLoading();
+                setTimeout(() => hideLoading(interval), 1000);
+            });
 
             // Add loading spinner for all form submissions
             document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', showLoading);
+                form.addEventListener('submit', () => {
+                    const interval = showLoading();
+                    setTimeout(() => hideLoading(interval), 1000);
+                });
             });
 
             // Add loading spinner for all links that are not "#" or javascript:void(0)
             document.querySelectorAll('a').forEach(link => {
                 if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
-                    link.addEventListener('click', showLoading);
+                    link.addEventListener('click', () => {
+                        const interval = showLoading();
+                        setTimeout(() => hideLoading(interval), 1000);
+                    });
                 }
             });
         });
     </script>
-    
 </body>
 
 </html>

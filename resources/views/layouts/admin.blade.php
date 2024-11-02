@@ -249,113 +249,119 @@
             </div>
         </div>
 
-             <!-- Loading Spinner -->
-             <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm hidden z-50">
-                <div class="relative flex flex-col items-center">
+                <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm hidden z-50">
+            <div class="relative flex flex-col items-center">
                     <!-- Logo Container with Animation -->
-                    <div class="w-32 h-32 mb-8 relative animate-bounce">
-                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-full h-full object-contain animate-pulse">
-                        <!-- Spinning ring around logo -->
-                        <div class="absolute inset-0 rounded-full border-8 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin"></div>
+                <div class="w-32 h-32 mb-8 relative animate-bounce">
+                    <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="w-full h-full object-contain animate-pulse">
+                    <!-- Spinning ring around logo -->
+                    <div class="absolute inset-0 rounded-full border-8 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin"></div>
+                </div>
+                <!-- Loading Text -->
+                <div class="text-center mt-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-white text-xl font-medium tracking-wider">
+                            <span class="inline-block animate-pulse">C</span>
+                            <span class="inline-block animate-pulse delay-75">l</span>
+                            <span class="inline-block animate-pulse delay-100">e</span>
+                            <span class="inline-block animate-pulse delay-150">a</span>
+                            <span class="inline-block animate-pulse delay-200">r</span>
+                            <span class="inline-block animate-pulse delay-300">V</span>
+                            <span class="inline-block animate-pulse delay-400">a</span>
+                            <span class="inline-block animate-pulse delay-500">u</span>
+                            <span class="inline-block animate-pulse delay-600">l</span>
+                            <span class="inline-block animate-pulse delay-700">t</span>
+                        </span>
                     </div>
-    
-                    <!-- Animated Loading Text -->
-                    <div class="text-center">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-white text-xl font-medium tracking-wider">
-                                <span class="inline-block animate-pulse">C</span>
-                                <span class="inline-block animate-pulse delay-75">l</span>
-                                <span class="inline-block animate-pulse delay-100">e</span>
-                                <span class="inline-block animate-pulse delay-150">a</span>
-                                <span class="inline-block animate-pulse delay-200">r</span>
-                                <span class="inline-block animate-pulse delay-300">V</span>
-                                <span class="inline-block animate-pulse delay-400">a</span>
-                                <span class="inline-block animate-pulse delay-500">u</span>
-                                <span class="inline-block animate-pulse delay-600">l</span>
-                                <span class="inline-block animate-pulse delay-700">t</span>
-                            </span>
-                        </div>
-                        <div class="mt-2 text-indigo-300 loading-dots">Loading</div>
-                    </div>
-    
-                    <!-- Progress bar -->
-                    <div class="w-48 h-1 bg-gray-700 rounded-full mt-4 overflow-hidden">
-                        <div class="progress-bar h-full w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 background-animate"></div>
-                    </div>
+                    <div id="progressText" class="mt-2 text-indigo-300">Loading... 0%</div>
+                </div>
+
+                  <!-- Loading Progress -->
+                  <div class="w-64 bg-gray-700 rounded-full h-1 overflow-hidden mt-4">
+                    <div id="progressBar" class="w-0 h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 transition-all duration-300 ease-out"></div>
                 </div>
             </div>
-    
-            <style>
-                .loading-dots::after {
-                    content: '';
-                    animation: dots 1.5s infinite;
+        </div>
+
+        <style>
+            .delay-75 { animation-delay: 75ms; }
+            .delay-100 { animation-delay: 100ms; }
+            .delay-150 { animation-delay: 150ms; }
+            .delay-200 { animation-delay: 200ms; }
+            .delay-300 { animation-delay: 300ms; }
+            .delay-400 { animation-delay: 400ms; }
+            .delay-500 { animation-delay: 500ms; }
+            .delay-600 { animation-delay: 600ms; }
+            .delay-700 { animation-delay: 700ms; }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                let progress = 0;
+
+                function updateProgress(percent) {
+                    progressBar.style.width = `${percent}%`;
+                    progressText.textContent = `Loading... ${Math.round(percent)}%`;
                 }
-    
-                @keyframes dots {
-                    0%, 20% { content: '.'; }
-                    40% { content: '..'; }
-                    60% { content: '...'; }
-                    80%, 100% { content: ''; }
-                }
-    
-                .background-animate {
-                    background-size: 400%;
-                    animation: AnimateBackground 1s ease infinite;
-                }
-    
-                @keyframes AnimateBackground {
-                    0%, 100% {
-                        background-position: 0% 50%;
-                    }
-                    50% {
-                        background-position: 100% 50%;
-                    }
-                }
-    
-                .delay-75 { animation-delay: 75ms; }
-                .delay-100 { animation-delay: 100ms; }
-                .delay-150 { animation-delay: 150ms; }
-                .delay-200 { animation-delay: 200ms; }
-                .delay-300 { animation-delay: 300ms; }
-                .delay-400 { animation-delay: 400ms; }
-                .delay-500 { animation-delay: 500ms; }
-                .delay-600 { animation-delay: 600ms; }
-                .delay-700 { animation-delay: 700ms; }
-            </style>
-    
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const loadingSpinner = document.getElementById('loadingSpinner');
-    
-                    function showLoading() {
-                        loadingSpinner.classList.remove('hidden');
-                        document.body.style.overflow = 'hidden'; // Prevent scrolling while loading
-                    }
-    
-                    function hideLoading() {
-                        loadingSpinner.classList.add('hidden');
-                        document.body.style.overflow = ''; // Restore scrolling
-                    }
-    
-                    // Show loading spinner on page unload
-                    window.addEventListener('beforeunload', showLoading);
-    
-                    // Hide loading spinner on page load
-                    window.addEventListener('load', hideLoading);
-    
-                    // Add loading spinner for all form submissions
-                    document.querySelectorAll('form').forEach(form => {
-                        form.addEventListener('submit', showLoading);
-                    });
-    
-                    // Add loading spinner for all links that are not "#" or javascript:void(0)
-                    document.querySelectorAll('a').forEach(link => {
-                        if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
-                            link.addEventListener('click', showLoading);
+
+                function simulateProgress() {
+                    const interval = setInterval(() => {
+                        if (progress < 90) {
+                            progress += Math.random() * 30;
+                            if (progress > 90) progress = 90;
+                            updateProgress(progress);
                         }
+                    }, 500);
+                    return interval;
+                }
+
+                function showLoading() {
+                    progress = 0;
+                    updateProgress(0);
+                    loadingSpinner.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    return simulateProgress();
+                }
+
+                function hideLoading(interval) {
+                    clearInterval(interval);
+                    progress = 100;
+                    updateProgress(100);
+                    setTimeout(() => {
+                        loadingSpinner.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    }, 500);
+                }
+
+                // Show loading spinner on page unload
+                window.addEventListener('beforeunload', () => {
+                    const interval = showLoading();
+                    setTimeout(() => hideLoading(interval), 1000);
+                });
+
+                // Handle form submissions
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', () => {
+                        const interval = showLoading();
+                        setTimeout(() => hideLoading(interval), 1000);
                     });
                 });
-            </script>
+
+                // Handle link clicks
+                document.querySelectorAll('a').forEach(link => {
+                    if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
+                        link.addEventListener('click', () => {
+                            const interval = showLoading();
+                            setTimeout(() => hideLoading(interval), 1000);
+                        });
+                    }
+                });
+            });
+        </script>
         
            {{-- <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 hidden z-50">
