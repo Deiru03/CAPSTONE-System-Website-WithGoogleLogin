@@ -6,10 +6,27 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <script src="//unpkg.com/alpinejs" defer></script>
 
+        <!-- Upload Notification -->
         <div id="uploadNotification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
             <div id="notificationIcon" class="inline-block mr-2"></div>
             <span id="notificationMessage"></span>
         </div>
+
+        <!-- Upload Tracker -->
+        <div id="uploadTracker" class="fixed bottom-4 right-4 w-80 bg-white shadow-2xl rounded-xl p-6 hidden transform transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-blue-500 hover:border-blue-700">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-bold text-gray-800 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                    </svg>
+                    Upload Progress
+                </h4>
+                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">In Progress</span>
+            </div>
+            <div id="uploadList" class="space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"></div>
+        </div>
+
+
 @if(isset($userClearance) && $userClearance)
     <style>
         table {
@@ -309,7 +326,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        Cancel
+                        Close
                     </button>
                     <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -894,5 +911,101 @@
             showNotification('{{ session('error') }}', 'error');
         @endif
     });
+</script>
+
+<!-- Script for Upload Tracker -->
+<script>
+    function createUploadProgress(fileName) {
+       const uploadList = document.getElementById('uploadList');
+       const uploadItem = document.createElement('div');
+       uploadItem.className = 'mb-2';
+       uploadItem.innerHTML = `
+           <div class="text-sm">${fileName}</div>
+           <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+               <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+           </div>
+           <div class="text-xs text-right">0%</div>
+       `;
+       uploadList.appendChild(uploadItem);
+       return uploadItem;
+   }
+
+   function updateUploadProgress(uploadItem, percentComplete) {
+       const progressBar = uploadItem.querySelector('.bg-blue-500');
+       const percentText = uploadItem.querySelector('.text-xs');
+       progressBar.style.width = percentComplete + '%';
+       percentText.textContent = Math.round(percentComplete) + '%';
+   }
+
+   function showUploadTracker() {
+       const uploadTracker = document.getElementById('uploadTracker');
+       uploadTracker.classList.remove('hidden');
+   }
+
+   function hideUploadTracker() {
+       const uploadTracker = document.getElementById('uploadTracker');
+       uploadTracker.classList.add('hidden');
+   }
+
+   document.getElementById('uploadForm').addEventListener('submit', function(event) {
+       event.preventDefault();
+
+       const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
+       const requirementId = document.getElementById('uploadRequirementIdInput').value;
+       const fileInput = document.getElementById('uploadFiles');
+
+       if (fileInput.files.length === 0) {
+           showNotification('Please select at least one file to upload.', 'error');
+           return;
+       }
+
+       showUploadTracker();
+
+       const files = fileInput.files;
+       for (let i = 0; i < files.length; i++) {
+           const formData = new FormData();
+           formData.append('files[]', files[i]);
+
+           const uploadItem = createUploadProgress(files[i].name);
+
+           const xhr = new XMLHttpRequest();
+           xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
+           xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+
+           xhr.upload.onprogress = function(event) {
+               if (event.lengthComputable) {
+                   const percentComplete = (event.loaded / event.total) * 100;
+                   updateUploadProgress(uploadItem, percentComplete);
+               }
+           };
+
+           xhr.onload = function() {
+               if (xhr.status === 200) {
+                   const response = JSON.parse(xhr.responseText);
+                   if (response.success) {
+                       showNotification(response.message, 'success');
+                   } else {
+                       showNotification(response.message || 'Failed to upload files.', 'error');
+                   }
+               } else {
+                   showNotification('An error occurred while uploading the files.', 'error');
+               }
+               uploadItem.remove();
+               if (document.getElementById('uploadList').children.length === 0) {
+                   hideUploadTracker();
+               }
+           };
+
+           xhr.onerror = function() {
+               showNotification('An error occurred while uploading the files.', 'error');
+               uploadItem.remove();
+               if (document.getElementById('uploadList').children.length === 0) {
+                   hideUploadTracker();
+               }
+           };
+
+           xhr.send(formData);
+       }
+   });
 </script>
     
