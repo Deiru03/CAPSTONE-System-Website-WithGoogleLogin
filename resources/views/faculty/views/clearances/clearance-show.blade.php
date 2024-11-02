@@ -1,30 +1,37 @@
  <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <script src="//unpkg.com/alpinejs" defer></script>
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
 
-        <!-- Upload Notification -->
-        <div id="uploadNotification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
-            <div id="notificationIcon" class="inline-block mr-2"></div>
-            <span id="notificationMessage"></span>
+    <!-- Upload Notification -->
+    <div id="uploadNotification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+        <div id="notificationIcon" class="inline-block mr-2"></div>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Upload Tracker -->
+    <div id="uploadTracker" class="fixed bottom-4 right-4 w-80 bg-white shadow-2xl rounded-xl p-6 hidden transform transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-blue-500 hover:border-blue-700">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-bold text-gray-800 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                Upload Progress
+            </h4>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">In Progress</span>
         </div>
+        <div id="uploadList" class="space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"></div>
+    </div>
 
-        <!-- Upload Tracker -->
-        <div id="uploadTracker" class="fixed bottom-4 right-4 w-80 bg-white shadow-2xl rounded-xl p-6 hidden transform transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-blue-500 hover:border-blue-700">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-bold text-gray-800 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                    </svg>
-                    Upload Progress
-                </h4>
-                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">In Progress</span>
-            </div>
-            <div id="uploadList" class="space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"></div>
-        </div>
+    <button id="returnToTop" class="hidden fixed bottom-4 right-4 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-all duration-300 ease-in-out transform hover:scale-110 hover:-translate-y-1 shadow-lg hover:shadow-xl text-sm font-bold flex items-center space-x-2 animate-bounce">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+        <span>Back to Top</span>
+    </button>
 
 
 @if(isset($userClearance) && $userClearance)
@@ -149,11 +156,38 @@
             </div>
         @endif
 
-        <div id="missingTracker" class="mb-4">
-            <span id="missingCount"></span>
-            <button id="findMissing" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
-                Find Missing
-            </button>
+        <div id="missingTracker" class="mb-6 bg-transparent p-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span id="missingCount" class="text-sm font-medium text-gray-600"></span>
+                        <button id="findMissing" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-200 text-sm font-medium ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            Find Missing Docs
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span id="returnCount" class="text-sm font-medium text-gray-600"></span>
+                        <button id="findReturn" class="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200 text-sm font-medium ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+                            </svg>
+                            Find Return Docs
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="overflow-x-auto">
@@ -177,6 +211,12 @@
                                     ->get();
                     
                                 $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
+                                $checkStatus = $hasNonArchivedUpload ? 'Uploaded' : 'No Upload';
+
+                                // Example logic for "Return" status
+                                if ($requirement->needs_return) {
+                                    $checkStatus = 'Return';
+                                }
                             @endphp
                     
                             <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200" data-uploaded="{{ $hasNonArchivedUpload ? 'true' : 'false' }}">
@@ -199,9 +239,32 @@
 
                                         $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
                                         $hasOnlyArchivedUploads = $uploadedFiles->count() > 0 && $uploadedFiles->where('is_archived', false)->count() == 0;
+                            
+                                        $checkStatus = 'No Upload';
+                                        if ($hasNonArchivedUpload) {
+                                            $checkStatus = 'Uploaded';
+                                            if ($feedback) {
+                                                if ($feedback->signature_status == 'Signed') {
+                                                    $checkStatus = 'Signed';
+                                                } elseif ($feedback->signature_status == 'Return') {
+                                                    $checkStatus = 'Return';
+                                                } else {
+                                                    $checkStatus = 'On Check';
+                                                }
+                                            }
+                                        } elseif ($hasOnlyArchivedUploads) {
+                                            $checkStatus = 'No Upload';
+                                        }
                                     @endphp
-
-                                    @if($hasNonArchivedUpload)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ $checkStatus === 'Signed' ? 'bg-green-100 text-green-900' : '' }}
+                                            {{ $checkStatus === 'Return' ? 'bg-red-100 text-red-900' : '' }}
+                                            {{ $checkStatus === 'On Check' ? 'bg-yellow-100 text-yellow-900' : '' }}
+                                            {{ $checkStatus === 'Uploaded' ? 'bg-blue-100 text-blue-900' : '' }}
+                                            {{ $checkStatus === 'No Upload' ? 'bg-gray-100 text-gray-800' : '' }}">
+                                            {{ $checkStatus }}
+                                        </span>
+                                    {{-- @if($hasNonArchivedUpload)
                                         @if($feedback)
                                             @if($feedback->signature_status == 'Signed')
                                                 <div class="flex items-center justify-center space-x-2 text-center">
@@ -229,7 +292,7 @@
                                         <div class="flex items-center justify-center space-x-2 text-center">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Upload</span>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                 </td>
                                 <td class="border-t px-3 py-2">
                                     @php
@@ -480,17 +543,29 @@
         document.addEventListener('DOMContentLoaded', function() {
             const requirements = document.querySelectorAll('.requirement-row');
             const missingCountElement = document.getElementById('missingCount');
+            const returnCountElement = document.getElementById('returnCount');
             const findMissingButton = document.getElementById('findMissing');
+            const findReturnButton = document.getElementById('findReturn');
+            const returnToTopButton = document.getElementById('returnToTop');
 
             let missingCount = 0;
-            requirements.forEach(row => {
+            let returnCount = 0;
+
+           requirements.forEach(row => {
                 const isUploaded = row.dataset.uploaded === 'true';
+                const statusSpan = row.querySelector('span');
+
                 if (!isUploaded) {
                     missingCount++;
                 }
-            });
 
+                if (statusSpan && statusSpan.textContent.trim() === 'Return') {
+                    returnCount++;
+                }
+            });
+            
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
+            returnCountElement.textContent = `Return Documents: ${returnCount} out of ${requirements.length}`;
 
             findMissingButton.addEventListener('click', function() {
                 for (let row of requirements) {
@@ -500,7 +575,30 @@
                     }
                 }
             });
+
+            findReturnButton.addEventListener('click', function() {
+                for (let row of requirements) {
+                    const statusSpan = row.querySelector('span');
+                    if (statusSpan && statusSpan.textContent.trim() === 'Return') {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        break;
+                    }
+                }
+            });
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 200) {
+                    returnToTopButton.classList.remove('hidden');
+                } else {
+                    returnToTopButton.classList.add('hidden');
+                }
+            });
+
+            returnToTopButton.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
+
         /**
          * Function to open the Upload modal.
          *
@@ -1048,5 +1146,24 @@
            xhr.send(formData);
        }
    });
+</script>
+
+<!-- Return to Top Button -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const returnToTopButton = document.getElementById('returnToTop');
+
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 200) {
+                returnToTopButton.classList.remove('hidden');
+            } else {
+                returnToTopButton.classList.add('hidden');
+            }
+        });
+
+        returnToTopButton.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
 </script>
     

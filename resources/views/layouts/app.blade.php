@@ -210,12 +210,14 @@
                 @endisset
 
                 <!-- Page Content -->
-                <main>
-                    {{ $slot }} <!-- This is where the content will be injected -->
-                    <footer class="bg-white py-6 mt-12">
-                        <div class="container mx-auto text-center text-gray-800">
+                <main class="min-h-screen overflow-x-hidden">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        {{ $slot }} <!-- This is where the content will be injected -->
+                    </div>
+                    <footer class="bg-white py-6 mt-auto">
+                        <div class="container mx-auto px-4 text-center text-gray-800">
                             <p class="text-sm">&copy; 2024 OMSCS IQA ClearVault.</p>
-                            <div class="flex justify-center space-x-4 mt-4">
+                            <div class="flex flex-wrap justify-center gap-4 mt-4">
                                 <a href="#" class="hover:text-indigo-400">Privacy Policy</a>
                                 <a href="#" class="hover:text-indigo-400">Terms of Service</a>
                                 <a href="#" class="hover:text-indigo-400">Contact Us</a>
