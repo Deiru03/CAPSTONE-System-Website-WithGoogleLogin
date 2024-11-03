@@ -10,9 +10,9 @@
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium">Test Page</h3>
                     <p class="mt-2">This is a test page.</p>
-                    <!-- Add your Test Page content here -->
                 </div>
             </div>
         </div>
     </div>
+    @vite(['resources/js/facult-js/test-page.js']) <!-- Include the JS file -->
 </x-app-layout>

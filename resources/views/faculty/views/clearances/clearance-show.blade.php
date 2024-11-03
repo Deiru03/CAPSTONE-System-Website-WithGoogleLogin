@@ -23,6 +23,9 @@
             </h4>
             <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">In Progress</span>
         </div>
+        <div class="text-sm text-amber-600 bg-amber-50 p-2 rounded-lg mb-3">
+            ⚠️ Please don't refresh or navigate away while uploading large files (>50MB). This may interrupt your upload.
+        </div>
         <div id="uploadList" class="space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"></div>
     </div>
 
@@ -381,6 +384,21 @@
                     <div class="flex flex-col space-y-1">
                         <p class="text-sm text-gray-600">ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
                         <p class="text-sm text-gray-600">Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
+                    </div>
+                </div>
+                <!-- Warning Message -->
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                <strong class="font-medium">Important Warning:</strong> When uploading large files, please wait for the current upload to complete before uploading files for other requirements. Uploading multiple files simultaneously may cause interruptions and failures.
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -1054,27 +1072,27 @@
 
 <!-- Script for Upload Tracker -->
 <script>
-    function createUploadProgress(fileName) {
-       const uploadList = document.getElementById('uploadList');
-       const uploadItem = document.createElement('div');
-       uploadItem.className = 'mb-2';
-       uploadItem.innerHTML = `
-           <div class="text-sm">${fileName}</div>
-           <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
-               <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-           </div>
-           <div class="text-xs text-right">0%</div>
-       `;
-       uploadList.appendChild(uploadItem);
-       return uploadItem;
-   }
+    function createUploadProgress(fileName, fileSize) {
+        const uploadList = document.getElementById('uploadList');
+        const uploadItem = document.createElement('div');
+        uploadItem.className = 'mb-2';
+        uploadItem.innerHTML = `
+            <div class="text-xs">${fileName} (${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-0.5">
+                <div class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="text-[10px] text-right">0% (0 MB of ${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
+        `;
+        uploadList.appendChild(uploadItem);
+        return uploadItem;
+    }
 
-   function updateUploadProgress(uploadItem, percentComplete) {
-       const progressBar = uploadItem.querySelector('.bg-blue-500');
-       const percentText = uploadItem.querySelector('.text-xs');
-       progressBar.style.width = percentComplete + '%';
-       percentText.textContent = Math.round(percentComplete) + '%';
-   }
+    function updateUploadProgress(uploadItem, percentComplete, loaded, total) {
+        const progressBar = uploadItem.querySelector('.bg-blue-500');
+        const percentText = uploadItem.querySelector('.text-xs');
+        progressBar.style.width = percentComplete + '%';
+        percentText.textContent = `${Math.round(percentComplete)}% (${(loaded / (1024 * 1024)).toFixed(2)} MB of ${(total / (1024 * 1024)).toFixed(2)} MB)`;
+    }
 
    function showUploadTracker() {
        const uploadTracker = document.getElementById('uploadTracker');
@@ -1086,66 +1104,66 @@
        uploadTracker.classList.add('hidden');
    }
 
-   document.getElementById('uploadForm').addEventListener('submit', function(event) {
-       event.preventDefault();
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-       const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
-       const requirementId = document.getElementById('uploadRequirementIdInput').value;
-       const fileInput = document.getElementById('uploadFiles');
+        const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
+        const requirementId = document.getElementById('uploadRequirementIdInput').value;
+        const fileInput = document.getElementById('uploadFiles');
 
-       if (fileInput.files.length === 0) {
-           showNotification('Please select at least one file to upload.', 'error');
-           return;
-       }
+        if (fileInput.files.length === 0) {
+            showNotification('Please select at least one file to upload.', 'error');
+            return;
+        }
 
-       showUploadTracker();
+        showUploadTracker();
 
-       const files = fileInput.files;
-       for (let i = 0; i < files.length; i++) {
-           const formData = new FormData();
-           formData.append('files[]', files[i]);
+        const files = fileInput.files;
+        for (let i = 0; i < files.length; i++) {
+            const formData = new FormData();
+            formData.append('files[]', files[i]);
 
-           const uploadItem = createUploadProgress(files[i].name);
+            const uploadItem = createUploadProgress(files[i].name, files[i].size);
 
-           const xhr = new XMLHttpRequest();
-           xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
-           xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
+            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
 
-           xhr.upload.onprogress = function(event) {
-               if (event.lengthComputable) {
-                   const percentComplete = (event.loaded / event.total) * 100;
-                   updateUploadProgress(uploadItem, percentComplete);
-               }
-           };
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    updateUploadProgress(uploadItem, percentComplete, event.loaded, event.total);
+                }
+            };
 
-           xhr.onload = function() {
-               if (xhr.status === 200) {
-                   const response = JSON.parse(xhr.responseText);
-                   if (response.success) {
-                       showNotification(response.message, 'success');
-                   } else {
-                       showNotification(response.message || 'Failed to upload files.', 'error');
-                   }
-               } else {
-                   showNotification('An error occurred while uploading the files.', 'error');
-               }
-               uploadItem.remove();
-               if (document.getElementById('uploadList').children.length === 0) {
-                   hideUploadTracker();
-               }
-           };
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                    } else {
+                        showNotification(response.message || 'Failed to upload files.', 'error');
+                    }
+                } else {
+                    showNotification('An error occurred while uploading the files.', 'error');
+                }
+                uploadItem.remove();
+                if (document.getElementById('uploadList').children.length === 0) {
+                    hideUploadTracker();
+                }
+            };
 
-           xhr.onerror = function() {
-               showNotification('An error occurred while uploading the files.', 'error');
-               uploadItem.remove();
-               if (document.getElementById('uploadList').children.length === 0) {
-                   hideUploadTracker();
-               }
-           };
+            xhr.onerror = function() {
+                showNotification('An error occurred while uploading the files.', 'error');
+                uploadItem.remove();
+                if (document.getElementById('uploadList').children.length === 0) {
+                    hideUploadTracker();
+                }
+            };
 
-           xhr.send(formData);
-       }
-   });
+            xhr.send(formData);
+        }
+        });
 </script>
 
 <!-- Return to Top Button -->

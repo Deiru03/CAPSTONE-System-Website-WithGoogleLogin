@@ -310,67 +310,11 @@
                                         Recent: N/A
                                     @endif
                                 </p>
-                              
                             </div>
                         </a>
                     @endforeach
                 </div>
             </div>
-
-            <!-- Add New Content Here -->
-            
-            {{-- 
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Example Status Table 1 -->
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold">Profile Status</h3>
-                    <table class="min-w-full mt-4">
-                        <thead>
-                            <tr>
-                                <th class="text-left">Status</th>
-                                <th class="text-left">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-blue-500">Active</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td class="text-red-500">Inactive</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Example Status Table 2 -->
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold">Messages Status</h3>
-                    <table class="min-w-full mt-4">
-                        <thead>
-                            <tr>
-                                <th class="text-left">Type</th>
-                                <th class="text-left">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-green-500">Read</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td class="text-yellow-500">Unread</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>  --}}
-            <!-- End of New Content -->
-
-            
-            <!-- End of Existing Content -->
         </div>
     </div>
 </x-admin-layout>
