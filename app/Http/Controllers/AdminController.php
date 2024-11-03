@@ -338,7 +338,7 @@ class AdminController extends Controller
             'status' => 'Completed',
         ]);
 
-        return $pdf->download('users-report.pdf');
+        return $pdf->download(Auth::user()->name.'-report-manage-faculty.pdf');
     }
 
     public function generateManagedFacultyReport()
@@ -399,7 +399,7 @@ class AdminController extends Controller
             'transaction_type' => 'Generated Report', 
             'status' => 'Completed',
         ]);
-        return $pdf->download('custom-report.pdf');
+        return $pdf->download(Auth::user()->name.'-report-custom-faculty.pdf');
     }
 
     /////////////////////////////////////////////// Clearance Controller /////////////////////////////////////////////////

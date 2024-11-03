@@ -137,13 +137,15 @@ class FacultyController extends Controller
     public function generateClearanceReport()
     {
         $user = Auth::user();
-    
+        
+        $image = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        // $image = asset('images/OMSCLogo.png'); //not working
         // Fetch program name using the same logic we used before
         $user->program_name = Program::find($user->program_id)->name ?? 'N/A';
         
         $userClearance = UserClearance::with('sharedClearance.clearance')->where('user_id', $user->id)->first();
 
-        $pdf = Pdf::loadView('faculty.views.reports.clearance', compact('user', 'userClearance'));
+        $pdf = Pdf::loadView('faculty.views.reports.clearance-slip', compact('user', 'userClearance', 'image'));
 
         SubmittedReport::create([
             'admin_id' => null,
