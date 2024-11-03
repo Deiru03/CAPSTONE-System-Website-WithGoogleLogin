@@ -790,6 +790,7 @@
                     // Store the new clearance ID in localStorage
                     localStorage.setItem('newClearanceId', data.clearance.id);
                     localStorage.setItem('newClearanceName', data.clearance.document_name);
+                    showNotification(data.message, 'successAdd');
 
                     // Reload the page
                     location.reload();
@@ -892,7 +893,7 @@
                 if (data.success) {
                     editNotification.classList.remove('hidden');
                     editNotification.innerText = data.message;
-
+                    showNotification(data.message, 'successEdit');
                     // Optionally, update the table without reloading
                     location.reload(); // Simple reload, can be optimized
                 } else {
@@ -944,6 +945,7 @@
                     closeDeleteModal();
                     alert(data.message);
                     location.reload(); // Simple reload, can be optimized
+                    showNotification(data.message, 'successDelete');
                 } else {
                     deleteNotification.classList.remove('hidden');
                     deleteNotification.innerText = data.message;
@@ -1084,6 +1086,7 @@
                 if (data.success) {
                     closeAddRequirementModal();
                     fetchRequirements(currentClearanceId);
+                    showNotification(data.message, 'successAddRequirement');
                 } else {
                     addRequirementNotification.classList.remove('hidden');
                     addRequirementNotification.innerText = data.message;
@@ -1166,6 +1169,7 @@
                     const notification = document.getElementById('editRequirementNotification');
                     notification.innerText = data.message;
                     notification.classList.remove('hidden');
+                    showNotification(data.message, 'successUpdate');
 
                     // Reset and close the modal after a short delay
                     setTimeout(() => {
@@ -1280,6 +1284,7 @@
                 if (data.success) {
                     shareNotification.classList.remove('hidden');
                     shareNotification.innerText = data.message;
+                    showNotification(data.message, 'successShared');
                     // Optionally, reload the page to reflect changes
                     setTimeout(() => {
                         closeShareModal();
@@ -1370,6 +1375,7 @@
             .then(data => {
                 if (data.success) {
                     fetchSharedClearances();
+                    showNotification(data.message, 'successRemovedShared');
                 } else {
                     alert(data.message || 'Failed to remove shared clearance.');
                 }
@@ -1410,6 +1416,24 @@
                 } else if (type === 'successRemovedShared') {
                     notification.classList.add('bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-700');
                     notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                } else if (type === 'successShared') {
+                    notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'successUpdate') {
+                    notification.classList.add('bg-indigo-100', 'border-l-4', 'border-indigo-500', 'text-indigo-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'successDelete') {
+                    notification.classList.add('bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                } else if (type === 'successEdit') {
+                    notification.classList.add('bg-indigo-100', 'border-l-4', 'border-indigo-500', 'text-indigo-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'successAddRequirement') {
+                    notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'successAdd') {
+                    notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
                 }
 
                 notification.classList.remove('hidden', 'translate-x-full');
@@ -1422,7 +1446,7 @@
                         notification.classList.add('hidden');
                         notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
                     }, 500);
-                }, 3000);
+                }, 5000);
             }
 
             document.addEventListener('DOMContentLoaded', function() {

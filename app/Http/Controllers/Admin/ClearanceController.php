@@ -65,6 +65,8 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Created Clearance Checklist',
                 'status' => 'Completed',
             ]);
+
+            session()->flash('successAdd', 'Clearance added successfully.', $clearance->document_name);
         } catch (\Exception $e) {
             Log::error('Error creating clearance: ' . $e->getMessage());
             return response()->json([
@@ -109,6 +111,8 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Edited Clearance Checklist',
                 'status' => 'Completed',
             ]);
+
+            session()->flash('successEdit', 'Clearance edited successfully.', $clearance->document_name);
         } else {
             return response()->json([
                 'success' => false,
@@ -150,6 +154,8 @@ class ClearanceController extends Controller
             'message' => 'Clearance updated successfully.',
             'clearance' => $clearance
         ]);
+
+        session()->flash('successUpdate', 'Clearance updated successfully.', $clearance->document_name);
     }
 
     public function share(Request $request, $id)
@@ -186,6 +192,8 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Shared Clearance Checklist',
                 'status' => 'Completed',
             ]);
+
+            session()->flash('successShared', 'Clearance shared successfully.', $clearance->document_name);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -217,6 +225,8 @@ class ClearanceController extends Controller
             'transaction_type' => 'Deleted Clearance Checklist',
             'status' => 'Completed',
         ]);
+
+        session()->flash('successDelete', 'Clearance deleted successfully.', $clearance->document_name);
 
         return response()->json([
             'success' => true,
@@ -370,6 +380,8 @@ class ClearanceController extends Controller
             'message' => 'Requirement added successfully.',
             'requirement' => $requirement,
         ]);
+
+        session()->flash('successAddRequirement', 'Clearance added successfully.', $clearance->document_name);
     }
 
     public function storeFeedback(Request $request)
