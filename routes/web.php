@@ -66,6 +66,7 @@ Route::middleware(['Faculty'])->group(function () {
 Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
 Route::post('/admin/faculty-report/generate', [AdminController::class, 'generateFacultyReport'])->name('admin.facultyReport.generate');
 Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');
+Route::get('/admin/clearance/{id}/report', [AdminClearanceController::class, 'generateChecklistInfo'])->name('admin.clearance.report');
 
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(function () {
@@ -96,6 +97,8 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
     Route::get('/clearance/edit/{id}', [AdminClearanceController::class, 'edit'])->name('admin.clearance.edit');
     Route::post('/clearance/update/{id}', [AdminClearanceController::class, 'update'])->name('admin.clearance.update');
     Route::delete('/clearance/delete/{id}', [AdminClearanceController::class, 'destroy'])->name('admin.clearance.destroy');
+    Route::get('/clearance/{id}/details', [AdminClearanceController::class, 'getClearanceDetails'])->name('admin.clearance.details');
+    Route::get('/clearance/all', [AdminClearanceController::class, 'getAllClearances'])->name('admin.clearance.all');
 
     Route::prefix('clearance/{clearanceId}/requirements')->group(function () {
         Route::get('/', [AdminClearanceController::class, 'requirements'])->name('admin.clearance.requirements');

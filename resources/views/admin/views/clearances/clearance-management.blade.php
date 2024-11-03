@@ -4,8 +4,9 @@
             {{ __('Clearance Management') }}
         </h2>
     </x-slot>
+    
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 shadow-lg border border-gray-300">
+    <div class="max-w-8xl mx-auto sm:px-2 lg:px-2 shadow-lg border border-gray-300">
         <div class="p-6 text-gray-900">
             <h2 class="text-3xl font-extrabold mb-6 text-indigo-600 ">Manage Clearance Checklists</h2>
             <p class="text-lg mb-4">Here you can create and manage clearance checklists.</p>
@@ -31,7 +32,7 @@
 
         <!-- Clearance Table -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full">
-            <div class="table-container overflow-x-auto" style="max-height: 490px; max-width: 1200px;">
+            <div class="table-container overflow-x-auto" style="max-height: 770px; max-width: 1200px;">
                 <table class="min-w-full text-sm border-collapse border border-gray-300">
                     <thead class="bg-gray-200 sticky top-0">
                         <tr>
@@ -46,7 +47,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($clearances as $clearance)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="openViewDetailsModal({{ $clearance->id }})" data-id="{{ $clearance->id }}">
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200">{{ $clearance->id }}</td>
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200">{{ $clearance->document_name }}</td>
                             <td class="px-4 py-4 border-b border-gray-200">
@@ -57,7 +58,7 @@
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200 text-center">{{ $clearance->units }}</td>
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200 text-center">{{ $clearance->type }}</td>
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200 text-center">{{ $clearance->number_of_requirements }}</td>
-                            <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200">
+                            <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200" onclick="event.stopPropagation()">
                                 <div class="flex flex-col space-y-2">
                                     <div class="flex space-x-2">
                                         <button onclick="openEditModal({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
@@ -94,6 +95,14 @@
                                     </svg>
                                     Share Clearance
                                 </button>
+                                <button onclick="generateReport({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13 7H7v6h6V7z" />
+                                        <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+                                    </svg>
+                                     PDF this Checklist
+                                </button>
+                                
                                 </div>
                                 </div>
                             </td>
@@ -104,6 +113,12 @@
             </div>     
         </div>
     </div>
+
+    <script>
+        function generateReport(clearanceId) {
+            window.location.href = `/admin/clearance/${clearanceId}/report`;
+        }
+    </script>
 
     <!-- Add Modal -->
     <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
@@ -434,7 +449,100 @@
         </div>
     </div>
 
-    <!-- Loader CSS (Add to your main CSS if not already present) -->
+    <!-- Remove Shared Clearance Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Confirm Removal</h3>
+            <p class="mb-6">Are you sure you want to remove this shared clearance?</p>
+            <div class="flex justify-end">
+                <button type="button" onclick="confirmRemoval()" class="px-4 py-2 bg-red-600 text-white rounded-md mr-2">
+                    Yes, Remove
+                </button>
+                <button type="button" onclick="closeConfirmationModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
+            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Clearance Checklist Details
+            </h3>
+            <div id="clearanceDetailsContent" class="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
+                <!-- Clearance Name -->
+                <div class="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <h4 class="text-xl font-bold text-gray-800">Document Details</h4>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500 uppercase tracking-wider">Document Name</span>
+                            <p id="clearancesName" class="text-indigo-700 font-medium text-lg"></p>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Clearance ID</span>
+                                <p id="clearanceId" class="text-red-700 font-medium"></p>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Type</span>
+                                <p id="clearanceType" class="text-gray-700 font-medium"></p>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Units</span>
+                                <p id="clearanceUnits" class="text-gray-700 font-medium"></p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500 uppercase tracking-wider">Description</span>
+                            <p id="clearanceDescription" class="text-gray-700 font-medium"></p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Created At</span>
+                                <p id="clearanceCreatedAt" class="text-gray-700 font-medium"></p>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Updated At</span>
+                                <p id="clearanceUpdatedAt" class="text-gray-700 font-medium"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Requirements List -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">Requirements:</h4>
+                    <ol id="requirementsList" class="space-y-3 list-none pl-0">
+                        <!-- Requirements will be populated here -->
+                    </ol>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end sticky bottom-0 bg-white pt-2">
+                <button type="button" onclick="closeViewDetailsModal()" 
+                    class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center 
+                    transition duration-300 ease-in-out transform hover:scale-105 
+                    hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 
+                    focus:ring-opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader CSS -->
     <style>
         .loader {
             border: 6px solid #f3f3f3;
@@ -450,13 +558,193 @@
             100% { transform: rotate(360deg); }
         }
 
-        .preserve-whitespace {
+        #clearanceDetailsContent::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #clearanceDetailsContent::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #clearanceDetailsContent::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+
+        #clearanceDetailsContent::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        #viewDetailsModal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #viewDetailsModal.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        #viewDetailsModal:not(.hidden) {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #requirementsList li {
+            @apply bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            position: relative;
+            padding-left: 2.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        #requirementsList li::before {
+            @apply font-bold text-gray-700;
+            content: counter(list-item) ".";
+            position: absolute;
+            left: 1rem;
+        }
+
+        #requirementsList li span {
+            @apply ml-2 text-gray-600;
+            display: block;
+            text-indent: -0.5rem;
+            padding-left: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        #requirementsList li:last-child {
+            border-bottom: none;
+        }
+
+        #requirementsList li:last-child span {
+            border-bottom: none;
+        }
+        .preserve-whitespace {
+            white-space: pre-wrap; /* Preserves whitespace and newlines */
+            word-wrap: break-word; /* Allows long words to be broken and wrapped onto the next line */
+            /* text-indent: -2em; /* Creates negative indent for hanging effect *
+            padding-left: 2em; /* Offsets the negative indent */
         }
     </style>
 
     <!-- Scripts -->
     <script>
+        let allClearances = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch("{{ route('admin.clearance.all') }}", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    allClearances = data.clearances;
+                    console.log('All clearances loaded:', allClearances); // Debugging line
+                } else {
+                    console.error('Failed to load clearances:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading clearances:', error);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableRows = document.querySelectorAll('.clearance-row');
+            tableRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const clearanceId = this.dataset.id;
+                    console.log(`Row clicked: Clearance ID = ${clearanceId}`); // Debugging line
+                    openViewDetailsModal(clearanceId);
+                });
+            });
+        });
+        /**
+         * Open the View Details Modal
+         */
+        function openViewDetailsModal(clearanceId) {
+            console.log(`Opening modal for clearance ID: ${clearanceId}`); // Debugging line
+
+            // Find the clearance in the pre-fetched data
+            const clearance = allClearances.find(c => c.id === clearanceId);
+
+            if (clearance) {
+                // Populate modal with clearance details
+                // Get all elements
+                const elements = {
+                    name: document.getElementById('clearancesName'),
+                    id: document.getElementById('clearanceId'), 
+                    description: document.getElementById('clearanceDescription'),
+                    units: document.getElementById('clearanceUnits'),
+                    type: document.getElementById('clearanceType'),
+                    createdAt: document.getElementById('clearanceCreatedAt'),
+                    updatedAt: document.getElementById('clearanceUpdatedAt')
+                };
+
+                // Helper function to format date
+                const formatDate = (dateString) => {
+                    return new Date(dateString).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+
+                // Update each element if it exists
+                Object.entries(elements).forEach(([key, element]) => {
+                    if (element) {
+                        let value = clearance[key === 'name' ? 'document_name' : 
+                                    key === 'createdAt' ? 'created_at' :
+                                    key === 'updatedAt' ? 'updated_at' : key];
+                        
+                        // Format dates
+                        if (key === 'createdAt' || key === 'updatedAt') {
+                            value = formatDate(value);
+                        }
+                        
+                        element.textContent = value;
+                        console.log(`${key} set to:`, element.textContent);
+                    } else {
+                        console.error(`Element with ID "${key}" not found.`);
+                    }
+                });
+                
+
+                const requirementsList = document.getElementById('requirementsList');
+                requirementsList.innerHTML = ''; // Clear existing list
+
+                clearance.requirements.forEach(req => {
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.textContent = req.requirement;
+                    li.appendChild(span);
+                    requirementsList.appendChild(li);
+                });
+
+                // Show the modal
+                document.getElementById('viewDetailsModal').classList.remove('hidden');
+            } else {
+                console.error('Clearance not found for ID:', clearanceId);
+                alert('Failed to fetch clearance details.');
+            }
+        }
+
+        /**
+         * Close the View Details Modal
+         */
+        function closeViewDetailsModal() {
+            document.getElementById('viewDetailsModal').classList.add('hidden');
+        }
+
         // Add Modal Functions
         function openAddModal() {
             document.getElementById('addModal').classList.remove('hidden');
@@ -1011,6 +1299,25 @@
     </script>
     <!-- Share Clearance Modal -->
     <script>
+        let clearanceIdToRemove = null;
+
+        function openConfirmationModal(id) {
+            clearanceIdToRemove = id;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+        }
+
+        function closeConfirmationModal() {
+            clearanceIdToRemove = null;
+            document.getElementById('confirmationModal').classList.add('hidden');
+        }
+
+        function confirmRemoval() {
+            if (clearanceIdToRemove !== null) {
+                removeSharedClearance(clearanceIdToRemove);
+                closeConfirmationModal();
+            }
+        }
+
         function openSharedClearancesModal() {
             fetchSharedClearances();
             document.getElementById('sharedClearancesModal').classList.remove('hidden');
@@ -1034,7 +1341,7 @@
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200 text-center">${clearance.units}</td>
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200">${clearance.type}</td>
                             <td class="px-4 py-4 whitespace-nowrap border-b border-gray-200">
-                                <button onclick="removeSharedClearance(${clearance.id})" class="text-red-600 hover:text-red-800 flex items-center text-sm">
+                                <button onclick="openConfirmationModal(${clearance.id})" class="text-red-600 hover:text-red-800 flex items-center text-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 000 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
                                     </svg>
@@ -1052,10 +1359,6 @@
         }
     
         function removeSharedClearance(id) {
-            if (!confirm('Are you sure you want to remove this shared clearance?')) {
-                return;
-            }
-    
             fetch(`{{ route('admin.clearance.removeShared', '') }}/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -1067,7 +1370,6 @@
             .then(data => {
                 if (data.success) {
                     fetchSharedClearances();
-                    alert(data.message || 'Shared clearance removed successfully.');
                 } else {
                     alert(data.message || 'Failed to remove shared clearance.');
                 }
@@ -1078,5 +1380,60 @@
             });
         }
     </script>
+
+   <!-- Notification -->
+        <div id="notification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+            <div class="flex items-center">
+                <div id="notificationIcon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
+                <div id="notificationMessage" class="text-sm font-medium"></div>
+            </div>
+        </div>
+
+        <script>
+            function showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notificationMessage');
+                const notificationIcon = document.getElementById('notificationIcon');
+
+                notificationMessage.textContent = message;
+
+                // Reset classes
+                notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
+                notificationIcon.innerHTML = '';
+
+                if (type === 'success') {
+                    notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else if (type === 'successRemovedShared') {
+                    notification.classList.add('bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-700');
+                    notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+
+                notification.classList.remove('hidden', 'translate-x-full');
+                notification.classList.add('translate-x-0');
+
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-0');
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        notification.classList.add('hidden');
+                        notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
+                    }, 500);
+                }, 3000);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                @if(session('notification'))
+                    showNotification('{{ session('notification') }}', 'success');
+                @endif
+
+                @if(session('error'))
+                    showNotification('{{ session('error') }}', 'error');
+                @endif
+            });
+        </script>
 
 </x-admin-layout>

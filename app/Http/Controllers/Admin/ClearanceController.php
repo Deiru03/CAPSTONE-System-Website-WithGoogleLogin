@@ -17,6 +17,8 @@ use App\Models\SubmittedReport;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Program;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class ClearanceController extends Controller
 {
     // Display the clearance management page
@@ -220,6 +222,53 @@ class ClearanceController extends Controller
             'success' => true,
             'message' => 'Clearance deleted successfully.'
         ]);
+    }
+
+    ///////////////////////////////////////// Clearance View Management ///////////////////////////////////////
+
+    public function getClearanceDetails($id)
+    {
+        $clearance = Clearance::with('requirements')->find($id);
+ 
+        if ($clearance) {
+            Log::info('Clearance details fetched:', ['clearance' => $clearance]);
+            return response()->json([
+                'success' => true,
+                'clearance' => [
+                    'name' => $clearance->document_name,
+                    'requirements' => $clearance->requirements->map(function ($requirement) {
+                        return ['requirement' => $requirement->requirement];
+                    }),
+                ],
+            ]);
+        } else {
+            Log::warning('Clearance not found for ID:', ['id' => $id]);
+            return response()->json(['success' => false, 'message' => 'Clearance not found.'], 404);
+        }
+    }
+
+    public function getAllClearances()
+    {
+        $clearances = Clearance::with('requirements')->get();
+
+        Log::info('All clearances fetched:', ['clearances' => $clearances]);
+
+        return response()->json([
+            'success' => true,
+            'clearances' => $clearances
+        ]);
+    }
+    ///////////////////////////////////////// Generate Clearance Checklist Info ///////////////////////////////////////
+    public function generateChecklistInfo($id)
+    {
+        $clearance = Clearance::with('requirements')->find($id);
+
+        if (!$clearance) {
+            return redirect()->back()->with('error', 'Clearance not found.');
+        }
+
+        $pdf = PDF::loadView('admin.views.reports.generate-checklist-info', compact('clearance'));
+        return $pdf->download('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 
     ///////////////////////////////////////// Clearance Requirements ///////////////////////////////////////
@@ -470,11 +519,13 @@ class ClearanceController extends Controller
         SubmittedReport::create([
             'admin_id' => Auth::id(),
             'user_id' => null,
-            'title' => 'Removed shared clearance checklist: ' . $sharedClearance->clearance->document_name,
+            'title' => 'Removed shared clearance checklist: ' . $sharedClearance->clearance->document_name . ' by ' . Auth::user()->name,
             'transaction_type' => 'Remove Shared' . "\n" .
                                 'Clearance Checklist',
             'status' => 'Completed',
         ]);
+
+        session()->flash('successRemovedShared', 'Shared clearance removed successfully.');
 
         return response()->json([
             'success' => true,

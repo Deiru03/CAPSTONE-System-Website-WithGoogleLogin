@@ -11,17 +11,17 @@
                 <p class="text-gray-600 mb-6">Here you can view and manage submitted reports.</p>
 
                 <!-- Filter Options -->
-                <div class="mb-6 flex gap-4 bg-gray-50 p-4 rounded-lg">
+                {{-- <div class="mb-6 flex gap-4 bg-gray-50 p-4 rounded-lg">
                     <input type="text" 
                             placeholder="Search by title..." 
                             class="flex-1 border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         <i class="fas fa-search mr-2"></i> Filter
                     </button>
-                </div>
+                </div> --}}
 
                 <!-- Reports Table -->
-                <div class="max-h-[600px] overflow-y-auto">
+                <div class="max-h-[790px] overflow-y-auto">
                     <table class="w-full table-fixed divide-y divide-gray-200">
                         <thead class="bg-gray-50 sticky top-0">
                             <tr>
@@ -35,26 +35,29 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($reports as $report)
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 truncate">
+                                    <td class="px-6 py-4 text-xs font-medium text-gray-900 truncate">
                                         {{ $report->admin_name }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
+                                    <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         {{ $report->title }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
-                                        <span class="px-3 py-1 rounded-full text-xs font-medium 
-                                            {{ $report->transaction_type === 'Reset Checklist' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
+                                    <td class="px-6 py-4 text-xs text-gray-600 truncate">
+                                        <span class="px-2 py-1 rounded-full text-[10px] font-medium 
+                                            {{ str_contains(strtolower($report->transaction_type), 'reset') ? 
+                                               'bg-orange-100 text-orange-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'remove') ?
+                                               'bg-purple-100 text-purple-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'delete') ?
+                                               'bg-red-100 text-red-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'generate') ? 
+                                               'bg-green-100 text-green-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'edit') || 
+                                                str_contains(strtolower($report->transaction_type), 'edited') ?
+                                               'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
                                             {{ $report->transaction_type }}
                                         </span>
                                     </td>
-                                    {{-- <td class="px-6 py-4 text-sm">
-                                        <span class="px-3 py-1 rounded-full text-xs font-medium
-                                            {{ $report->status === 'complete' ? 'bg-green-100 text-green-800' : 
-                                                ($report->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                            {{ $report->status }}
-                                        </span>
-                                    </td> --}}
-                                    <td class="px-6 py-4 text-sm text-gray-600 truncate">
+                                    <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         {{ $report->created_at->format('M d, Y H:i') }}
                                     </td>
                                 </tr>
