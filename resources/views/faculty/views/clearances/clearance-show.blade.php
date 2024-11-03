@@ -87,6 +87,19 @@
         button svg {
             margin-right: 4px;
         }
+      
+        .folder-content {
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+
+        .folder-content.hidden {
+            max-height: 0;
+        }
+
+        .folder-content:not(.hidden) {
+            max-height: 1000px; /* A sufficiently large value to accommodate the content */
+}
     </style>
 
     <!-- Notification -->
@@ -586,7 +599,7 @@
             let missingCount = 0;
             let returnCount = 0;
 
-           requirements.forEach(row => {
+            requirements.forEach(row => {
                 const isUploaded = row.dataset.uploaded === 'true';
                 const statusSpan = row.querySelector('span');
 
@@ -602,23 +615,76 @@
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
             returnCountElement.textContent = `Return Documents: ${returnCount} out of ${requirements.length}`;
 
-            findMissingButton.addEventListener('click', function() {
-                for (let row of requirements) {
-                    if (row.dataset.uploaded !== 'true') {
-                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        break;
+            // Function to toggle folders
+            function toggleFolder(header) {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.folder-icon');
+                
+                // Toggle the clicked folder
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            }
+
+            // Function to open a specific category and close others
+            function openCategory(categoryName) {
+                const allHeaders = document.querySelectorAll('.folder-header');
+                allHeaders.forEach(header => {
+                    const headerText = header.querySelector('h3').textContent.trim().split(' ')[0]; // Get category name
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('.folder-icon');
+
+                    if (headerText === categoryName) {
+                        if (content.classList.contains('hidden')) {
+                            content.classList.remove('hidden');
+                            icon.classList.add('rotate-180');
+                        }
+                    } else {
+                        if (!content.classList.contains('hidden')) {
+                            content.classList.add('hidden');
+                            icon.classList.remove('rotate-180');
+                        }
                     }
-                }
+                });
+            }
+
+            // Event listener for Find Missing Docs
+            findMissingButton.addEventListener('click', function() {
+                openCategory('Missing');
+                // Allow some time for the category to open before scrolling
+                setTimeout(() => {
+                    let found = false;
+                    requirements.forEach(row => {
+                        const isUploaded = row.dataset.uploaded === 'true';
+                        if (!isUploaded) {
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            found = true;
+                            return false; // Exit the loop
+                        }
+                    });
+                    if (!found) {
+                        showNotification('No missing documents found.', 'info');
+                    }
+                }, 300);
             });
 
+            // Event listener for Find Return Docs
             findReturnButton.addEventListener('click', function() {
-                for (let row of requirements) {
-                    const statusSpan = row.querySelector('span');
-                    if (statusSpan && statusSpan.textContent.trim() === 'Return') {
-                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        break;
+                openCategory('Return');
+                // Allow some time for the category to open before scrolling
+                setTimeout(() => {
+                    let found = false;
+                    requirements.forEach(row => {
+                        const statusSpan = row.querySelector('span');
+                        if (statusSpan && statusSpan.textContent.trim() === 'Return') {
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            found = true;
+                            return false; // Exit the loop
+                        }
+                    });
+                    if (!found) {
+                        showNotification('No return documents found.', 'info');
                     }
-                }
+                }, 300);
             });
 
             window.addEventListener('scroll', function() {
@@ -633,6 +699,17 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
+
+        /**
+         * Function to toggle folder open/close
+         */
+        function toggleFolder(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.folder-icon');
+            
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
 
         /**
          * Function to open the Upload modal.
