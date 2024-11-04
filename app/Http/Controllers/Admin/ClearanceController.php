@@ -49,6 +49,17 @@ class ClearanceController extends Controller
         try {
             $clearance = Clearance::create($validator->validated());
 
+            
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => $clearance->document_name,
+                'transaction_type' => 'Created Clearance Checklist',
+                'status' => 'Completed',
+            ]);
+            
+            session()->flash('successAdd', 'Clearance added successfully.', $clearance->document_name);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Clearance added successfully',
@@ -57,18 +68,12 @@ class ClearanceController extends Controller
                     'document_name' => $clearance->document_name,
                 ],
             ]);
-
-            SubmittedReport::create([
-                'admin_id' => Auth::id(),
-                'user_id' => null,
-                'title' => $clearance->document_name,
-                'transaction_type' => 'Created Clearance Checklist',
-                'status' => 'Completed',
-            ]);
-
-            session()->flash('successAdd', 'Clearance added successfully.', $clearance->document_name);
+            
         } catch (\Exception $e) {
             Log::error('Error creating clearance: ' . $e->getMessage());
+
+            session()->flash('error', 'An error occurred while adding the clearance.');
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while adding the clearance.'
@@ -97,27 +102,47 @@ class ClearanceController extends Controller
     // Fetch a clearance for editing
     public function edit($id)
     {
-        $clearance = Clearance::find($id);
-        if ($clearance) {
-            return response()->json([
-                'success' => true,
-                'clearance' => $clearance
-            ]);
+        try {
+            $clearance = Clearance::find($id);
+            if ($clearance) {
+                return response()->json([
+                    'success' => true,
+                    'clearance' => $clearance
+                ]);
 
-            SubmittedReport::create([
-                'admin_id' => Auth::id(),
-                'user_id' => null,
-                'title' => $clearance->document_name,
-                'transaction_type' => 'Edited Clearance Checklist',
-                'status' => 'Completed',
-            ]);
+                SubmittedReport::create([
+                    'admin_id' => Auth::id(),
+                    'user_id' => null,
+                    'title' => $clearance->document_name,
+                    'transaction_type' => 'Edited Clearance Checklist',
+                    'status' => 'Completed',
+                ]);
 
-            session()->flash('successEdit', 'Clearance edited successfully.', $clearance->document_name);
-        } else {
+                session()->flash('successEdit', 'Clearance edited successfully.', $clearance->document_name);
+
+                // Simulate an error
+                // return response()->json([
+                //     'success' => false,
+                //     'message' => 'Simulated server error.'
+                // ], 500);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Clearance edited successfully.',
+                    'clearance' => $clearance
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Clearance not found.'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error editing clearance: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Clearance not found.'
-            ], 404);
+                'message' => 'An error occurred while editing the clearance.'
+            ], 500);
         }
     }
 
@@ -208,30 +233,41 @@ class ClearanceController extends Controller
     // Delete a clearance
     public function destroy($id)
     {
-        $clearance = Clearance::find($id);
-        if (!$clearance) {
+        try {
+            $clearance = Clearance::find($id);
+                if (!$clearance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Clearance not found.'
+                ], 404);
+            }
+
+            $clearance->delete();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => $clearance->document_name,
+                'transaction_type' => 'Deleted Clearance Checklist',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successDelete', 'Clearance deleted successfully.', $clearance->document_name);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Clearance deleted successfully.'
+            ]);
+        } 
+        catch (\Exception $e) {
+
+            session()->flash('error', 'An error occurred while deleting the clearance.');
+
             return response()->json([
                 'success' => false,
-                'message' => 'Clearance not found.'
-            ], 404);
+                'message' => 'An error occurred while deleting the clearance.'
+            ], 500);
         }
-
-        $clearance->delete();
-
-        SubmittedReport::create([
-            'admin_id' => Auth::id(),
-            'user_id' => null,
-            'title' => $clearance->document_name,
-            'transaction_type' => 'Deleted Clearance Checklist',
-            'status' => 'Completed',
-        ]);
-
-        session()->flash('successDelete', 'Clearance deleted successfully.', $clearance->document_name);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Clearance deleted successfully.'
-        ]);
     }
 
     ///////////////////////////////////////// Clearance View Management ///////////////////////////////////////
@@ -426,18 +462,36 @@ class ClearanceController extends Controller
      */
     public function editRequirement($clearanceId, $requirementId)
     {
-        $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
+        try {
+            $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
 
-        if ($requirement) {
-            return response()->json([
-                'success' => true,
-                'requirement' => $requirement,
-            ]);
-        } else {
+            if ($requirement) {
+                return response()->json([
+                    'success' => true,
+                    'requirement' => $requirement,
+                ]);
+
+                session()->flash('successEditRequirement', 'Requirement updated successfully.', $clearance->document_name);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Requirement updated successfully.',
+                    'requirement' => $requirement,
+                ]);
+            } else {
+                session()->flash('error', 'Requirement not found.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Requirement not found.'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while fetching the requirement.');
             return response()->json([
                 'success' => false,
-                'message' => 'Requirement not found.'
-            ], 404);
+                'message' => 'An error occurred while fetching the requirement.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -446,28 +500,39 @@ class ClearanceController extends Controller
      */
     public function updateRequirement(Request $request, $clearanceId, $requirementId)
     {
-        $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
+        try {
+            $clearance = Clearance::findOrFail($clearanceId);
+            $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
 
-        if (!$requirement) {
+            if (!$requirement) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Requirement not found.'
+                ], 404);
+            }
+
+            $request->validate([
+                'requirement' => 'required|string',
+            ]);
+
+            $requirement->update([
+                'requirement' => $request->requirement,
+            ]);
+
+            session()->flash('successEditRequirement', 'Requirement updated successfully.', $clearance->document_name);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Requirement updated successfully.',
+                'requirement' => $requirement,
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while updating the requirement.');
             return response()->json([
                 'success' => false,
-                'message' => 'Requirement not found.'
-            ], 404);
+                'message' => 'An error occurred while updating the requirement.',
+            ], 500);
         }
-
-        $request->validate([
-            'requirement' => 'required|string',
-        ]);
-
-        $requirement->update([
-            'requirement' => $request->requirement,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Requirement updated successfully.',
-            'requirement' => $requirement,
-        ]);
     }
 
     /**
@@ -475,26 +540,38 @@ class ClearanceController extends Controller
      */
     public function destroyRequirement($clearanceId, $requirementId)
     {
-        $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
+        try {
+            $requirement = ClearanceRequirement::where('clearance_id', $clearanceId)->find($requirementId);
 
-        if (!$requirement) {
+            if (!$requirement) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Requirement not found.'
+                ], 404);
+            }
+
+            $requirement->delete();
+
+            // Update the number_of_requirements
+            $clearance = Clearance::findOrFail($clearanceId);
+            $clearance->number_of_requirements = $clearance->requirements()->count();
+            $clearance->save();
+
+            session()->flash('successDeleteRequirement', 'Requirement deleted successfully.', $clearance->document_name);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Requirement deleted successfully.',
+            ]);
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while deleting the requirement.');
+
             return response()->json([
                 'success' => false,
-                'message' => 'Requirement not found.'
-            ], 404);
+                'message' => 'An error occurred while deleting the requirement.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $requirement->delete();
-
-        // Update the number_of_requirements
-        $clearance = Clearance::findOrFail($clearanceId);
-        $clearance->number_of_requirements = $clearance->requirements()->count();
-        $clearance->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Requirement deleted successfully.',
-        ]);
     }
 
     /////////////////////////////////// Shared Fetch Methods ////////////////////////////////////////////////

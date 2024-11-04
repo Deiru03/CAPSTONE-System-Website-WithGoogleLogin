@@ -863,7 +863,6 @@
                 showNotification('An error occurred while deleting the file.', 'error');
             });
             closeDeleteConfirmationModal();
-            showNotification('File deleted successfully.', 'success');
         }
 
         // Function to open the view files modal
