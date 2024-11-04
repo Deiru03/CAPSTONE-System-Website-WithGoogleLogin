@@ -49,7 +49,8 @@
                                                'bg-purple-100 text-purple-800' :
                                                (str_contains(strtolower($report->transaction_type), 'delete') ?
                                                'bg-red-100 text-red-800' :
-                                               (str_contains(strtolower($report->transaction_type), 'generate') ? 
+                                               (str_contains(strtolower($report->transaction_type), 'generate') ||
+                                                str_contains(strtolower($report->transaction_type), 'add') ?
                                                'bg-green-100 text-green-800' :
                                                (str_contains(strtolower($report->transaction_type), 'edit') || 
                                                 str_contains(strtolower($report->transaction_type), 'edited') ?

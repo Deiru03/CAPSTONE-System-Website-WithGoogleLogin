@@ -507,9 +507,20 @@ class AdminController extends Controller
             }
     
             Department::create($data);
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Department added successfully. by '. Auth::user()->name ."\n" . 'a college department named '. $data['name'],
+                'transaction_type' => 'Added Department',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successAddCollegeDepartment', 'Department added successfully.'. "\n" . 'a college department named '. $data['name']);
     
             return redirect()->route('admin.views.college')->with('success', 'Department added successfully.');
         } catch (\Exception $e) {
+            session()->flash('error', 'Failed to add department.');
             return redirect()->route('admin.views.college')->with('error', 'Failed to add department.');
         }
     }
@@ -528,6 +539,16 @@ class AdminController extends Controller
                 'department_id' => $request->department_id,
             ]);
             
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Program added successfully. by '. Auth::user()->name ."\n" . 'a college program named '. $request->name,
+                'transaction_type' => 'Added Program',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successAddCollegeProgram', 'Program added successfully.'. "\n" . 'a college program named '. $request->name);
+
             // Use 'success' as the session key
             return redirect()->route('admin.views.college')->with('success', 'Program added successfully.');
         } catch (\Exception $e) {
@@ -551,9 +572,20 @@ class AdminController extends Controller
                 ]);
             }
 
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Programs added successfully. by '. Auth::user()->name ."\n" . 'a college programs named '. $request->programs[0]['name'],
+                'transaction_type' => 'Added Programs',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successAddCollegePrograms', 'Programs added successfully.'. "\n" . 'a college programs named '. $request->programs[0]['name']);
+
             // Use 'success' as the session key
-            return redirect()->route('admin.views.college')->with('success', 'Programs added successfully.');
+            return redirect()->route('admin.views.college')->with('successAddCollegePrograms', 'Programs added successfully redirect.');
         } catch (\Exception $e) {
+            session()->flash('error', 'Failed to add programs.');
             return redirect()->route('admin.views.college')->with('error', 'Failed to add programs.');
         }
     }
@@ -563,6 +595,17 @@ class AdminController extends Controller
         try {
             $program = Program::findOrFail($id);
             $program->delete();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                    // Start of Selection
+                    'title' => "Program deleted successfully. by " . Auth::user()->name . "\n" . "a college program named " . $program->name,
+                'transaction_type' => 'Deleted Program',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successDeleteCollegeProgram', 'Program deleted successfully.'. "\n" . 'a college program named '. $program->name);
 
             return response()->json(['success' => true, 'message' => 'Program deleted successfully.']);
         } catch (\Exception $e) {
@@ -576,6 +619,16 @@ class AdminController extends Controller
         try {
             $department = Department::findOrFail($id);
             $department->delete();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Department deleted successfully. by '. Auth::user()->name ."\n" . 'a college department named '. $department->name,
+                'transaction_type' => 'Deleted Department',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successDeleteCollegeDepartment', 'Department deleted successfully.'. "\n" . 'a college department named '. $department->name);
 
             return response()->json(['success' => true, 'message' => 'Department deleted successfully.']);
         } catch (\Exception $e) {
@@ -614,8 +667,19 @@ class AdminController extends Controller
             if ($request->filled('remove_programs')) {
                 $department->programs()->whereIn('id', $request->remove_programs)->delete();
             }
-    
-            return redirect()->route('admin.views.college')->with('success', 'Department updated successfully.');
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Department updated successfully. by '. Auth::user()->name ."\n" . 'a college department named '. $department->name,
+                'transaction_type' => 'Updated Department',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successUpdateCollegeDepartment', 'Department updated successfully session.');
+
+
+            return redirect()->route('admin.views.college')->with('successUpdateCollegeDepartment', 'Department updated successfully redirect.');
         } catch (\Exception $e) {
             return redirect()->route('admin.views.college')->with('error', 'Failed to update department.');
         }
@@ -626,6 +690,16 @@ class AdminController extends Controller
         try {
             $program = Program::findOrFail($programId);
             $program->delete();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Program removed successfully. by '. Auth::user()->name .'\n' . 'a college program named '. $program->name,
+                'transaction_type' => 'Removed Program',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successRemoveCollegeProgram', 'Program removed successfully.'. '\n' . 'a college program named '. $program->name);
     
             return response()->json(['success' => true, 'message' => 'Program removed successfully.']);
         } catch (\Exception $e) {
@@ -663,6 +737,14 @@ class AdminController extends Controller
             $facultyMember = User::findOrFail($validatedData['id']);
             $facultyMember->update($validatedData);
 
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Faculty member updated successfully. by '. Auth::user()->name .'\n' . 'a faculty member named '. $facultyMember->name,
+                'transaction_type' => 'Updated Faculty',
+                'status' => 'Completed',
+            ]);
+
             return response()->json(['success' => true, 'message' => 'Faculty member updated successfully.']);
         } catch (\Exception $e) {
             Log::error('Error updating faculty member: ' . $e->getMessage());
@@ -681,6 +763,16 @@ class AdminController extends Controller
             // }
 
             $facultyMember->delete();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => null,
+                'title' => 'Faculty member deleted successfully. by '. Auth::user()->name .'\n' . 'a faculty member named '. $facultyMember->name,
+                'transaction_type' => 'Deleted   Faculty',
+                'status' => 'Completed',
+            ]);
+
+            session()->flash('successDeleteFaculty', 'Faculty member deleted successfully.'. '\n' . 'a faculty member named '. $facultyMember->name);
 
             return response()->json(['success' => true, 'message' => 'Faculty member deleted successfully.']);
         } catch (\Exception $e) {

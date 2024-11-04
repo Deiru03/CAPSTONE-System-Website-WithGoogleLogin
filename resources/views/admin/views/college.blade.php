@@ -560,8 +560,17 @@
             } else if (type === 'error') {
                 notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
                 notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            } else if (type === 'successRemoveDepartment') {
+                notification.classList.add('bg-orange-100', 'border-l-4', 'border-orange-500', 'text-orange-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>';
+            } else if (type === 'successUpdateCollegeDepartment'){
+                notification.classList.add('bg-sky-100', 'border-l-4', 'border-sky-300', 'text-sky-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>'; 
+            } else if (type === 'successAddCollegePrograms'){
+                notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
             }
-
+            
             notification.classList.remove('hidden', 'translate-x-full');
             notification.classList.add('translate-x-0');
 
@@ -572,7 +581,7 @@
                     notification.classList.add('hidden');
                     notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
                 }, 500);
-            }, 1100);
+            }, 3000);
         }
 
         function openConfirmModal(action, id) {
@@ -641,7 +650,7 @@
             .then(data => {
                 confirmButton.disabled = false; // Re-enable the button
                 if (data.success) {
-                    showNotification('Department removed successfully.', 'success');
+                    showNotification('Department removed successfully.', 'successRemoveDepartment');
                     setTimeout(() => {
                         location.reload();
                     }, 2000); // Delay reload by 3 seconds
@@ -663,9 +672,21 @@
             });
         @endif
 
+        @if(session('successUpdateCollegeDepartment'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showNotification('{{ session('successUpdateCollegeDepartment') }}', 'successUpdateCollegeDepartment');
+            });
+        @endif
+
         @if(session('error'))
             document.addEventListener('DOMContentLoaded', function() {
                 showNotification('{{ session('error') }}', 'error');
+            });
+        @endif
+
+        @if(session('successAddCollegePrograms'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showNotification('{{ session('successAddCollegePrograms') }}', 'successAddCollegePrograms');
             });
         @endif
     </script>
