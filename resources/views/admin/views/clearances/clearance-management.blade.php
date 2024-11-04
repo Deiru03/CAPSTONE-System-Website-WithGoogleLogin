@@ -34,15 +34,15 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full">
             <div class="table-container overflow-x-auto" style="max-height: 770px; max-width: 1200px;">
                 <table class="min-w-full text-sm border-collapse border border-gray-300">
-                    <thead class="bg-gray-200 sticky top-0">
+                    <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 sticky -top-3">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">ID</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">Document Name</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">Description</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300 text-center">Units</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300 text-center">Type</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300 text-center"># of Req.</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">Actions</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Document Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Description</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Units</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Type</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300"># of Req.</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -77,42 +77,43 @@
                                         </button>
                                     </div>
                                     <button 
-                                    onclick="openEditRequirementsModal({{ $clearance->id }}, '{{ addslashes($clearance->document_name) }}')" 
-                                    class="text-purple-600 flex hover:text-purple-800 items-center text-sm">
-                                    {{-- Edit Requirements Icon --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                        <path fill-rule="evenodd" d="M5 5a2 2 0 012-2h6a2 2 0 012 2v2a1 1 0 01-1 1H6a1 1 0 01-1-1V5z" clip-rule="evenodd" />
-                                    </svg>
-                                    Manage Reqs
-                                </button>
-                                <button 
-                                    onclick="openShareModal({{ $clearance->id }}, '{{ addslashes($clearance->document_name) }}')" 
-                                    class="text-green-600 hover:text-green-800 flex items-center text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M8 9H7v6H5V9H4l3-3 3 3z" />
-                                        <path d="M18 10v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6a2 2 0 012-2h1V7a2 2 0 012-2h4a2 2 0 012 2v1h1a2 2 0 012 2z" />
-                                    </svg>
-                                    Share Clearance
-                                </button>
-                                <button onclick="generateReport({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M13 7H7v6h6V7z" />
-                                        <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
-                                    </svg>
-                                     PDF this Checklist
-                                </button>
+                                        onclick="openEditRequirementsModal({{ $clearance->id }}, '{{ addslashes($clearance->document_name) }}')" 
+                                        class="text-purple-600 flex hover:text-purple-800 items-center text-sm">
+                                        {{-- Edit Requirements Icon --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                                            <path fill-rule="evenodd" d="M5 5a2 2 0 012-2h6a2 2 0 012 2v2a1 1 0 01-1 1H6a1 1 0 01-1-1V5z" clip-rule="evenodd" />
+                                        </svg>
+                                        Manage Reqs
+                                    </button>
+                                    <button 
+                                        onclick="openShareModal({{ $clearance->id }}, '{{ addslashes($clearance->document_name) }}')" 
+                                        class="text-green-600 hover:text-green-800 flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M8 9H7v6H5V9H4l3-3 3 3z" />
+                                            <path d="M18 10v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6a2 2 0 012-2h1V7a2 2 0 012-2h4a2 2 0 012 2v1h1a2 2 0 012 2z" />
+                                        </svg>
+                                        Share Clearance
+                                    </button>
+                                    <button onclick="generateReport({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M13 7H7v6h6V7z" />
+                                            <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+                                        </svg>
+                                        PDF this Checklist
+                                    </button>
                                 
                                 </div>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>     
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>     
         </div>
     </div>
+
 
     <script>
         function generateReport(clearanceId) {
@@ -121,7 +122,7 @@
     </script>
 
     <!-- Add Modal -->
-    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -173,14 +174,14 @@
             <div id="addNotification" class="hidden mt-4 text-green-600 bg-green-100 p-3 rounded-lg border border-green-200"></div>
             
             <!-- Loader for Add Modal -->
-            <div id="addLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+            <div id="addLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 rounded-2xl">
                 <div class="loader border-t-4 border-green-500 border-solid rounded-full animate-spin h-12 w-12"></div>
             </div>
         </div>
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -232,14 +233,14 @@
             <div id="editNotification" class="hidden mt-4 text-blue-600 bg-blue-100 p-3 rounded-lg border border-blue-200"></div>
             
             <!-- Loader for Edit Modal -->
-            <div id="editLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+            <div id="editLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 rounded-2xl">
                 <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-12 w-12"></div>
             </div>
         </div>
     </div>
 
      <!-- Edit Requirements Modal -->
-     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-purple-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -278,7 +279,7 @@
             </div>
 
             <!-- Add Requirement Modal (Nested) -->
-            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-100">
+            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden z-100">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full relative">
                     <h4 class="text-xl font-semibold mb-4 text-gray-800">Add Requirement</h4>
                     <form id="addRequirementForm">
@@ -297,7 +298,7 @@
             </div>
 
             <!-- Edit Requirement Modal (Nested) -->
-            <div id="editRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+            <div id="editRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full relative">
                     <h4 class="text-xl font-semibold mb-4 text-gray-800">Edit Requirement</h4>
                     <form id="editRequirementForm">
@@ -317,7 +318,7 @@
             </div>
 
             <!-- Delete Requirement Confirmation Modal (Nested) -->
-            <div id="deleteRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+            <div id="deleteRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
                     <h4 class="text-xl font-semibold mb-4 text-gray-800">Confirm Deletion</h4>
                     <p>Are you sure you want to delete the requirement: <strong id="deleteRequirementName"></strong>?</p>
@@ -337,7 +338,7 @@
     </div>
 
     <!-- Share Clearance Modal -->
-    <div id="shareModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-30 backdrop-blur-sm hidden transition-opacity duration-300">
+    <div id="shareModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 backdrop-blur-sm hidden transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -366,14 +367,14 @@
             </form>
             <div id="shareNotification" class="hidden mt-4 text-green-600 bg-green-100 p-3 rounded-lg border border-green-200"></div>
             <!-- Loader -->
-            <div id="shareLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+            <div id="shareLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 rounded-2xl">
                 <div class="loader border-t-4 border-green-500 border-solid rounded-full animate-spin h-12 w-12"></div>
             </div>
         </div>
     </div>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -406,14 +407,14 @@
             </div>
             
             <!-- Loader for Delete Modal -->
-            <div id="deleteLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
+            <div id="deleteLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 rounded-2xl">
                 <div class="loader"></div>
             </div>
         </div>
     </div>
     
     <!-- Shared Clearances Modal ID -->
-    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50">
         <div class="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -450,7 +451,7 @@
     </div>
 
     <!-- Remove Shared Clearance Confirmation Modal -->
-    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
             <h3 class="text-xl font-bold mb-4 text-gray-800">Confirm Removal</h3>
             <p class="mb-6">Are you sure you want to remove this shared clearance?</p>
@@ -466,8 +467,8 @@
     </div>
 
     <!-- View Details Modal -->
-    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
+    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
+        <div class="bg-white p-5 rounded-2xl shadow-2xl max-w-2xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -517,19 +518,29 @@
                                 <p id="clearanceUpdatedAt" class="text-gray-700 font-medium"></p>
                             </div>
                         </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Requirements Count:&nbsp;</span>
+                                <span id="requirementCount" class="text-gray-700 font-medium"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Users Copy Count: Not implemented</span>
+                                <p id="sharedCount" class="text-gray-700 font-medium"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Requirements List -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-lg font-semibold text-gray-700 mb-2">Requirements:</h4>
-                    <ol id="requirementsList" class="space-y-3 list-none pl-0">
+                <div class="bg-gray-50 p-2 rounded-lg">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Requirements:</h4>
+                    <ol id="requirementsList" class="space-y-3 list-none pl-0 text-[11px]">
                         <!-- Requirements will be populated here -->
                     </ol>
                 </div>
             </div>
-            <div class="mt-4 flex justify-end sticky bottom-0 bg-white pt-2">
+            <div class="mt-1 flex justify-end sticky bottom-0 bg-white pt-1">
                 <button type="button" onclick="closeViewDetailsModal()" 
-                    class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center 
+                    class="px-6 py-1 bg-gray-200 text-gray-700 rounded-md flex items-center 
                     transition duration-300 ease-in-out transform hover:scale-105 
                     hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 
                     focus:ring-opacity-50">
@@ -685,7 +696,9 @@
                     units: document.getElementById('clearanceUnits'),
                     type: document.getElementById('clearanceType'),
                     createdAt: document.getElementById('clearanceCreatedAt'),
-                    updatedAt: document.getElementById('clearanceUpdatedAt')
+                    updatedAt: document.getElementById('clearanceUpdatedAt'),
+                    requirementCount: document.getElementById('requirementCount'),
+                    sharedCount: document.getElementById('sharedCount')
                 };
 
                 // Helper function to format date
@@ -710,6 +723,15 @@
                         if (key === 'createdAt' || key === 'updatedAt') {
                             value = formatDate(value);
                         }
+
+                         // Set requirements count and shared count
+                        if (key === 'requirementCount') {
+                            value = clearance.requirements.length;
+                        } 
+                        // else if (key === 'sharedCount') {
+                        //     value = clearance.shared_users_count; // Assuming this data is available
+                        // }
+
                         
                         element.textContent = value;
                         console.log(`${key} set to:`, element.textContent);
