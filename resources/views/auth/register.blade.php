@@ -141,10 +141,12 @@
                         </button>
                     </div>
                 </div>
+                <p id="password-hint" class="text-xs text-gray-600 mt-1">Password must be at least 8 characters long, include a letter, a number, and a special character.</p>
                 @error('password')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
+            <!-- Confirm Password -->
             <div class="relative">
                 <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-xs font-medium text-gray-700" />
                 <div class="relative" x-data="{ show: false }">
@@ -175,6 +177,26 @@
                 @enderror
             </div>
         </div>
+
+        <script>
+            function validatePassword(password) {
+                const hint = document.getElementById('password-hint');
+                const lengthRequirement = password.length >= 8;
+                const letterRequirement = /[a-zA-Z]/.test(password);
+                const numberRequirement = /\d/.test(password);
+                const specialCharRequirement = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        
+                if (lengthRequirement && letterRequirement && numberRequirement && specialCharRequirement) {
+                    hint.textContent = 'Password meets all requirements.';
+                    hint.classList.remove('text-gray-600');
+                    hint.classList.add('text-green-600');
+                } else {
+                    hint.textContent = 'Password must be at least 8 characters long, include a letter, a number, and a special character.';
+                    hint.classList.remove('text-green-600');
+                    hint.classList.add('text-gray-600');
+                }
+            }
+        </script>
 
         <div class="flex items-center justify-between mb-4">
             <a class="text-xs text-blue-600 hover:text-blue-500" href="{{ route('login') }}">
