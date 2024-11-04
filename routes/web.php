@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ClearanceController as AdminClearanceController;
 use App\Http\Controllers\Faculty\ClearanceController as FacultyClearanceController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\OptimizationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
@@ -61,6 +62,12 @@ Route::middleware(['Faculty'])->group(function () {
     Route::get('/faculty/homepage', [FacultyController::class, 'home'])->name('faculty.home');
 });
 /////////////////////////////////////////////// End of Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////// Optimization Routes ////////////////////////////////////////////////
+Route::get('/optimize/clear-cache', [OptimizationController::class, 'clearCache'])->name('optimize.clearCache');
+Route::get('/optimize/prune-reports', [OptimizationController::class, 'pruneReports'])->name('optimize.pruneReports');
+//--------------------------------------------------------------------------------------------------------------------//
 
 /////////////////////////////////////////////// DomPDF Routes ////////////////////////////////////////////////
 Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
