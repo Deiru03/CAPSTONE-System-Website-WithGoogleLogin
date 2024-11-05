@@ -310,7 +310,7 @@
                                                 }
                                             @endphp
 
-                                            <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200">
+                                            <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200" data-uploaded="{{ $hasNonArchivedUpload ? 'true' : 'false' }}">
                                                 <td class="border-t px-3 py-2 text-gray-400">{{ $requirement->id }}</td>
                                                 <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
                                                 <td class="border-t px-3 py-2 text-center">
@@ -611,6 +611,9 @@
                     returnCount++;
                 }
             });
+
+            console.log(requirements);
+   console.log(`Missing: ${missingCount}, Return: ${returnCount}`);
             
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
             returnCountElement.textContent = `Return Documents: ${returnCount} out of ${requirements.length}`;
@@ -1025,14 +1028,17 @@
         notificationIcon.innerHTML = '';
 
         if (type === 'success') {
-            notification.classList.add('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700');
+            notification.classList.add('bg-green-100/90', 'border-l-4', 'border-green-500', 'text-green-700');
             notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
         } else if (type === 'error') {
-            notification.classList.add('bg-red-100', 'border-l-4', 'border-red-500', 'text-red-700');
+            notification.classList.add('bg-red-100/90', 'border-l-4', 'border-red-500', 'text-red-700');
             notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
         } else if (type === 'successDelete') {
-            notification.classList.add('bg-yellow-100', 'border-l-4', 'border-yellow-500', 'text-yellow-700', 'z-100');
+            notification.classList.add('bg-yellow-100/90', 'border-l-4', 'border-yellow-500', 'text-yellow-700', 'z-50');
             notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-7 7-3-3"></path></svg>';
+        } else if (type === 'info') {
+            notification.classList.add('bg-blue-100/80', 'border-l-4', 'border-blue-500', 'text-blue-700');
+            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
         }
 
         notification.classList.remove('hidden', 'translate-x-full');
@@ -1060,6 +1066,9 @@
 
         @if(session('error'))
             showNotification('{{ session('error') }}', 'error');
+        @endif
+        @if (session('info'))
+            showNotification('{{ session('info') }}', 'info');
         @endif
     });
 </script>
