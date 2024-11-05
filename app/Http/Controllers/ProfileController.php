@@ -67,8 +67,8 @@ class ProfileController extends Controller
             $user->admin_id_registered = $request->admin_id;
         }
     
-        $user->clearances_status = 'pending';
-        $user->checked_by = 'System';
+        // $user->clearances_status = 'pending';
+        // $user->checked_by = 'System';
         $program = \App\Models\Program::find($request->input('program_id'));
         
         $user->program = $program ? $program->name : null;
