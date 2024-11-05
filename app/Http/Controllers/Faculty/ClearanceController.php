@@ -195,11 +195,10 @@ class ClearanceController extends Controller
                     'status' => 'Okay',
                 ]);
 
-                session()->flash('success', 'Files uploaded successfully.');
     
                 return response()->json([
                     'success' => true,
-                    'message' => 'Files uploaded successfully.',
+                    'message' => 'Files uploaded successfully for requirement id:' . $requirementId .' with ' . $fileCount . ' file(s).',
                 ]);
             } catch (\Exception $e) {
                 Log::error('File Upload Error: '.$e->getMessage());

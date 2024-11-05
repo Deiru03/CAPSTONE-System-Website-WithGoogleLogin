@@ -7,13 +7,13 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <!-- Upload Notification -->
-    <div id="uploadNotification" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+    <div id="uploadNotification" class="hidden backdrop-blur-sm fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
         <div id="notificationIcon" class="inline-block mr-2"></div>
         <span id="notificationMessage"></span>
     </div>
 
     <!-- Upload Tracker -->
-    <div id="uploadTracker" class="fixed bottom-4 right-4 w-80 bg-white shadow-2xl rounded-xl p-6 hidden transform transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-blue-500 hover:border-blue-700">
+    <div id="uploadTracker" class="fixed bottom-20 right-4 w-80 bg-white/70 backdrop-blur-sm shadow-2xl rounded-xl p-6 z-20 hidden transform transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-blue-500 hover:border-blue-700 pointer-events-none">
         <div class="flex items-center justify-between mb-4">
             <h4 class="text-lg font-bold text-gray-800 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
     </style>
 
     <!-- Notification -->
-    <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-100"></div>
+    <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50"></div>
 
     <!-- Clearance Details -->
     <div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">
@@ -396,7 +396,7 @@
     </div>
 
     <!-- Upload Modal -->
-    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -467,7 +467,7 @@
     </div>
 
     <!-- View Files Modal -->
-    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 to-teal-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -498,7 +498,7 @@
     </div>
 
     <!-- Preview Modal -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-35 hidden items-center justify-center z-40">
         <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
             <div class="flex justify-between items-center p-4 border-b">
                 <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
@@ -515,7 +515,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -559,7 +559,7 @@
 @endif
 
     <!-- Single File Delete Modal -->
-    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
+    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -710,105 +710,6 @@
             content.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');
         }
-
-        /**
-         * Function to open the Upload modal.
-         *
-         * @param {number} sharedClearanceId
-         * @param {number} requirementId
-         */
-        function openUploadModal(sharedClearanceId, requirementId) {
-            const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
-            
-            document.getElementById('uploadModal').classList.remove('hidden');
-            document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
-            document.getElementById('uploadRequirementId').innerText = requirementId;
-            document.getElementById('uploadRequirementIdInput').value = requirementId;
-            document.getElementById('uploadRequirementName').textContent = requirements[requirementId];
-        }
-
-        // Function to close the upload modal
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            document.getElementById('uploadForm').reset();
-            document.getElementById('uploadNotification').classList.add('hidden');
-            document.getElementById('uploadLoader').classList.add('hidden');
-        }
-
-        // Handle Upload Form Submission
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
-            const requirementId = document.getElementById('uploadRequirementIdInput').value;
-            const fileInput = document.getElementById('uploadFiles');
-            const uploadNotification = document.getElementById('uploadNotification');
-            const uploadLoader = document.getElementById('uploadLoader');
-            const uploadProgressContainer = document.getElementById('uploadProgressContainer');
-            const uploadProgressBar = document.getElementById('uploadProgressBar');
-
-            if (fileInput.files.length === 0) {
-                showNotification('Please select at least one file to upload.', 'error');
-                return;
-            }
-
-            const files = fileInput.files;
-            for (let i = 0; i < files.length; i++) {
-                if (files[i].type !== 'application/pdf' && files[i].type !== 'image/*' && files[i].type !== 'application/msword' && files[i].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                    showNotification('Only PDF files are allowed.', 'error');
-                    return;
-                }
-            }
-
-            const formData = new FormData();
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files[]', files[i]);
-            }
-
-            uploadLoader.classList.remove('hidden');
-            uploadProgressContainer.classList.remove('hidden');
-            uploadNotification.classList.add('hidden');
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
-            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
-            xhr.upload.onprogress = function(event) {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    uploadProgressBar.style.width = percentComplete + '%';
-                    uploadProgressBar.textContent = Math.round(percentComplete) + '%';
-                }
-            };
-
-            xhr.onload = function() {
-                uploadLoader.classList.add('hidden');
-                uploadProgressContainer.classList.add('hidden');
-
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        showNotification(response.message, 'success');
-                        setTimeout(() => {
-                            closeUploadModal();
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        showNotification(response.message || 'Failed to upload files.', 'error');
-                    }
-                } else {
-                    showNotification('An error occurred while uploading the files.', 'error');
-                }
-            };
-
-            xhr.onerror = function() {
-                uploadLoader.classList.add('hidden');
-                uploadProgressContainer.classList.add('hidden');
-                showNotification('An error occurred while uploading the files.', 'error');
-            };
-
-            xhr.send(formData);
-        });
 
         /**
          * Function to open the delete confirmation modal.
@@ -1165,16 +1066,43 @@
 
 <!-- Script for Upload Tracker -->
 <script>
+/////////////////////////////////////////////////////// START OF UPLOAD MODAL ///////////////////////////////////////////////////////
+    /**
+     * Function to open the Upload modal.
+     *
+     * @param {number} sharedClearanceId
+     * @param {number} requirementId
+     */
+    function openUploadModal(sharedClearanceId, requirementId) {
+        const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
+        
+        document.getElementById('uploadModal').classList.remove('hidden');
+        document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
+        document.getElementById('uploadRequirementId').innerText = requirementId;
+        document.getElementById('uploadRequirementIdInput').value = requirementId;
+        document.getElementById('uploadRequirementName').textContent = requirements[requirementId];
+    }
+
+    // Function to close the upload modal
+    function closeUploadModal() {
+        document.getElementById('uploadModal').classList.add('hidden');
+        document.getElementById('uploadForm').reset();
+        document.getElementById('uploadNotification').classList.add('hidden');
+        document.getElementById('uploadLoader').classList.add('hidden');
+    }
+
     function createUploadProgress(fileName, fileSize) {
         const uploadList = document.getElementById('uploadList');
         const uploadItem = document.createElement('div');
         uploadItem.className = 'mb-2';
         uploadItem.innerHTML = `
-            <div class="text-xs">${fileName} (${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
-            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-0.5">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
+            <div class="font-medium text-sm mb-1">${fileName}</div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                <div class="bg-blue-500 h-2 rounded-full" style="width: 0%" data-progress="0"></div>
             </div>
-            <div class="text-[10px] text-right">0% (0 MB of ${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
+            <div class="flex justify-end">
+                <div class="text-xs text-gray-600">0% (0 MB of ${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
+            </div>
         `;
         uploadList.appendChild(uploadItem);
         return uploadItem;
@@ -1182,21 +1110,33 @@
 
     function updateUploadProgress(uploadItem, percentComplete, loaded, total) {
         const progressBar = uploadItem.querySelector('.bg-blue-500');
-        const percentText = uploadItem.querySelector('.text-xs');
+        const progressText = uploadItem.querySelector('.text-xs');
         progressBar.style.width = percentComplete + '%';
-        percentText.textContent = `${Math.round(percentComplete)}% (${(loaded / (1024 * 1024)).toFixed(2)} MB of ${(total / (1024 * 1024)).toFixed(2)} MB)`;
+        progressBar.setAttribute('data-progress', percentComplete);
+        progressText.textContent = `${Math.round(percentComplete)}% (${(loaded / (1024 * 1024)).toFixed(2)} MB of ${(total / (1024 * 1024)).toFixed(2)} MB)`;
     }
 
-   function showUploadTracker() {
-       const uploadTracker = document.getElementById('uploadTracker');
-       uploadTracker.classList.remove('hidden');
-   }
+    function showUploadTracker() {
+        const uploadTracker = document.getElementById('uploadTracker');
+        uploadTracker.classList.remove('hidden');
+    }
 
-   function hideUploadTracker() {
-       const uploadTracker = document.getElementById('uploadTracker');
-       uploadTracker.classList.add('hidden');
-   }
+    function hideUploadTracker() {
+        const uploadTracker = document.getElementById('uploadTracker');
+        uploadTracker.classList.add('hidden');
+    }
 
+    function checkAllUploadsComplete() {
+        const progressBars = document.querySelectorAll('#uploadList .bg-blue-500');
+        if (progressBars.length === 0) return false;
+        
+        return Array.from(progressBars).every(bar => {
+            const progress = parseFloat(bar.getAttribute('data-progress'));
+            return progress === 100;
+        });
+    }
+
+    // Single Upload Form Submit Handler with completion tracking
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -1209,9 +1149,16 @@
             return;
         }
 
+        const files = fileInput.files;
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type !== 'application/pdf' && files[i].type !== 'image/*' && files[i].type !== 'application/msword' && files[i].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') { // Only allow PDF only but for Testing Images, Word, and Excel files
+                showNotification('Only PDF files are allowed.', 'error');
+                return;
+            }
+        }
+
         showUploadTracker();
 
-        const files = fileInput.files;
         for (let i = 0; i < files.length; i++) {
             const formData = new FormData();
             formData.append('files[]', files[i]);
@@ -1226,6 +1173,14 @@
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
                     updateUploadProgress(uploadItem, percentComplete, event.loaded, event.total);
+                    
+                    // Check if all uploads are complete after each progress update
+                    if (checkAllUploadsComplete()) {
+                        setTimeout(() => {
+                            closeUploadModal();
+                            location.reload();
+                        }, 1000);
+                    }
                 }
             };
 
@@ -1234,13 +1189,14 @@
                     const response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         showNotification(response.message, 'success');
+                        updateUploadProgress(uploadItem, 100, files[i].size, files[i].size);
                     } else {
                         showNotification(response.message || 'Failed to upload files.', 'error');
                     }
                 } else {
                     showNotification('An error occurred while uploading the files.', 'error');
                 }
-                uploadItem.remove();
+                
                 if (document.getElementById('uploadList').children.length === 0) {
                     hideUploadTracker();
                 }
@@ -1256,7 +1212,7 @@
 
             xhr.send(formData);
         }
-        });
+    });
 </script>
 
 <!-- Return to Top Button -->
