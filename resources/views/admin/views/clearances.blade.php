@@ -39,8 +39,8 @@
                 <p class="text-3xl font-bold text-yellow-800">{{ $clearance->where('clearances_status', 'pending')->count() }}</p>
             </div>
             <div class="bg-red-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                <h3 class="text-lg font-semibold text-red-700 mb-2">Return</h3>
-                <p class="text-3xl font-bold text-red-800">{{ $clearance->where('clearances_status', 'return')->count() }}</p>
+                <h3 class="text-lg font-semibold text-red-700 mb-2">Total Users</h3>
+                <p class="text-3xl font-bold text-red-800">{{ $clearance->count() }}</p>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@
                             <td class="py-2 px-3 text-sm">{{ $user->id }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->name }}</td>
                             <td class="py-2 px-3 text-sm">{{ $user->email }}</td>
-                            <td class="py-2 px-3 text-sm">{{ $user->program->name ?? 'N/A' }}</td>
+                            <td class="py-2 px-3 text-sm">{{ $user->program ?? 'N/A' }}</td>
                             <td class="py-2 px-3 clearances_status text-center text-sm">
                                 @if($user->clearances_status == 'pending')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

@@ -331,8 +331,8 @@
                             <div class="col-span-4">
                                 <label for="editUserType" class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
                                 <select name="user_type" id="editUserType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
-                                    <option value="admin">Admin</option>
-                                    <option value="faculty">Faculty</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Faculty">Faculty</option>
                                 </select>
                             </div>
                         </div>

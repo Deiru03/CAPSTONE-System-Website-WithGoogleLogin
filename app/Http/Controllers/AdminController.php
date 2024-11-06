@@ -735,6 +735,11 @@ class AdminController extends Controller
 
         try {
             $facultyMember = User::findOrFail($validatedData['id']);
+            
+            // Get program name
+            $program = Program::findOrFail($validatedData['program_id']);
+            $validatedData['program'] = $program->name;
+            
             $facultyMember->update($validatedData);
 
             SubmittedReport::create([
