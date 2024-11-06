@@ -49,22 +49,37 @@ class ProfileController extends Controller
             $user->profile_picture = '/storage/' . $path;
         }
     
-        // Handle admin_id for Admin users
-        if ($request->has('admin_id')) {
-            $request->validate([
-                'admin_id' => ['required', 'exists:admin_ids,admin_id'],
-            ], [
-                'admin_id.exists' => 'The provided Admin ID does not exist.',
-            ]);
-    
-            $adminId = AdminId::where('admin_id', $request->admin_id)->first();
-            if ($adminId->is_assigned && $adminId->admin_id !== $user->admin_id_registered) {
-                return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
+        // Handle admin_id based on user type
+        if ($request->input('user_type') === 'Admin') {
+            if ($request->has('admin_id')) {
+                $request->validate([
+                    'admin_id' => ['required', 'exists:admin_ids,admin_id'],
+                ], [
+                    'admin_id.exists' => 'The provided Admin ID does not exist.',
+                ]);
+        
+                $adminId = AdminId::where('admin_id', $request->admin_id)->first();
+                if ($adminId->is_assigned && $adminId->admin_id !== $user->admin_id_registered) {
+                    return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
+                }
+                
+                $user->user_type = $request->input('user_type');
+                AdminId::where('admin_id', $request->admin_id)->update([
+                    'is_assigned' => true,
+                    'user_id' => $user->id
+                ]);
+                $user->admin_id_registered = $request->admin_id;
             }
-            
-            $user->user_type = $request->input('user_type');
-            AdminId::where('admin_id', $request->admin_id)->update(['is_assigned' => true]);
-            $user->admin_id_registered = $request->admin_id;
+        } else {
+            // If user is Faculty, set admin_id to null and remove user_id from admin_ids
+            if ($user->admin_id_registered) {
+                AdminId::where('admin_id', $user->admin_id_registered)->update([
+                    'is_assigned' => false,
+                    'user_id' => null
+                ]);
+            }
+            $user->user_type = 'Faculty';
+            $user->admin_id_registered = null;
         }
     
         // $user->clearances_status = 'pending';

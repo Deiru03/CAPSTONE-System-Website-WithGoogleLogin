@@ -17,6 +17,7 @@ class AdminId extends Model
     protected $fillable = [
         'admin_id',
         'is_assigned',
+        'user_id', // Added this line Nov 6 2024
     ];
 
     /**

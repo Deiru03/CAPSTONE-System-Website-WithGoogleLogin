@@ -52,13 +52,12 @@ class RegisteredUserController extends Controller
             'admin_id.exists' => 'The provided Admin ID does not exist.',
         ]);
 
+        // Check Admin ID assignment before creating user
         if ($request->user_type === 'Admin') {
             $adminId = AdminId::where('admin_id', $request->admin_id)->first();
             if ($adminId->is_assigned) {
                 return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
             }
-            $adminId->is_assigned = true;
-            $adminId->save();
         }
 
         $user = User::create([
@@ -73,6 +72,15 @@ class RegisteredUserController extends Controller
             'program' => \App\Models\Program::find($request->program_id)->name,
             'admin_id_registered' => $request->admin_id,
         ]);
+
+          // Handle Admin ID assignment after user creation
+        if ($request->user_type === 'Admin') {
+            // Update admin_id record with user_id and is_assigned
+            $adminId->update([
+                'is_assigned' => true,
+                'user_id' => $user->id
+            ]);
+        }
 
         event(new Registered($user));
 

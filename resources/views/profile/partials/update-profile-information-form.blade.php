@@ -82,43 +82,33 @@
                             @endif
                         </div>
 
-                        <div>
+                        <div x-data="{ userType: '{{ old('user_type', $user->user_type) }}' }">
                             <x-input-label for="user_type" :value="__('User Type')" />
-                            <select id="user_type" name="user_type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="user_type" name="user_type" 
+                                x-model="userType"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                required>
                                 <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
                                 <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('user_type')" />
-                            <p class="text-sm text-gray-600 mt-2">{{ __('You can only change to admin role if you have Admin ID.') }}</p>
+                            <template x-if="userType === 'Admin'">
+                                <p class="text-sm text-gray-600 mt-2">{{ __('Always use your Admin-ID when switching from Faculty to Admin.') }}</p>
+                            </template>
+                            <template x-if="userType === 'Faculty'">
+                                <p class="text-sm text-gray-600 mt-2">{{ __('You are now in Faculty user type.') }}</p>
+                            </template>
                         </div>
                         
-                        <!-- Admin ID (conditionally displayed) -->
-                        <div id="admin_id_field" class="hidden">
+                        <!-- Admin ID -->
+                        <div>
                             <x-input-label for="admin_id" :value="__('Admin ID')" />
                             <x-text-input id="admin_id" name="admin_id" type="text" class="mt-1 block w-full" :value="old('admin_id', $user->admin_id_registered)" />
                             <x-input-error class="mt-2" :messages="$errors->get('admin_id')" />
-                        </div>
-                        
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const userTypeSelect = document.getElementById('user_type');
-                                const adminIdField = document.getElementById('admin_id_field');
-                        
-                                function toggleAdminIdField() {
-                                    adminIdField.style.display = userTypeSelect.value === 'Admin' ? 'block' : 'none';
-                                }
-                        
-                                userTypeSelect.addEventListener('change', toggleAdminIdField);
-                                toggleAdminIdField(); // Initial check on page load
-                            });
-                        </script>
-
-                        <div>
-                            <x-input-label for="user_id" :value="__('User ID #:')" />
-                            <x-text-input id="user_id" name="user_id" type="text" class="mt-1 block w-full" :value="old('user_id', $user->id)" disabled readonly />
-                            <p class="text-sm text-gray-600 mt-2">{{ __('User ID cannot be edited.') }}</p>
+                            <p class="text-sm text-gray-600 mt-2">{{ __('Save your Admin-ID for future use when switching from Admin to Faculty.') }}</p>
                         </div>
 
+                        <!-- Department -->
                         <div>
                             <x-input-label for="department_id" :value="__('Department')" />
                             <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
@@ -129,6 +119,8 @@
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
                         </div>
+
+                        <!-- Program -->
                         <div>
                             <x-input-label for="program_id" :value="__('Program')" />
                             <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
@@ -143,6 +135,7 @@
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
                         </div>
+
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 const departmentSelect = document.getElementById('department_id');
