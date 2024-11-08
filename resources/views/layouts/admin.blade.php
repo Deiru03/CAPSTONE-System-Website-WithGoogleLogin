@@ -90,9 +90,11 @@
                             <a href="{{ route('admin.views.clearances') }}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700 {{ request()->routeIs('admin.views.clearances') ? 'bg-gray-700 text-indigo-300' : 'text-gray-300' }}">
                                 <span>View Clearances</span>
                             </a>
-                            <a href="{{ route('admin.clearance.manage') }}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700 {{ request()->routeIs('admin.clearance.manage') ? 'bg-gray-700 text-indigo-300' : 'text-gray-300' }}">
-                                <span>Manage Clearances</span>
-                            </a>
+                            @if(Auth::user()->user_type == 'Admin')
+                                <a href="{{ route('admin.clearance.manage') }}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700 {{ request()->routeIs('admin.clearance.manage') ? 'bg-gray-700 text-indigo-300' : 'text-gray-300' }}">
+                                    <span>Manage Clearances</span>
+                                </a>
+                            @endif
                             <a href="{{ route('admin.clearance.check') }}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700 {{ request()->routeIs('admin.clearance.check') || request()->routeIs('admin.clearances.show') ? 'bg-gray-700 text-indigo-300' : 'text-gray-300' }}">
                                 <span>Check Clearances</span>
                             </a>
@@ -124,12 +126,14 @@
                     </a>
 
                     <!-- College -->
-                    <a href="{{ route('admin.views.college') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.college') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                        </svg>
-                        <span class="{{ request()->routeIs('admin.views.college') ? 'text-indigo-300 font-semibold' : '' }}">College</span>
-                    </a>
+                    @if(Auth::user()->user_type == 'Admin')
+                        <a href="{{ route('admin.views.college') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.college') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                            </svg>
+                            <span class="{{ request()->routeIs('admin.views.college') ? 'text-indigo-300 font-semibold' : '' }}">College</span>
+                        </a>
+                    @endif
 
                     <!-- My Files // Archives -->
                     <a href="{{ route('admin.views.archive') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.archive') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
@@ -140,12 +144,14 @@
                     </a>
                     
                     <!-- Admin ID Management -->
-                    <a href="{{ route('admin.adminIdManagement') }}" class="flex items-center px-9 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.adminIdManagement') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-9 w-9 mr-2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
-                        </svg>
-                        <span class="{{ request()->routeIs('admin.adminIdManagement') ? 'text-indigo-300 font-semibold' : '' }}">Admin ID Management</span>
-                    </a>
+                    @if(Auth::user()->user_type == 'Admin')
+                        <a href="{{ route('admin.adminIdManagement') }}" class="flex items-center px-9 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.adminIdManagement') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-9 w-9 mr-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                            </svg>
+                            <span class="{{ request()->routeIs('admin.adminIdManagement') ? 'text-indigo-300 font-semibold' : '' }}">Admin ID Management</span>
+                        </a>
+                    @endif
 
                     <!-- Profile -->
                     <a href="{{ route('admin.profile.edit') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.profile.edit') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">

@@ -33,6 +33,8 @@
                 <select id="user_type" name="user_type" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" onchange="toggleAdminIdField()">
                     <option value="Faculty" selected>Faculty</option>
                     <option value="Admin">Admin</option>
+                    <option value="Dean">Dean</option>
+                    <option value="Program-Head">Program Head</option>
                 </select>
                 @error('user_type')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

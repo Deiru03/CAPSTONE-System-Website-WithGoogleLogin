@@ -16,7 +16,7 @@ class RedirectIfNotAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user() && Auth::user()->user_type !== 'Admin') {
+        if (Auth::user() && Auth::user()->user_type !== 'Admin' && Auth::user()->user_type !== 'Dean' && Auth::user()->user_type !== 'Program-Head') {
             return redirect()->route('faculty.dashboard');
         }
         return $next($request);

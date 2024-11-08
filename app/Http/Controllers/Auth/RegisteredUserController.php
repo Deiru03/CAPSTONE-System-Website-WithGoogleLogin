@@ -53,7 +53,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // Check Admin ID assignment before creating user
-        if ($request->user_type === 'Admin') {
+        if ($request->user_type === 'Admin' || $request->user_type === 'Dean' || $request->user_type === 'Program-Head') {
             $adminId = AdminId::where('admin_id', $request->admin_id)->first();
             if ($adminId->is_assigned) {
                 return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);

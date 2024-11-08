@@ -50,7 +50,7 @@ class ProfileController extends Controller
         }
     
         // Handle admin_id based on user type
-        if ($request->input('user_type') === 'Admin') {
+        if ($request->input('user_type') === 'Admin' || $request->input('user_type') === 'Dean' || $request->input('user_type') === 'Program-Head') {
             if ($request->has('admin_id')) {
                 $request->validate([
                     'admin_id' => ['required', 'exists:admin_ids,admin_id'],

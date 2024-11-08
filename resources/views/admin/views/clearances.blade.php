@@ -17,14 +17,16 @@
                 <span class="text-xl">Check Clearances</span>
             </span>
         </a>
-        <a href="{{ route('admin.clearance.manage') }}" class="bg-green-500 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
-            <span class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-spin" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                <span class="text-xl">Manage Clearances</span>
-            </span>
-        </a>
+        @if(Auth::user()->user_type === 'Admin')
+            <a href="{{ route('admin.clearance.manage') }}" class="bg-green-500 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                <span class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-spin" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    <span class="text-xl">Manage Clearances</span>
+                </span>
+            </a>
+        @endif
     </div>
     <div class="py-10">
         <h2 class="text-3xl font-bold mb-4 text-indigo-600 border-b pb-2">Clearance Management</h2>

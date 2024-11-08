@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register Middleware
         $middleware->alias([
             'Admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
+            'Dean' => \App\Http\Middleware\RedirectIfNotAdmin::class,
+            'Program-Head' => \App\Http\Middleware\RedirectIfNotAdmin::class,
             'Faculty' => \App\Http\Middleware\RedirectIfNotFaculty::class,
         ]);
     })

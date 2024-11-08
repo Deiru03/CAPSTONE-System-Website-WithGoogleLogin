@@ -90,6 +90,8 @@
                                 required>
                                 <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
                                 <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="Dean" {{ old('user_type', $user->user_type) === 'Dean' ? 'selected' : '' }}>Dean</option>
+                                <option value="Program-Head" {{ old('user_type', $user->user_type) === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('user_type')" />
                             <template x-if="userType === 'Admin'">

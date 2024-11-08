@@ -52,7 +52,7 @@ Route::get('/homepage', function () {
 
 Route::get('/dashboard', function () {
     if (Auth::check()) {
-        if (Auth::user()->user_type === 'Admin') {
+        if (Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Dean' || Auth::user()->user_type === 'Program-Head') {
             return redirect()->route('admin.dashboard');
         } else {
             return redirect()->route('faculty.dashboard');
@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 /////////////////////////////////////////////// Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
-Route::middleware(['Admin'])->group(function () {
+Route::middleware(['Admin', 'Dean', 'Program-Head'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/homepage', [AdminController::class, 'home'])->name('admin.home');
 });
@@ -92,17 +92,19 @@ Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateMa
 Route::get('/admin/clearance/{id}/report', [AdminClearanceController::class, 'generateChecklistInfo'])->name('admin.clearance.report');
 
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
-Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix('admin')->group(function () {
     Route::get('/homepage', [AdminController::class, 'home'])->name('admin.home');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/clearances', [AdminController::class, 'clearances'])->name('admin.views.clearances');
+    Route::get('/clearances_view', [AdminController::class, 'clearances'])->name('admin.views.clearances');
     Route::get('/submitted-reports', [AdminController::class, 'submittedReports'])->name('admin.views.submittedReports');
     Route::get('/faculty', [AdminController::class, 'faculty'])->name('admin.views.faculty');
     Route::get('/my-files', [AdminController::class, 'myFiles'])->name('admin.views.myFiles');
     Route::get('/action-reports', [AdminController::class, 'actionReports'])->name('admin.views.actionReports');
     Route::get('/archive', [AdminController::class, 'archive'])->name('admin.views.archive');
     Route::get('/profile', [AdminController::class, 'profileEdit'])->name('admin.profile.edit');
-    Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
+    Route::middleware(['Admin'])->group(function () {
+        Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
+    });
 
     ///////////////////// Admin ID Management /////////////////////
     Route::post('/admin-id-management', [AdminController::class, 'createAdminId'])->name('admin.createAdminId');
@@ -115,14 +117,16 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
     Route::post('/clearance/update', [AdminController::class, 'updateFacultyClearanceUser'])->name('admin.views.update-clearance'); // Update Clearance
 
     // Clearance Management
-    Route::get('/clearance', [AdminClearanceController::class, 'index'])->name('admin.clearance.manage');
-    Route::post('/clearance/store', [AdminClearanceController::class, 'store'])->name('admin.clearance.store');
-    Route::post('/clearance/share/{id}', [AdminClearanceController::class, 'share'])->name('admin.clearance.share');
-    Route::get('/clearance/edit/{id}', [AdminClearanceController::class, 'edit'])->name('admin.clearance.edit');
-    Route::post('/clearance/update/{id}', [AdminClearanceController::class, 'update'])->name('admin.clearance.update');
-    Route::delete('/clearance/delete/{id}', [AdminClearanceController::class, 'destroy'])->name('admin.clearance.destroy');
-    Route::get('/clearance/{id}/details', [AdminClearanceController::class, 'getClearanceDetails'])->name('admin.clearance.details');
-    Route::get('/clearance/all', [AdminClearanceController::class, 'getAllClearances'])->name('admin.clearance.all');
+    Route::middleware(['Admin'])->group(function () {
+        Route::get('/clearance_manage', [AdminClearanceController::class, 'index'])->name('admin.clearance.manage');
+        Route::post('/clearance/store', [AdminClearanceController::class, 'store'])->name('admin.clearance.store');
+        Route::post('/clearance/share/{id}', [AdminClearanceController::class, 'share'])->name('admin.clearance.share');
+        Route::get('/clearance/edit/{id}', [AdminClearanceController::class, 'edit'])->name('admin.clearance.edit');
+        Route::post('/clearance/update/{id}', [AdminClearanceController::class, 'update'])->name('admin.clearance.update');
+        Route::delete('/clearance/delete/{id}', [AdminClearanceController::class, 'destroy'])->name('admin.clearance.destroy');
+        Route::get('/clearance/{id}/details', [AdminClearanceController::class, 'getClearanceDetails'])->name('admin.clearance.details');
+        Route::get('/clearance/all', [AdminClearanceController::class, 'getAllClearances'])->name('admin.clearance.all');
+    });
 
     Route::prefix('clearance/{clearanceId}/requirements')->group(function () {
         Route::get('/', [AdminClearanceController::class, 'requirements'])->name('admin.clearance.requirements');
