@@ -99,6 +99,7 @@ Route::middleware(['auth', 'verified', 'Admin'])->prefix('admin')->group(functio
     Route::get('/submitted-reports', [AdminController::class, 'submittedReports'])->name('admin.views.submittedReports');
     Route::get('/faculty', [AdminController::class, 'faculty'])->name('admin.views.faculty');
     Route::get('/my-files', [AdminController::class, 'myFiles'])->name('admin.views.myFiles');
+    Route::get('/action-reports', [AdminController::class, 'actionReports'])->name('admin.views.actionReports');
     Route::get('/archive', [AdminController::class, 'archive'])->name('admin.views.archive');
     Route::get('/profile', [AdminController::class, 'profileEdit'])->name('admin.profile.edit');
     Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');

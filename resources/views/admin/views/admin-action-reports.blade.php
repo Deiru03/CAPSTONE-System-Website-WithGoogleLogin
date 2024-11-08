@@ -21,46 +21,40 @@
                 </div> --}}
 
                 <!-- Reports Table -->
-               <!-- Reports Table -->
                 <div class="max-h-[790px] overflow-y-auto">
                     <table class="w-full table-fixed divide-y divide-gray-200">
                         <thead class="bg-gray-50 sticky top-0">
                             <tr>
-                                <th class="hidden w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
-                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Faculty</th>
-                                <th class="w-2/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
-                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="w-2/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
+                                {{-- <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> --}}
+                                <th class="w-1/5 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($reports as $report)
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="hidden px-6 py-4 text-xs font-medium text-gray-900 truncate">
-                                        {{ $report->admin_name }}
-                                    </td>
                                     <td class="px-6 py-4 text-xs font-medium text-gray-900 truncate">
-                                        {{ $report->faculty_name ?? 'System Generated' }}
+                                        {{ $report->admin_name }}
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         {{ $report->title }}
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         <span class="px-2 py-1 rounded-full text-[10px] font-medium 
-                                            {{ str_contains(strtolower($report->transaction_type), 'reset') || 
-                                            str_contains(strtolower($report->transaction_type), 'resubmit') ? 
-                                            'bg-orange-100 text-orange-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'remove') ?
-                                            'bg-purple-100 text-purple-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'delete') ?
-                                            'bg-red-100 text-red-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'generate') ||
-                                                str_contains(strtolower($report->transaction_type), 'add') ||
-                                                str_contains(strtolower($report->transaction_type), 'validated') ?
-                                            'bg-green-100 text-green-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'edit') || 
+                                            {{ str_contains(strtolower($report->transaction_type), 'reset') ? 
+                                               'bg-orange-100 text-orange-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'remove') ?
+                                               'bg-purple-100 text-purple-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'delete') ?
+                                               'bg-red-100 text-red-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'generate') ||
+                                                str_contains(strtolower($report->transaction_type), 'add') ?
+                                               'bg-green-100 text-green-800' :
+                                               (str_contains(strtolower($report->transaction_type), 'edit') || 
                                                 str_contains(strtolower($report->transaction_type), 'edited') ?
-                                            'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
+                                               'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
                                             {{ $report->transaction_type }}
                                         </span>
                                     </td>

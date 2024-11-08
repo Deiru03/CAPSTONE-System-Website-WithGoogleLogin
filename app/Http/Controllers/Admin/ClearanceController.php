@@ -422,39 +422,56 @@ class ClearanceController extends Controller
 
     public function storeFeedback(Request $request)
     {
-        $validatedData = $request->validate([
-            'requirement_id' => 'required|exists:clearance_requirements,id',
-            'user_id' => 'required|exists:users,id',
-            'message' => 'nullable|string',
-            'signature_status' => 'required|in:On Check,Complied,Resubmit',
-        ]);
-    
-        // Find the feedback record
-        $feedback = ClearanceFeedback::firstOrNew([
-            'requirement_id' => $validatedData['requirement_id'],
-            'user_id' => $validatedData['user_id'],
-        ]);
-    
-        // Update the fields
-        $feedback->message = $validatedData['message'];
-        $feedback->signature_status = $validatedData['signature_status'];
-        $feedback->is_archived = false; // Set to false
-        $feedback->save();
+        try {
+            $validatedData = $request->validate([
+                'requirement_id' => 'required|exists:clearance_requirements,id',
+                'user_id' => 'required|exists:users,id',
+                'message' => 'nullable|string',
+                'signature_status' => 'required|in:On Check,Complied,Resubmit',
+            ]);
         
-        // Update user's last_clearance_update timestamp
-        User::where('id', $validatedData['user_id'])->update([
-            'last_clearance_update' => now()
-        ]);
-    
-        Log::info('Feedback updated:', $feedback->toArray());
-    
-        app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'Feedback saved successfully.',
-            'feedback' => $feedback,
-        ]);
+            // Find the feedback record
+            $feedback = ClearanceFeedback::firstOrNew([
+                'requirement_id' => $validatedData['requirement_id'],
+                'user_id' => $validatedData['user_id'],
+            ]);
+        
+            // Update the fields
+            $feedback->message = $validatedData['message'];
+            $feedback->signature_status = $validatedData['signature_status'];
+            $feedback->is_archived = false; // Set to false
+            $feedback->save();
+
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => $validatedData['user_id'],
+                'title' => 'Clearance Checklist: ',
+                'transaction_type' => $feedback->signature_status == 'Resubmit' ? 'Resubmit Document' : 'Validated Document',
+                'status' => 'Completed',
+            ]);
+            
+            // Update user's last_clearance_update timestamp
+            User::where('id', $validatedData['user_id'])->update([
+                'last_clearance_update' => now()
+            ]);
+        
+            Log::info('Feedback updated:', $feedback->toArray());
+        
+            app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
+        
+            return response()->json([
+                'success' => true,
+                'message' => 'Feedback saved successfully.',
+                'feedback' => $feedback,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving feedback.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

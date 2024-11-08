@@ -58,9 +58,9 @@ class AdminController extends Controller
     {
         //////////////////////// Clearance Counts //////////////////////////
         $TotalUser = User::count();
-        $clearancePending = User::where('clearances_status', 'On Check')->count();
-        $clearanceComplete = User::where('clearances_status', 'Complied')->count();
-        $clearanceReturn = User::where('clearances_status', 'Resubmit')->count();
+        $clearancePending = User::where('clearances_status', 'Pending')->count();
+        $clearanceComplete = User::where('clearances_status', 'Complete')->count();
+        $clearanceReturn = User::where('clearances_status', 'Return')->count();
         $clearanceTotal = $clearancePending + $clearanceComplete + $clearanceReturn;
         $clearanceChecklist = Clearance::count();
         //////////////////////// Faculty Counts //////////////////////////
@@ -137,6 +137,31 @@ class AdminController extends Controller
 
     public function submittedReports(): View
     {
+        // Get the current admin's ID
+        $adminId = Auth::id();
+        
+        // Get reports from managed faculty
+        $reports = SubmittedReport::with('user')
+            ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
+            ->leftJoin('users as faculty', 'submitted_reports.user_id', '=', 'faculty.id')
+            ->leftJoin('admin_faculty', function($join) use ($adminId) {
+                $join->on('submitted_reports.user_id', '=', 'admin_faculty.faculty_id')
+                     ->where('admin_faculty.admin_id', '=', $adminId);
+            })
+            ->select(
+                'submitted_reports.*',
+                'admins.name as admin_name',
+                'faculty.name as faculty_name'
+            )
+            ->whereNotNull('admin_faculty.faculty_id')
+            ->orderBy('submitted_reports.created_at', 'desc')
+            ->get();
+    
+        return view('admin.views.submitted-reports', compact('reports'));
+    }
+
+    public function actionReports(): View
+    {
         $reports = SubmittedReport::with('user')
         ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
         ->select('submitted_reports.*', 'admins.name as admin_name')
@@ -144,7 +169,7 @@ class AdminController extends Controller
         ->orderBy('submitted_reports.created_at', 'desc')
         ->get();
 
-        return view('admin.views.submitted-reports', compact('reports'));
+        return view('admin.views.admin-action-reports', compact('reports'));
     }
 
     public function faculty(Request $request): View

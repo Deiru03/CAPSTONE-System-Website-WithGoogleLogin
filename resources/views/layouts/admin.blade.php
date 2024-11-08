@@ -39,7 +39,7 @@
                     <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
                 </div> --}}
             <div class="w-60 bg-gray-800 text-white h-screen fixed z-10 overflow-y-auto">
-                <div class="profile-section">
+                {{-- <div class="profile-section">
                     @if(Auth::check())
                         @if(Auth::user()->profile_picture)
                             <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="profile-picture h-9 w-9">
@@ -51,8 +51,8 @@
                         <span class="text-lg font-semibold">{{ Auth::user()->name }}</span>
                     @endif
                     {{-- <img src="{{ asset('images/OMSCLogo.png') }}" alt="Logo" class="h-12 w-12 mr-2">
-                    <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}}
-                </div> 
+                    <span class="text-lg font-semibold">{{ Auth::user()->name }}</span> --}
+                </div>  --}}
                 <div class="mt-auto p-2">
                     <a href="{{ route('admin.home') }}" class="block hover:bg-gray-700 rounded-lg transition duration-300 ease-in-out">
                         <div class="flex flex-col items-center p-4">
@@ -105,6 +105,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
                         </svg>                                                    
                         <span class="{{ request()->routeIs('admin.views.submittedReports') ? 'text-indigo-300 font-semibold' : '' }}">Submitted Reports</span>
+                    </a>
+
+                    <!-- Admin Action Reports -->
+                    <a href="{{ route('admin.views.actionReports') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.actionReports') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+                        </svg>
+                        <span class="{{ request()->routeIs('admin.views.actionReports') ? 'text-indigo-300 font-semibold' : '' }}">Admin Action Reports</span>
                     </a>
 
                     <!-- Faculty -->

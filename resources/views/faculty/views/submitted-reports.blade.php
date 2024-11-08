@@ -80,7 +80,25 @@
                                             </td>
                                             <td class="py-2 px-4 border-b text-xs">{{ $report->requirement_name }}</td>
                                             <td class="py-2 px-4 border-b text-xs">{{ $report->uploaded_clearance_name }}</td>
-                                            <td class="py-2 px-4 border-b text-xs">{{ $report->transaction_type }}</td>
+                                            <td class="py-2 px-4 border-b text-xs">
+                                                <span class="px-2 py-1 rounded-full text-[10px] font-medium 
+                                                    {{ str_contains(strtolower($report->transaction_type), 'reset') || 
+                                                    str_contains(strtolower($report->transaction_type), 'resubmit') ? 
+                                                    'bg-orange-100 text-orange-800' :
+                                                    (str_contains(strtolower($report->transaction_type), 'remove') ?
+                                                    'bg-purple-100 text-purple-800' :
+                                                    (str_contains(strtolower($report->transaction_type), 'delete') ?
+                                                    'bg-red-100 text-red-800' :
+                                                    (str_contains(strtolower($report->transaction_type), 'generate') ||
+                                                        str_contains(strtolower($report->transaction_type), 'add') ||
+                                                        str_contains(strtolower($report->transaction_type), 'validated') ?
+                                                    'bg-green-100 text-green-800' :
+                                                    (str_contains(strtolower($report->transaction_type), 'edit') || 
+                                                        str_contains(strtolower($report->transaction_type), 'edited') ?
+                                                    'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
+                                                    {{ $report->transaction_type }}
+                                                </span>
+                                            </td>
                                             <td class="py-2 px-4 border-b text-xs">{{ $report->created_at->format('M d, Y H:i') }}</td>
                                             <td class="py-2 px-4 border-b">
                                                 <span class="px-2 py-1 inline-flex text-xxs leading-4 font-semibold rounded-full 
