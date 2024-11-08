@@ -801,10 +801,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    console.log('Files data:', data.files); // Add this line
                     data.files.forEach(file => {
+                        // const fileLink = document.createElement('div');
+                        // fileCard.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'flex', 'flex-col', 'items-center', 'justify-between');
+                        // fileCard.onclick = () => viewFile(file.url, file.name);
                         const fileCard = document.createElement('div');
                         fileCard.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'flex', 'flex-col', 'items-center', 'justify-between');
-                        fileCard.onclick = () => viewFile(file.url, file.name);
+                        // const filePath = file.url.replace('/storage/uploads/', '');
+                        fileCard.onclick = () => viewFile(file.file_path, file.name); // Changed from url to file_path
+
 
                         // File Icon
                         const fileIcon = document.createElement('i');
@@ -832,7 +838,10 @@
                         const fileLink = document.createElement('button');
                         fileLink.classList.add('text-blue-500', 'underline', 'truncate', 'w-full', 'text-center', 'mb-2');
                         fileLink.innerText = file.name;
-                        fileLink.onclick = () => viewFile(file.url, file.name);
+                        fileLink.onclick = (e) => {
+                            e.stopPropagation();
+                            viewFile(file.file_path, file.name);
+                        };
 
                         const deleteButton = document.createElement('button');
                         deleteButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded', 'mt-2');
@@ -867,15 +876,19 @@
             document.getElementById('viewFilesModal').classList.add('hidden');
         }
 
-        function viewFile(url, filename) {
+        function viewFile(path, filename) {
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
+            console.log('File path:', path); 
+
             
             // Remove comments if hosted na ang project
-            // const fileUrl = `/file-view/${url}`;
-            // previewFrame.src = fileUrl;
-            previewFrame.src = url;
+            const fileUrl = `/file-view/${path}`;
+            console.log('File URL:', fileUrl);
+
+            previewFrame.src = fileUrl;
+            // previewFrame.src = url;
             previewFileName.textContent = filename;
             
             previewModal.classList.remove('hidden');

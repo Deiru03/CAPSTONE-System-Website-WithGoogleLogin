@@ -102,8 +102,11 @@
                                     }
                                     
                                     // For part-timers with 9 units and below
-                                    if ($userPosition == 'Part-Timer' && $userUnits <= 9 && 
-                                        $sharedClearance->clearance->units <= 9) {
+                                    if ($userPosition == 'Part-Timer' && 
+                                        $userUnits <= 9 && 
+                                        $userUnits > 0 && 
+                                        $sharedClearance->clearance->units <= 9 && 
+                                        $sharedClearance->clearance->units > 0) {
                                         $isRecommended = true;
                                     }
                                 @endphp

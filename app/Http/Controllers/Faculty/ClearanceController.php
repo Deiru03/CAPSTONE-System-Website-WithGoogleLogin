@@ -378,33 +378,33 @@ class ClearanceController extends Controller
     public function getUploadedFiles($sharedClearanceId, $requirementId)
     {
         $user = Auth::user();
-
+    
         try {
             $uploadedFiles = UploadedClearance::where('shared_clearance_id', $sharedClearanceId)
                 ->where('requirement_id', $requirementId)
                 ->where('user_id', $user->id)
                 ->where('is_archived', false)
                 ->get();
-
+    
             $files = $uploadedFiles->map(function($file) {
                 return [
                     'id' => $file->id,
                     'name' => basename($file->file_path),
-                    'url' => Storage::url($file->file_path),
+                    'file_path' => $file->file_path,  // Changed from url to file_path
                 ];
             });
-
+    
             return response()->json([
                 'success' => true,
                 'files' => $files,
             ]);
         } catch (\Exception $e) {
             Log::error('Fetching Uploaded Files Error: '.$e->getMessage());
-
+    
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch uploaded files.',
             ], 500);
         }
-    }
+     }
 }
