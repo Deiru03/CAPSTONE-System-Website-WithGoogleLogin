@@ -53,7 +53,7 @@
                     </div>
                 @endif
 
-                @if($sharedClearances->isEmpty())
+                @if($filteredClearances->isEmpty())
                     <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-md shadow-md">
                         <div class="flex items-center">
                             <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +82,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @foreach($sharedClearances as $sharedClearance)
+                                @foreach($filteredClearances as $sharedClearance)
                                 @php
                                     $userPosition = Auth::user()->position;
                                     $userUnits = Auth::user()->units;

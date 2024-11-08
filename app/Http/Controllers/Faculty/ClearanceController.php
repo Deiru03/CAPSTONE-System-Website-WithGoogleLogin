@@ -22,27 +22,42 @@ class ClearanceController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $userUnits = $user->units;
+        $userPosition = $user->position;
 
         // Get all shared clearances with their associated clearance data
         $sharedClearances = SharedClearance::with('clearance')->get();
-        $sharedClearances = SharedClearance::with('clearance')
-        ->whereHas('clearance', function ($query) {
-            
-        })
-        ->get();
+
+        // Filter shared clearances based on user's units and position
+        $filteredClearances = $sharedClearances->filter(function ($sharedClearance) use ($userUnits, $userPosition) {
+            $clearanceUnits = $sharedClearance->clearance->units;
+            $clearanceType = $sharedClearance->clearance->type;
+
+            // Main filter by units
+            if ($userUnits > 0) {
+                return $clearanceUnits == $userUnits;
+            }
+
+            // Secondary filter by position if no units
+            if ($userUnits == 0 && ($userPosition == 'Permanent' || $userPosition == 'Temporary')) {
+                return $clearanceType == $userPosition;
+            }
+
+            return false;
+        });
 
         // Get user_clearances to map shared_clearance_id to user_clearance_id
         $userClearances = UserClearance::where('user_id', $user->id)
-            ->whereIn('shared_clearance_id', $sharedClearances->pluck('id'))
+            ->whereIn('shared_clearance_id', $filteredClearances->pluck('id'))
             ->pluck('id', 'shared_clearance_id')
             ->toArray();
 
         // Determine recommendations based on user's units and position
-        $recommendations = $sharedClearances->filter(function ($sharedClearance) use ($user) {
+        $recommendations = $filteredClearances->filter(function ($sharedClearance) use ($user) {
             return $sharedClearance->clearance->units == $user->units && $sharedClearance->clearance->type == $user->position;
         });
 
-        return view('faculty.views.clearances.clearance-index', compact('sharedClearances', 'userClearances', 'recommendations'));
+        return view('faculty.views.clearances.clearance-index', compact('filteredClearances', 'userClearances', 'recommendations'));
     }
 
     /**
