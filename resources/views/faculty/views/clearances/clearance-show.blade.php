@@ -311,9 +311,9 @@
                                             @endphp
 
                                             <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200" data-uploaded="{{ $hasNonArchivedUpload ? 'true' : 'false' }}">
-                                                <td class="border-t px-3 py-2 text-gray-400">{{ $requirement->id }}</td>
-                                                <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
-                                                <td class="border-t px-3 py-2 text-center">
+                                                <td class="border-t px-2 py-1 text-gray-400">{{ $requirement->id }}</td>
+                                                <td class="border-t px-2 py-1">{!! nl2br(e($requirement->requirement)) !!}</td>
+                                                <td class="border-t px-2 py-1 text-center">
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                         {{ $checkStatus === 'Complied' ? 'bg-green-100 text-green-900' : '' }}
                                                         {{ $checkStatus === 'Resubmit' ? 'bg-red-100 text-red-900' : '' }}
@@ -323,7 +323,7 @@
                                                         {{ $checkStatus }}
                                                     </span>
                                                 </td>
-                                                <td class="border-t px-3 py-2">
+                                                <td class="border-t px-2 py-1">
                                                     @if($feedback && !empty($feedback->message))
                                                         <p class="text-yellow-800"><strong>{{ $feedback->message }}</strong></p>
                                                     @else
@@ -367,7 +367,7 @@
                                                         <div class="flex justify-center">
                                                             <button 
                                                                 onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                                                class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
+                                                                class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-0 rounded-full transition-colors duration-200 text-xs font-semibold">
                                                                 Upload
                                                             </button>
                                                         </div>
