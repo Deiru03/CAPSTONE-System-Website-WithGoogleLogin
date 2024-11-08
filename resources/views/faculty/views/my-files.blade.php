@@ -35,7 +35,8 @@
                                         <td class="py-2 px-4 border-b">{{ $file->requirement->requirement ?? 'N/A' }}</td>
                                         <td class="py-2 px-4 border-b">{{ $file->created_at->format('Y-m-d H:i') }}</td>
                                         <td class="py-2 px-4 border-b">
-                                            <a href="{{ Storage::url($file->file_path) }}" target="_blank" class="text-blue-500 hover:underline">View</a>
+                                            <button onclick="viewFile('{{ $file->file_path }}', '{{ basename($file->file_path) }}')" class="text-blue-500 hover:underline">View</button>
+                                            {{-- <a href="{{ Storage::url($file->file_path) }}" target="_blank" class="text-blue-500 hover:underline">View</a>
                                             <form action="{{ route('faculty.clearances.deleteSingleFile', [$file->shared_clearance_id, $file->requirement_id, $file->id]) }}" 
                                                 method="POST" 
                                                 class="inline"
@@ -43,7 +44,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 hover:underline">Delete</button>
-                                            </form>
+                                            </form> --}}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -52,6 +53,17 @@
                     @endif
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium" id="previewFileName"></h3>
+                <button onclick="closePreviewModal()" class="text-gray-600 hover:text-gray-800">&times;</button>
+            </div>
+            <iframe id="previewFrame" class="w-full h-[80vh]"></iframe>
         </div>
     </div>
 
@@ -105,6 +117,31 @@
         });
 
         return false;
-    }
+        }
+
+        function viewFile(path, filename) {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            const previewFileName = document.getElementById('previewFileName');
+            
+            // Use the direct file viewing route
+            const fileUrl = `/file-view/${path}`;
+            previewFrame.src = fileUrl;
+            previewFileName.textContent = filename;
+            
+            previewModal.classList.remove('hidden');
+            previewModal.classList.add('flex');
+        }
+
+        function closePreviewModal() {
+            const previewModal = document.getElementById('previewModal');
+            const previewFrame = document.getElementById('previewFrame');
+            
+            previewModal.classList.add('hidden');
+            previewModal.classList.remove('flex');
+            previewFrame.src = '';
+        }
+
     </script>
+    
 </x-app-layout>

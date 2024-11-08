@@ -154,7 +154,7 @@
                 <tr>
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
-                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Signature Status</th>
+                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Document<br>Status</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
                 </tr>
@@ -173,7 +173,7 @@
                             ->first();
                         
                         // Determine if the requirement is complied based on feedback and upload dates
-                        $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Return' && $uploadedFile->created_at > $feedback->updated_at;
+                        $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Resubmit' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ $requirement->requirement }}</td>
@@ -195,7 +195,7 @@
                                 </span>
                             @elseif($uploadedFile && !$uploadedFile->is_archived)
                                 @if($feedback && !$feedback->is_archived)
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Signed' ? 'green' : ($feedback->signature_status == 'Return' ? 'red' : 'yellow') }}-800">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-800">
                                         {{ $feedback->signature_status }}
                                     </span>
                                 @else
@@ -244,11 +244,11 @@
                     <p id="requirementName" class="text-sm text-gray-600 bg-gray-100 p-2 rounded whitespace-pre-line"></p>
                 </div>
                 <div class="mb-6">
-                    <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Signature Status</label>
+                    <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Document Status</label>
                     <select name="signature_status" id="signatureStatus" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="On Check">On Check</option>
-                        <option value="Signed">Signed</option>
-                        <option value="Return">Return</option>
+                        <option value="Complied">Complied</option>
+                        <option value="Resubmit">Resubmit</option>
                     </select>
                 </div>
                 <div class="mb-6">
@@ -367,8 +367,9 @@
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
             
-            const url = `{{ asset('storage') }}/${path}`;
-            previewFrame.src = url;
+          // Convert the storage URL to our direct file viewing route
+            const fileUrl = `/file-view/${path}`;
+            previewFrame.src = fileUrl;
             previewFileName.textContent = filename;
             
             previewModal.classList.remove('hidden');

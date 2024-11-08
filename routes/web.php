@@ -13,10 +13,26 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
 use Faker\Provider\ar_EG\Address;
+use Illuminate\Support\Facades\File;
 
 Route::get('/', function () {
     return view('welcome');
 });
+/////////////////////////////////////////////// File View Route ////////////////////////////////////////////////
+Route::get('/file-view/{path}', function($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    
+    if (!File::exists($fullPath)) {
+        abort(404);
+    }
+    
+    return response()->file($fullPath, [
+        'Content-Type' => File::mimeType($fullPath),
+        'Content-Disposition' => 'inline; filename="' . basename($path) . '"'
+    ]);
+})->where('path', '.*')->middleware('auth');
+/////////////////////////////////////////////// End of File View Route ////////////////////////////////////////////////
+
 
 // Google Auth Routes
 Route::get('auth/google', [GoogleAuthController::class, 'redirectGoogle'])->name('google.login');

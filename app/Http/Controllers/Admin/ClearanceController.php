@@ -426,7 +426,7 @@ class ClearanceController extends Controller
             'requirement_id' => 'required|exists:clearance_requirements,id',
             'user_id' => 'required|exists:users,id',
             'message' => 'nullable|string',
-            'signature_status' => 'required|in:On Check,Signed,Return',
+            'signature_status' => 'required|in:On Check,Complied,Resubmit',
         ]);
     
         // Find the feedback record

@@ -199,7 +199,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
                             </svg>
-                            Find Return Docs
+                            Find Resubmit Docs
                         </button>
                     </div>
                 </div>
@@ -216,7 +216,7 @@
                     $categorizedRequirements = [
                         'Missing' => [],
                         'Uploaded' => [],
-                        'Return' => []
+                        'Resubmit' => []
                     ];
 
                     foreach($requirements as $requirement) {
@@ -232,8 +232,8 @@
                             ->where('is_archived', false)
                             ->first();
 
-                        if ($feedback && $feedback->signature_status == 'Return') {
-                            $categorizedRequirements['Return'][] = $requirement;
+                        if ($feedback && $feedback->signature_status == 'Resubmit') {
+                            $categorizedRequirements['Resubmit'][] = $requirement;
                         } elseif ($hasNonArchivedUpload) {
                             $categorizedRequirements['Uploaded'][] = $requirement;
                         } else {
@@ -249,20 +249,20 @@
                             <div class="folder-header p-3 cursor-pointer flex items-center justify-between transition-colors duration-200 
                                 {{ $category === 'Missing' ? 'bg-yellow-100 hover:bg-yellow-200' : '' }}
                                 {{ $category === 'Uploaded' ? 'bg-green-100 hover:bg-green-200' : '' }}
-                                {{ $category === 'Return' ? 'bg-red-100 hover:bg-red-200' : '' }}"
+                                {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200' : '' }}"
                                 onclick="toggleFolder(this)">
                                 <div class="flex items-center">
                                     <svg class="folder-icon h-5 w-5 mr-2 transform transition-transform duration-200
                                         {{ $category === 'Missing' ? 'text-yellow-600' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-600' : '' }}
-                                        {{ $category === 'Return' ? 'text-red-600' : '' }}" 
+                                        {{ $category === 'Resubmit' ? 'text-red-600' : '' }}" 
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                     <h3 class="text-lg font-semibold 
                                         {{ $category === 'Missing' ? 'text-yellow-700' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-700' : '' }}
-                                        {{ $category === 'Return' ? 'text-red-700' : '' }}">
+                                        {{ $category === 'Resubmit' ? 'text-red-700' : '' }}">
                                         {{ $category }} ({{ count($requirements) }})
                                     </h3>
                                 </div>
@@ -275,7 +275,7 @@
                                         <tr>
                                             <th class="py-2 px-3 text-left">ID</th>
                                             <th class="py-2 px-3 text-left">Requirement</th>
-                                            <th class="py-2 px-3 text-center">Check Status</th>
+                                            <th class="py-2 px-3 text-center">Document<br>Status</th>
                                             <th class="py-2 px-3 text-left">Feedback</th>
                                             <th class="py-2 px-3 text-left text-center">Actions</th>
                                         </tr>
@@ -299,10 +299,10 @@
                                                 if ($hasNonArchivedUpload) {
                                                     $checkStatus = 'Uploaded';
                                                     if ($feedback) {
-                                                        if ($feedback->signature_status == 'Signed') {
-                                                            $checkStatus = 'Signed';
-                                                        } elseif ($feedback->signature_status == 'Return') {
-                                                            $checkStatus = 'Return';
+                                                        if ($feedback->signature_status == 'Complied') {
+                                                            $checkStatus = 'Complied';
+                                                        } elseif ($feedback->signature_status == 'Resubmit') {
+                                                            $checkStatus = 'Resubmit';
                                                         } else {
                                                             $checkStatus = 'On Check';
                                                         }
@@ -315,8 +315,8 @@
                                                 <td class="border-t px-3 py-2">{!! nl2br(e($requirement->requirement)) !!}</td>
                                                 <td class="border-t px-3 py-2 text-center">
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                        {{ $checkStatus === 'Signed' ? 'bg-green-100 text-green-900' : '' }}
-                                                        {{ $checkStatus === 'Return' ? 'bg-red-100 text-red-900' : '' }}
+                                                        {{ $checkStatus === 'Complied' ? 'bg-green-100 text-green-900' : '' }}
+                                                        {{ $checkStatus === 'Resubmit' ? 'bg-red-100 text-red-900' : '' }}
                                                         {{ $checkStatus === 'On Check' ? 'bg-yellow-100 text-yellow-900' : '' }}
                                                         {{ $checkStatus === 'Uploaded' ? 'bg-blue-100 text-blue-900' : '' }}
                                                         {{ $checkStatus === 'No Upload' ? 'bg-gray-100 text-gray-800' : '' }}">
@@ -607,16 +607,16 @@
                     missingCount++;
                 }
 
-                if (statusSpan && statusSpan.textContent.trim() === 'Return') {
+                if (statusSpan && statusSpan.textContent.trim() === 'Resubmit') {
                     returnCount++;
                 }
             });
 
             console.log(requirements);
-   console.log(`Missing: ${missingCount}, Return: ${returnCount}`);
+            console.log(`Missing: ${missingCount}, Resubmit: ${returnCount}`);
             
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
-            returnCountElement.textContent = `Return Documents: ${returnCount} out of ${requirements.length}`;
+            returnCountElement.textContent = `Resubmit Documents: ${returnCount} out of ${requirements.length}`;
 
             // Function to toggle folders
             function toggleFolder(header) {
@@ -672,20 +672,20 @@
 
             // Event listener for Find Return Docs
             findReturnButton.addEventListener('click', function() {
-                openCategory('Return');
+                openCategory('Resubmit');
                 // Allow some time for the category to open before scrolling
                 setTimeout(() => {
                     let found = false;
                     requirements.forEach(row => {
                         const statusSpan = row.querySelector('span');
-                        if (statusSpan && statusSpan.textContent.trim() === 'Return') {
+                        if (statusSpan && statusSpan.textContent.trim() === 'Resubmit') {
                             row.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             found = true;
                             return false; // Exit the loop
                         }
                     });
                     if (!found) {
-                        showNotification('No return documents found.', 'info');
+                        showNotification('No resubmit documents found.', 'info');
                     }
                 }, 300);
             });

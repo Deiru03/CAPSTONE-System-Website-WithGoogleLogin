@@ -37,7 +37,7 @@ class FacultyController extends Controller
         $noActiveClearance = !$userClearance;
 
         $userFeedbackReturn = ClearanceFeedback::where('user_id', $user->id)
-            ->where('signature_status', 'return')
+            ->where('signature_status', 'resubmit')
             ->count();
 
         $totalRequirements = 0;
@@ -59,7 +59,7 @@ class FacultyController extends Controller
             $missingRequirements = $totalRequirements - $uploadedRequirements;
             $returnedDocuments = ClearanceFeedback::whereIn('requirement_id', $currentUploadedClearances->pluck('requirement_id'))
                 ->where('user_id', $user->id)
-                ->where('signature_status', 'return')
+                ->where('signature_status', 'resubmit')
                 ->count();
 
             // Calculate completion rate

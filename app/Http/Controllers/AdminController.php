@@ -31,13 +31,36 @@ class AdminController extends Controller
         return view('admin.home');
     }
 
+     /////////////////////////////////////////////// Auto Update Clearance Status Controller /////////////////////////////////////////////////
+
+     public function updateClearanceStatus($userId)
+     {
+         $userClearance = UserClearance::with('sharedClearance.clearance.requirements.feedback')
+             ->where('user_id', $userId)
+             ->first();
+ 
+         if ($userClearance) {
+             $allSigned = $userClearance->sharedClearance->clearance->requirements->every(function ($requirement) use ($userClearance) {
+                 $feedback = $requirement->feedback->where('user_id', $userClearance->user_id)->first();
+                 return $feedback && $feedback->signature_status === 'Complied';
+             });
+ 
+             $user = User::find($userId);
+             $user->clearances_status = $allSigned ? 'complete' : 'pending';
+             $user->last_clearance_update = now(); // Update the last_clearance_update column
+             $user->save();
+         }
+     }
+     
+     /////////////////////////////////////////////// End of Auto Update Clearance Status Controller /////////////////////////////////////////////////
+
     public function dashboard(): View
     {
         //////////////////////// Clearance Counts //////////////////////////
         $TotalUser = User::count();
-        $clearancePending = User::where('clearances_status', 'pending')->count();
-        $clearanceComplete = User::where('clearances_status', 'complete')->count();
-        $clearanceReturn = User::where('clearances_status', 'return')->count();
+        $clearancePending = User::where('clearances_status', 'On Check')->count();
+        $clearanceComplete = User::where('clearances_status', 'Complied')->count();
+        $clearanceReturn = User::where('clearances_status', 'Resubmit')->count();
         $clearanceTotal = $clearancePending + $clearanceComplete + $clearanceReturn;
         $clearanceChecklist = Clearance::count();
         //////////////////////// Faculty Counts //////////////////////////
@@ -402,27 +425,7 @@ class AdminController extends Controller
         return $pdf->download(Auth::user()->name.'-report-custom-faculty.pdf');
     }
 
-    /////////////////////////////////////////////// Clearance Controller /////////////////////////////////////////////////
-
-    public function updateClearanceStatus($userId)
-    {
-        $userClearance = UserClearance::with('sharedClearance.clearance.requirements.feedback')
-            ->where('user_id', $userId)
-            ->first();
-
-        if ($userClearance) {
-            $allSigned = $userClearance->sharedClearance->clearance->requirements->every(function ($requirement) use ($userClearance) {
-                $feedback = $requirement->feedback->where('user_id', $userClearance->user_id)->first();
-                return $feedback && $feedback->signature_status === 'Signed';
-            });
-
-            $user = User::find($userId);
-            $user->clearances_status = $allSigned ? 'complete' : 'pending';
-            $user->last_clearance_update = now(); // Update the last_clearance_update column
-            $user->save();
-        }
-    }
-
+   
     /////////////////////////////////////////////// Admin Faculty Assigned or Managed /////////////////////////////////////////////////
     public function assignFaculty(Request $request)
     {

@@ -106,7 +106,7 @@
                     new Chart(ctx1, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Uploaded', 'Missing', 'Returned'],
+                            labels: ['Uploaded', 'Missing', 'Resubmit'],
                             datasets: [{
                                 data: [{{ $uploadedRequirements }}, {{ $missingRequirements }}, {{ $returnedDocuments }}],
                                 backgroundColor: ['#10B981', '#FBBF24', '#EF4444'],
@@ -130,7 +130,7 @@
                     new Chart(ctx2, {
                         type: 'bar',
                         data: {
-                            labels: ['Total', 'Uploaded', 'Missing', 'Returned'],
+                            labels: ['Total', 'Uploaded', 'Missing', 'Resubmit'],
                             datasets: [{
                                 label: 'Requirements',
                                 data: [{{ $totalRequirements }}, {{ $uploadedRequirements }}, {{ $missingRequirements }}, {{ $returnedDocuments }}],

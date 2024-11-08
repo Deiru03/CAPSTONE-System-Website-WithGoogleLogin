@@ -69,7 +69,7 @@
                     <td>{{ $member->position ?? 'N/A' }}</td>
                     <td>{{ $member->managingAdmins->pluck('name')->join(', ') ?? 'N/A' }}</td>
                     <td style="color: {{ $member->clearances_status == 'complete' ? '#22c55e' : ($member->clearances_status == 'pending' ? '#ef4444' : '#000') }}">
-                        {{ $member->clearances_status == 'complete' ? 'Accomplished' : ($member->clearances_status == 'pending' ? 'Not Complete' : $member->clearances_status) }}
+                        {{ $member->clearances_status == 'complete' ? 'Accomplished' : ($member->clearances_status == 'pending' ? 'Not Complied' : $member->clearances_status) }}
                     </td>
                     <td>{{ $member->last_clearance_update ? $member->last_clearance_update->format('F j, Y H:i:s') : 'N/A' }}</td>
                 </tr>

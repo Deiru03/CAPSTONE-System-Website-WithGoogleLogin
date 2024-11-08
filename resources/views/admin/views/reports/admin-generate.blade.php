@@ -55,7 +55,7 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td style="color: {{ $user->clearances_status == 'complete' ? '#22c55e' : ($user->clearances_status == 'pending' ? '#ef4444' : '') }}">
-                        {{ $user->clearances_status == 'complete' ? 'Accomplished' : ($user->clearances_status == 'pending' ? 'Not Complete' : $user->clearances_status) }}
+                        {{ $user->clearances_status == 'complete' ? 'Accomplished' : ($user->clearances_status == 'pending' ? 'Not Complied' : $user->clearances_status) }}
                     </td>
                     <td>
                         @if($user->managingAdmins->isNotEmpty())
