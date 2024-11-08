@@ -202,7 +202,7 @@
 
         <div class="flex items-center justify-between mb-4">
             <a class="text-xs text-blue-600 hover:text-blue-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+                {{ __('Sign In') }}
             </a>
             <x-primary-button class="ml-3 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700">
                 {{ __('Register') }}

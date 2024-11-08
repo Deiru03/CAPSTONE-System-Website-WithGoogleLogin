@@ -76,6 +76,11 @@
                     Manage your clearances Checklists, reports, and files with ease
                 </p>
             </div>
+            <div class="cursor-pointer">
+                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
+                    Click Me to Proceed To Your Dashbaord
+                </h1>
+            </div>
         </a>
         <div class="h-24"></div>
     </div>
