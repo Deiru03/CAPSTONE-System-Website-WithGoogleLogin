@@ -150,8 +150,8 @@
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
             
-            const url = `{{ asset('storage') }}/${path}`;
-            previewFrame.src = url;
+            const fileUrl = `/file-view/${path}`;
+            previewFrame.src = fileUrl;
             previewFileName.textContent = filename;
             
             previewModal.classList.remove('hidden');

@@ -49,9 +49,14 @@
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
-            
-            const url = `{{ asset('storage') }}/${path}`;
-            previewFrame.src = url;
+
+            // production hosted
+            const fileUrl = `/file-view/${path}`;
+            previewFrame.src = fileUrl;
+
+            // local hosted
+            // const url = `{{ asset('storage') }}/${path}`;
+            // previewFrame.src = url;
             previewFileName.textContent = filename;
             
             previewModal.classList.remove('hidden');

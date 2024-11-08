@@ -872,6 +872,9 @@
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
             
+            // Remove comments if hosted na ang project
+            // const fileUrl = `/file-view/${url}`;
+            // previewFrame.src = fileUrl;
             previewFrame.src = url;
             previewFileName.textContent = filename;
             
