@@ -280,7 +280,11 @@
                             @else
                                 bg-gray-50
                             @endif">
-                            <img src="{{ $user->profile_picture ? $user->profile_picture : asset('images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            @if ($user->profile_picture)
+                                <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            @else
+                                <img src="{{ url('/images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            @endif
                             <div>
                                 <h4 class="text-lg font-semibold">{{ $user->name }}</h4>
                                 <p class="text-sm text-gray-500">{{ $user->email }}</p>

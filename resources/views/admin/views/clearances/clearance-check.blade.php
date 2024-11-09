@@ -199,7 +199,7 @@
                             <div class="flex items-center ml-3">
                                 <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
                                     @if ($user->profile_picture)
-                                        <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-semibold">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}

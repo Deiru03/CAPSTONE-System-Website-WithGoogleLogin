@@ -554,13 +554,19 @@
 
                 data.allFaculty.forEach(faculty => {
                     const isManaged = data.managedFaculty.includes(faculty.id);
-                    const managedBy = faculty.managed_by || 'None'; // Use the managed_by field
+                    const managedBy = faculty.managed_by || 'None';
 
                     const departmentName = faculty.department ? faculty.department.name : 'N/A';
                     const programName = faculty.program ? faculty.program.name : 'N/A';
-                    const profilePicture = faculty.profile_picture ? 
-                        `<img src="${faculty.profile_picture}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-1">` :
-                        `<div class="initials w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold mr-1" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;
+                    
+                    let profilePicture;
+                    if (faculty.profile_picture) {
+                        // Use url() helper like in app.blade.php
+                        const profilePicturePath = `/profile_pictures/${faculty.profile_picture.split('/').pop()}`;
+                        profilePicture = `<img src="${profilePicturePath}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-1">`;
+                    } else {
+                        profilePicture = `<div class="initials w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold mr-1" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;
+                    }
 
                     const facultyItem = `
                         <div class="flex items-center mb-2 p-1 bg-white rounded shadow text-xs">
