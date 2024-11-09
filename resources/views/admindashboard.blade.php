@@ -264,7 +264,7 @@
                                     ->where('is_archived', false)
                                     ->first();
                                 $hasComplied = $feedback && 
-                                    $feedback->signature_status == 'Return' && 
+                                    $feedback->signature_status == 'Resubmit' && 
                                     $latestUpload->created_at > $feedback->updated_at;
                             }
                         @endphp
