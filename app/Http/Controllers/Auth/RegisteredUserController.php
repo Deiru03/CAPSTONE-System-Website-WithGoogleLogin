@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Models\Program;
+use App\Models\Campus;
 use App\Models\AdminId;
 class RegisteredUserController extends Controller
 {
@@ -20,10 +22,22 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
+        $campuses = Campus::all();
         $departments = Department::all();
-        return view('auth.register', compact('departments'));
+        return view('auth.register', compact('campuses', 'departments'));
     }
 
+    public function getDepartments($campusId)
+    {
+        $departments = Department::where('campus_id', $campusId)->get();
+        return response()->json($departments);
+    }
+
+    public function getPrograms($departmentId)
+    {
+        $programs = Program::where('department_id', $departmentId)->get();
+        return response()->json($programs);
+    }
     /**
      * Handle an incoming registration request.
      *
@@ -46,6 +60,7 @@ class RegisteredUserController extends Controller
             'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
             'department_id' => ['required', 'exists:departments,id'],
             'program_id' => ['required', 'exists:programs,id'],
+            'campus_id' => ['required', 'exists:campuses,id'],
             'admin_id' => ['required_if:user_type,Admin', 'nullable', 'exists:admin_ids,admin_id'],
         ], [
             'admin_id.required_if' => 'The Admin ID is required when registering as an Admin.',
@@ -69,6 +84,7 @@ class RegisteredUserController extends Controller
             'position' => $request->position,
             'department_id' => $request->department_id,
             'program_id' => $request->program_id,
+            'campus_id' => $request->campus_id,
             'program' => \App\Models\Program::find($request->program_id)->name,
             'admin_id_registered' => $request->admin_id,
         ]);

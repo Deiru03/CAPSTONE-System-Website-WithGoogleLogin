@@ -264,7 +264,9 @@ class AdminController extends Controller
         $users = User::all();
         
         $programs = Program::where('department_id', $id)->get();
-        return view('admin.views.colleges.edit-department', compact('department', 'programs', 'departments','department1', 'users'));
+        $campuses = Campus::all(); // Fetch all campuses
+
+        return view('admin.views.colleges.edit-department', compact('department', 'programs', 'departments','department1', 'users', 'campuses'));
     }
 
     public function myFiles(): View
@@ -300,10 +302,11 @@ class AdminController extends Controller
     {
         $user = Auth::user();
         $departments = Department::with('programs')->get();
+        $campuses = Campus::all();
 
         $noActiveClearance = true;
 
-        return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance'));
+        return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance', 'campuses'));
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 
@@ -672,13 +675,14 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'campus_id' => 'required|exists:campuses,id', // Validate campus_id
             'new_programs' => 'array',
             'remove_programs' => 'array',
         ]);
     
         try {
             $department = Department::findOrFail($id);
-            $data = $request->only('name', 'description');
+            $data = $request->only('name', 'description', 'campus_id');
     
             if ($request->hasFile('profile_picture')) {
                 $filePath = $request->file('profile_picture')->store('profile_pictures', 'public');

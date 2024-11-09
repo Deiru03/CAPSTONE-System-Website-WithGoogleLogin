@@ -9,7 +9,7 @@
                 <div class="flex items-center mb-4">
                     <div class="relative group">
                         <div class="bg-yellow-100 rounded-full p-3 mr-4 border-2 border-yellow-300 transition-colors duration-300 group-hover:bg-blue-100 group-hover:border-blue-300">
-                            <img id="preview-image" src="{{ $department->profile_picture ? asset('storage/' . $department->profile_picture) : '#' }}" 
+                            <img id="preview-image" src="{{ $department->profile_picture ? url('/profile_pictures/' . basename($department->profile_picture)) : '#' }}" 
                                 alt="{{ $department->name }}" 
                                 class="h-16 w-16 rounded-full object-cover {{ $department->profile_picture ? '' : 'hidden' }}">
                             <svg id="default-image" class="h-16 w-16 text-yellow-500 transition-colors duration-300 group-hover:text-blue-500 {{ $department->profile_picture ? 'hidden' : '' }}" 
@@ -105,17 +105,32 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2 md:col-span-1">
-                        <div class="mb-6">
+                        {{-- Department Name --}}
+                        <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Department Name</label>
                             <input type="text" name="name" id="name" value="{{ $department->name }}" 
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                                 required>
                         </div>
 
-                        <div class="mb-6">
+                        {{-- Department Description --}}
+                        <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                             <textarea name="description" id="description" rows="4" 
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">{{ $department->description }}</textarea>
+                        </div>
+
+                        {{-- Campus --}}
+                        <div class="mb-4">
+                            <label for="campus_id" class="block text-sm font-medium text-gray-700 mb-2">Select Campus</label>
+                            <select name="campus_id" id="campus_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" required>
+                                <option value="">Select a campus</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}" {{ $department->campus_id == $campus->id ? 'selected' : '' }}>
+                                        {{ $campus->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

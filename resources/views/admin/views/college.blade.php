@@ -224,7 +224,7 @@
                         <div class="flex items-center mb-4">
                             <div class="bg-yellow-100 rounded-full p-3 mr-4 border-2 border-yellow-300 transition-colors duration-300 group-hover:bg-blue-100 group-hover:border-blue-300">
                                 @if($department->profile_picture)
-                                    <img src="{{ asset('storage/' . $department->profile_picture) }}" alt="{{ $department->name }}" class="h-16 w-16 rounded-full object-cover">
+                                    <img src="{{ url('/profile_pictures/' . basename($department->profile_picture)) }}" alt="{{ $department->name }}" class="h-16 w-16 rounded-full object-cover">
                                 @else
                                     <svg class="h-16 w-16 text-yellow-500 transition-colors duration-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -232,7 +232,7 @@
                                 @endif
                             </div>
                             <div>
-                                <h3 class="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors duration-300">{{ $department->name }}</h3>
+                                <h3 class="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">{{ $department->name }} <span class="{{ $department->campus ? 'text-gray-700' : 'text-red-500' }} text-sm">- {{ $department->campus->name ?? 'No Campus Set' }}</span></h3>
                                 <p class="text-sm text-gray-600 group-hover:text-indigo-400 transition-colors duration-300">{{ $department->programs->count() }} programs</p>
                             </div>
                         </div>

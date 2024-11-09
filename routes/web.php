@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CampusController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\OptimizationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
@@ -99,7 +100,6 @@ Route::middleware(['Faculty'])->group(function () {
 });
 /////////////////////////////////////////////// End of Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// Optimization Routes ////////////////////////////////////////////////
 Route::get('/optimize/clear-cache', [OptimizationController::class, 'clearCache'])->name('optimize.clearCache');
 Route::get('/optimize/prune-reports', [OptimizationController::class, 'pruneReports'])->name('optimize.pruneReports');
@@ -110,6 +110,10 @@ Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])
 Route::post('/admin/faculty-report/generate', [AdminController::class, 'generateFacultyReport'])->name('admin.facultyReport.generate');
 Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');
 Route::get('/admin/clearance/{id}/report', [AdminClearanceController::class, 'generateChecklistInfo'])->name('admin.clearance.report');
+
+/////////////////////////////////////////////// Register Routes ////////////////////////////////////////////////
+Route::get('/departments/{campusId}', [RegisteredUserController::class, 'getDepartments']);
+Route::get('/programs/{departmentId}', [RegisteredUserController::class, 'getPrograms']);
 
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix('admin')->group(function () {

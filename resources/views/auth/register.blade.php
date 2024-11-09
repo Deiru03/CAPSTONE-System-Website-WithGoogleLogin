@@ -94,25 +94,29 @@
         <!-- Department and Program -->
         <div class="grid grid-cols-2 gap-3 mb-4">
             <div>
-                <x-input-label for="department_id" :value="__('Department')" class="text-xs font-medium text-gray-700" />
-                <select id="department_id" name="department_id" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" required>
-                    <option value="" disabled>Select a department</option>
-                    @foreach($departments as $department)
-                        <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
+                <x-input-label for="campus_id" :value="__('Campus')" class="text-xs font-medium text-gray-700" />
+                <select id="campus_id" name="campus_id" required class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
+                    <option value="" disabled selected>Select your campus</option>
+                    @foreach($campuses as $campus)
+                        <option value="{{ $campus->id }}" {{ old('campus_id') == $campus->id ? 'selected' : '' }}>
+                            {{ $campus->name }}
+                        </option>
                     @endforeach
                 </select>
-                @error('department_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
             </div>
+            
             <div>
-                <x-input-label for="program_id" :value="__('Program')" class="text-xs font-medium text-gray-700" />
-                <select id="program_id" name="program_id" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" required>
-                    <option value="" disabled>Select a program</option>
+                <x-input-label for="department_id" :value="__('Department')" class="text-xs font-medium text-gray-700" />
+                <select id="department_id" name="department_id" required class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
+                    <option value="" disabled>Select your department</option>
                 </select>
-                @error('program_id')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+            </div>
+            
+            <div class="col-span-2">
+                <x-input-label for="program_id" :value="__('Program')" class="text-xs font-medium text-gray-700" />
+                <select id="program_id" name="program_id" required class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
+                    <option value="" disabled>Select your program</option>
+                </select>
             </div>
         </div>
 
@@ -299,29 +303,73 @@
                 input.type = "password";
             }
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const oldCampusId = "{{ old('campus_id') }}";
+            const oldDepartmentId = "{{ old('department_id') }}";
+            const oldProgramId = "{{ old('program_id') }}";
 
-        document.getElementById('department_id').addEventListener('change', function() {
-            const departmentId = this.value;
-            const programs = @json($departments->pluck('programs', 'id'));
-            const programSelect = document.getElementById('program_id');
- 
-            programSelect.innerHTML = '<option value="" disabled selected>Select a program</option>';
-            if (programs[departmentId]) {
-                programs[departmentId].forEach(program => {
-                    const option = document.createElement('option');
-                    option.value = program.id;
-                    option.textContent = program.name;
-                    programSelect.appendChild(option);
-                });
+            if (oldCampusId) {
+                document.getElementById('campus_id').value = oldCampusId;
+                loadDepartments(oldCampusId, oldDepartmentId);
+            }
+
+            if (oldDepartmentId) {
+                loadPrograms(oldDepartmentId, oldProgramId);
             }
         });
 
+        document.getElementById('campus_id').addEventListener('change', function() {
+            const campusId = this.value;
+            loadDepartments(campusId);
+        });
 
-        function toggleAdminIdField() {
-            const userType = document.getElementById('user_type').value;
-            const adminIdField = document.getElementById('admin_id_field');
-            adminIdField.style.display = userType === 'Admin' ? 'block' : 'none';
+        document.getElementById('department_id').addEventListener('change', function() {
+            const departmentId = this.value;
+            loadPrograms(departmentId);
+        });
+
+        function loadDepartments(campusId, selectedDepartmentId = null) {
+            const departmentSelect = document.getElementById('department_id');
+            departmentSelect.innerHTML = '<option value="" disabled selected>Select your department</option>';
+
+            if (campusId) {
+                fetch(`/departments/${campusId}`)
+                    .then(response => response.json())
+                    .then(departments => {
+                        departments.forEach(department => {
+                            const option = document.createElement('option');
+                            option.value = department.id;
+                            option.textContent = department.name;
+                            if (selectedDepartmentId && selectedDepartmentId == department.id) {
+                                option.selected = true;
+                            }
+                            departmentSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching departments:', error));
+            }
         }
-        toggleAdminIdField();
+
+        function loadPrograms(departmentId, selectedProgramId = null) {
+            const programSelect = document.getElementById('program_id');
+            programSelect.innerHTML = '<option value="" disabled selected>Select your program</option>';
+
+            if (departmentId) {
+                fetch(`/programs/${departmentId}`)
+                    .then(response => response.json())
+                    .then(programs => {
+                        programs.forEach(program => {
+                            const option = document.createElement('option');
+                            option.value = program.id;
+                            option.textContent = program.name;
+                            if (selectedProgramId && selectedProgramId == program.id) {
+                                option.selected = true;
+                            }
+                            programSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching programs:', error));
+            }
+        }
     </script>
 </x-guest-layout>

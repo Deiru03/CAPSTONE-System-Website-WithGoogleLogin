@@ -110,21 +110,35 @@
                             <p class="text-sm text-gray-600 mt-2">{{ __('Save your Admin-ID for future use when switching from Admin to Faculty.') }}</p>
                         </div>
 
-                        <!-- Department -->
-                        <div>
-                            <x-input-label for="department_id" :value="__('Department')" />
-                            <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                <option value="" disabled>Select a department</option>
-                                @foreach($departments as $department)
-                                    <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
+                        <!-- Department and Campus Row -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Campus -->
+                            <div>
+                                <x-input-label for="campus_id" :value="__('Campus')" />
+                                <select id="campus_id" name="campus_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="" disabled>Select a campus</option>
+                                    @foreach($campuses as $campus)
+                                        <option value="{{ $campus->id }}" {{ old('campus_id', $user->campus_id) == $campus->id ? 'selected' : '' }}>{{ $campus->name }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('campus_id')" />
+                            </div>
+                            <!-- Department -->
+                            <div>
+                                <x-input-label for="department_id" :value="__('Department')" />
+                                <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="" disabled>Select a department</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
+                            </div>
                         </div>
 
-                        <!-- Program -->
-                        <div>
-                            <x-input-label for="program_id" :value="__('Program')" />
+                        <!-- Program Row -->
+                        <div class="">
+                            <x-input-label for="program_id" :value="__('Program')" class="text-lg font-semibold" />
                             <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="" disabled>Select a program</option>
                                 @foreach($departments as $department)
@@ -138,11 +152,38 @@
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
                         </div>
 
+                        <!-- Position and Units Row -->
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <!-- Position -->
+                            <div>
+                                <x-input-label for="position" :value="__('Position')" class="text-base" />
+                                <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>
+                                    <option value="Temporary" {{ old('position', $user->position) === 'Temporary' ? 'selected' : '' }}>Temporary</option>
+                                    <option value="Part-Timer" {{ old('position', $user->position) === 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('position')" />
+                            </div>
+
+                            <!-- Units -->
+                            <div>
+                                <x-input-label for="units" :value="__('Units')" class="text-base" />
+                                <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
+                                <x-input-error class="mt-2" :messages="$errors->get('units')" />
+                                <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
+                                    {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
+                                </div>
+                            </div>
+                        </div>
+
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 const departmentSelect = document.getElementById('department_id');
                                 const programSelect = document.getElementById('program_id');
                                 const programOptions = programSelect.querySelectorAll('option');
+                                const positionSelect = document.getElementById('position');
+                                const unitsInput = document.getElementById('units');
+                                const unitsWarning = document.getElementById('units-warning');
                         
                                 function updateProgramOptions() {
                                     const selectedDepartmentId = departmentSelect.value;
@@ -153,53 +194,25 @@
                                             option.style.display = 'none';
                                         }
                                     });
-                                    // Set the selected program if it matches the user's current program
                                     programSelect.value = "{{ old('program_id', $user->program_id) }}";
+                                }
+
+                                function checkPosition() {
+                                    if (positionSelect.value === 'Part-Timer') {
+                                        unitsWarning.classList.remove('hidden');
+                                        unitsInput.setAttribute('required', 'required');
+                                    } else {
+                                        unitsWarning.classList.add('hidden');
+                                        unitsInput.removeAttribute('required');
+                                    }
                                 }
                         
                                 departmentSelect.addEventListener('change', updateProgramOptions);
+                                positionSelect.addEventListener('change', checkPosition);
                                 updateProgramOptions();
+                                checkPosition();
                             });
                         </script>
-
-                        <div>
-                            <x-input-label for="position" :value="__('Position')" />
-                            <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>
-                                <option value="Temporary" {{ old('position', $user->position) === 'Temporary' ? 'selected' : '' }}>Temporary</option>
-                                <option value="Part-Timer" {{ old('position', $user->position) === 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('position')" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="units" :value="__('Units')" />
-                            <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
-                            <x-input-error class="mt-2" :messages="$errors->get('units')" />
-                            <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
-                                {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
-                            </div>
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const positionSelect = document.getElementById('position');
-                                    const unitsInput = document.getElementById('units');
-                                    const unitsWarning = document.getElementById('units-warning');
-
-                                    function checkPosition() {
-                                        if (positionSelect.value === 'Part-Timer') {
-                                            unitsWarning.classList.remove('hidden');
-                                            unitsInput.setAttribute('required', 'required');
-                                        } else {
-                                            unitsWarning.classList.add('hidden');
-                                            unitsInput.removeAttribute('required');
-                                        }
-                                    }
-
-                                    positionSelect.addEventListener('change', checkPosition);
-                                    checkPosition(); // Check initial state
-                                });
-                            </script>
-                        </div>
                     </div>
 
                     <div class="ml-8 flex-shrink-0">

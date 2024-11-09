@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Department;
 use App\Models\AdminId;
+use App\Models\Campus;
+
 class ProfileController extends Controller
 {
     /**
@@ -19,6 +21,7 @@ class ProfileController extends Controller
     {
         $departments = Department::with('programs')->get();
         $user = $request->user();
+        $campuses = Campus::all();
 
         // check if user has no active clearance
         $noActiveClearance = !$user->clearances()->where('is_active', true)->exists();
@@ -27,6 +30,7 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user(),
             'departments' => $departments,
+            'campuses' => $campuses,
             'noActiveClearance' => $noActiveClearance,
         ]);
     }
@@ -38,6 +42,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $user->fill($request->validated());
+        $campuses = Campus::all();
     
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -85,16 +90,17 @@ class ProfileController extends Controller
         // $user->clearances_status = 'pending';
         // $user->checked_by = 'System';
         $program = \App\Models\Program::find($request->input('program_id'));
-        
+
         $user->program = $program ? $program->name : null;
         $user->position = $request->input('position');
         $user->units = $request->input('units');
+        $user->campus_id = $request->input('campus_id');
         $user->department_id = $request->input('department_id');
         $user->program_id = $request->input('program_id');
     
         $user->save();
     
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated', 'campuses');
     }
 
     /**
