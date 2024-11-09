@@ -437,7 +437,7 @@
                         <p class="text-gray-500">Drag & drop files here or click to select files</p>
                         <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 1gb.</p>
+                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 200mb.</p>
                 </div>
                 <div id="uploadLoader" class="hidden flex items-center justify-center">
                     <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-8 w-8"></div>
