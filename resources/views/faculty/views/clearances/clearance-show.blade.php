@@ -304,7 +304,7 @@
                                                         } elseif ($feedback->signature_status == 'Resubmit') {
                                                             $checkStatus = 'Resubmit';
                                                         } else {
-                                                            $checkStatus = 'On Check';
+                                                            $checkStatus = 'Checking';
                                                         }
                                                     }
                                                 }
@@ -317,7 +317,7 @@
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                         {{ $checkStatus === 'Complied' ? 'bg-green-100 text-green-900' : '' }}
                                                         {{ $checkStatus === 'Resubmit' ? 'bg-red-100 text-red-900' : '' }}
-                                                        {{ $checkStatus === 'On Check' ? 'bg-yellow-100 text-yellow-900' : '' }}
+                                                        {{ $checkStatus === 'Checking' ? 'bg-yellow-100 text-yellow-900' : '' }}
                                                         {{ $checkStatus === 'Uploaded' ? 'bg-blue-100 text-blue-900' : '' }}
                                                         {{ $checkStatus === 'No Upload' ? 'bg-gray-100 text-gray-800' : '' }}">
                                                         {{ $checkStatus }}

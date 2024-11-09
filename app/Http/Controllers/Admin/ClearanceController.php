@@ -427,7 +427,7 @@ class ClearanceController extends Controller
                 'requirement_id' => 'required|exists:clearance_requirements,id',
                 'user_id' => 'required|exists:users,id',
                 'message' => 'nullable|string',
-                'signature_status' => 'required|in:On Check,Complied,Resubmit',
+                'signature_status' => 'required|in:Checking,Complied,Resubmit',
             ]);
         
             // Find the feedback record
@@ -647,7 +647,7 @@ class ClearanceController extends Controller
         try {
             DB::transaction(function () use ($ids) {
                 UploadedClearance::whereIn('shared_clearance_id', $ids)->update(['is_archived' => true]);
-                ClearanceFeedback::whereIn('requirement_id', $ids)->update(['is_archived' => true, 'signature_status' => 'On Check']);
+                ClearanceFeedback::whereIn('requirement_id', $ids)->update(['is_archived' => true, 'signature_status' => 'Checking']);
             });
 
             return response()->json(['success' => true, 'message' => 'Clearances archived successfully.']);
@@ -674,7 +674,7 @@ class ClearanceController extends Controller
                 // Archive all feedback and uploaded files for these users
                 ClearanceFeedback::whereIn('user_id', $userIds)->update([
                     'is_archived' => true,
-                    'signature_status' => 'On Check' // Reset signature status
+                    'signature_status' => 'Checking' // Reset signature status
                 ]);
 
                 UploadedClearance::whereIn('user_id', $userIds)->update(['is_archived' => true]);
@@ -709,7 +709,7 @@ class ClearanceController extends Controller
                 // Archive all feedback and uploaded files for this user
                 ClearanceFeedback::where('user_id', $userId)->update([
                     'is_archived' => true,
-                    'signature_status' => 'On Check' // Reset signature status
+                    'signature_status' => 'Checking' // Reset signature status
                 ]);
 
                 UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);
@@ -750,7 +750,7 @@ class ClearanceController extends Controller
                     // Archive all feedback and uploaded files for this user
                     ClearanceFeedback::where('user_id', $userId)->update([
                         'is_archived' => true,
-                        'signature_status' => 'On Check' // Reset signature status
+                        'signature_status' => 'Checking' // Reset signature status
                     ]);
     
                     UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);

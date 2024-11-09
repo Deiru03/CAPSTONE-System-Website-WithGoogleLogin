@@ -201,7 +201,7 @@
                                         {{ $feedback->signature_status }}
                                     </span>
                                 @else
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">On Check</span>
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Checking</span>
                                 @endif
                             @else
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
@@ -250,7 +250,7 @@
                 <div class="mb-6">
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Document Status</label>
                     <select name="signature_status" id="signatureStatus" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="On Check">On Check</option>
+                        <option value="Checking">Checking</option>
                         <option value="Complied">Complied</option>
                         <option value="Resubmit">Resubmit</option>
                     </select>
@@ -305,7 +305,7 @@
 
             document.getElementById('requirementId').value = requirementId;
             document.getElementById('requirementName').textContent = `Requirement ID: ${requirementId}\n${requirements[requirementId]}`;
-            document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'On Check';
+            document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'Checking';
             document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
 
             document.getElementById('feedbackModal').classList.remove('hidden');
