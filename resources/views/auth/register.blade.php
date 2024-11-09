@@ -31,10 +31,10 @@
             <div>
                 <x-input-label for="user_type" :value="__('User Type')" class="text-xs font-medium text-gray-700" />
                 <select id="user_type" name="user_type" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" onchange="toggleAdminIdField()">
-                    <option value="Faculty" {{ old('user_type') == 'Faculty' ? 'selected' : '' }}>Faculty</option>
-                    <option value="Admin" {{ old('user_type') == 'Admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="Dean" {{ old('user_type') == 'Dean' ? 'selected' : '' }}>Dean</option>
-                    <option value="Program-Head" {{ old('user_type') == 'Program-Head' ? 'selected' : '' }}>Program Head</option>
+                    <option value="Faculty" {{ old('user_type') === 'Faculty' ? 'selected' : '' }}>Faculty</option>
+                    <option value="Admin" {{ old('user_type') === 'Admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="Program-Head" {{ old('user_type') === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
+                    <option value="Dean" {{ old('user_type') === 'Dean' ? 'selected' : '' }}>Dean</option>
                 </select>
                 @error('user_type')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -71,6 +71,50 @@
                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                 @enderror
             </div>
+
+            <!-- Program Head ID (conditionally displayed) -->
+            <div id="program_head_id_field" style="display: none;">
+                <x-input-label for="program_head_id" :value="__('Program Head ID')" class="text-xs font-medium text-gray-700" />
+                <x-text-input id="program_head_id" class="mt-1 block w-full text-sm" type="text" name="program_head_id" :value="old('program_head_id')" />
+                @error('program_head_id')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Dean ID (conditionally displayed) -->
+            <div id="dean_id_field" style="display: none;">
+                <x-input-label for="dean_id" :value="__('Dean ID')" class="text-xs font-medium text-gray-700" />
+                <x-text-input id="dean_id" class="mt-1 block w-full text-sm" type="text" name="dean_id" :value="old('dean_id')" />
+                @error('dean_id')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <script>
+                function toggleAdminIdField() {
+                    const userType = document.getElementById('user_type').value;
+                    const adminIdField = document.getElementById('admin_id_field');
+                    const programHeadIdField = document.getElementById('program_head_id_field');
+                    const deanIdField = document.getElementById('dean_id_field');
+                    
+                    // Hide all fields first
+                    adminIdField.style.display = 'none';
+                    programHeadIdField.style.display = 'none';
+                    deanIdField.style.display = 'none';
+                    
+                    // Show relevant field based on user type
+                    if (userType === 'Admin') {
+                        adminIdField.style.display = 'block';
+                    } else if (userType === 'Program-Head') {
+                        programHeadIdField.style.display = 'block';
+                    } else if (userType === 'Dean') {
+                        deanIdField.style.display = 'block';
+                    }
+                }
+
+                // Call the function on page load to handle initial state
+                document.addEventListener('DOMContentLoaded', toggleAdminIdField);
+            </script>
         </div>
 
         <!-- Name and Email -->

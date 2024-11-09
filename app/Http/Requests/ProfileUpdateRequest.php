@@ -20,6 +20,8 @@ class ProfileUpdateRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             'user_type' => ['required', 'string', 'in:Admin,Faculty,Dean,Program-Head'],
             'admin_id' => ['nullable', 'string', 'exists:admin_ids,admin_id'],
+            'dean_id' => ['nullable', 'numeric', 'exists:dean_ids,dean_id'],
+            'program_head_id' => ['nullable', 'numeric', 'exists:program_head_ids,program_head_id'],
         ];
     }
 }

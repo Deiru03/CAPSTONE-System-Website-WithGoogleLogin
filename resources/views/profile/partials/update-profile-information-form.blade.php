@@ -52,6 +52,12 @@
 
                 <div class="flex items-start">
                     <div class="flex-grow grid grid-cols-2 gap-4">
+                        <!-- Personal Information Section -->
+                        {{-- <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-900 mt-3">Personal Information</h3>
+                        </div> --}}
+
+                        <!-- Name and Email Row -->
                         <div>
                             <x-input-label for="name" :value="__('Name')" />
                             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
@@ -82,38 +88,41 @@
                             @endif
                         </div>
 
-                        <div x-data="{ userType: '{{ old('user_type', $user->user_type) }}' }">
-                            <x-input-label for="user_type" :value="__('User Type')" />
-                            <select id="user_type" name="user_type" 
-                                x-model="userType"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
-                                required>
-                                <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
-                                <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="Dean" {{ old('user_type', $user->user_type) === 'Dean' ? 'selected' : '' }}>Dean</option>
-                                <option value="Program-Head" {{ old('user_type', $user->user_type) === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('user_type')" />
-                            <template x-if="userType === 'Admin'">
-                                <p class="text-sm text-gray-600 mt-2">{{ __('Always use your Admin-ID when switching from Faculty to Admin.') }}</p>
-                            </template>
-                            <template x-if="userType === 'Faculty'">
-                                <p class="text-sm text-gray-600 mt-2">{{ __('You are now in Faculty user type.') }}</p>
-                            </template>
+                        {{-- <!-- Employment Information Section -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-900 mt-3">Employment Information</h3>
+                        </div> --}}
+
+                         <!-- Position and Units Row -->
+                         <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-1">
+                                <x-input-label for="position" :value="__('Position')" class="text-base" />
+                                <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>
+                                    <option value="Temporary" {{ old('position', $user->position) === 'Temporary' ? 'selected' : '' }}>Temporary</option>
+                                    <option value="Part-Timer" {{ old('position', $user->position) === 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('position')" />
+                            </div>
+
+                            <div class="col-span-1">
+                                <x-input-label for="units" :value="__('Units')" class="text-base" />
+                                <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
+                                <x-input-error class="mt-2" :messages="$errors->get('units')" />
+                                <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
+                                    {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- Admin ID -->
-                        <div>
-                            <x-input-label for="admin_id" :value="__('Admin ID')" />
-                            <x-text-input id="admin_id" name="admin_id" type="text" class="mt-1 block w-full" :value="old('admin_id', $user->admin_id_registered)" />
-                            <x-input-error class="mt-2" :messages="$errors->get('admin_id')" />
-                            <p class="text-sm text-gray-600 mt-2">{{ __('Save your Admin-ID for future use when switching from Admin to Faculty.') }}</p>
-                        </div>
+
+                        <!-- School Information Section -->
+                        {{-- <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-900 mt-3">School Information</h3>
+                        </div> --}}
 
                         <!-- Department and Campus Row -->
                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Campus -->
-                            <div>
+                            <div class="col-span-1">
                                 <x-input-label for="campus_id" :value="__('Campus')" />
                                 <select id="campus_id" name="campus_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="" disabled>Select a campus</option>
@@ -123,8 +132,8 @@
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('campus_id')" />
                             </div>
-                            <!-- Department -->
-                            <div>
+
+                            <div class="col-span-1">
                                 <x-input-label for="department_id" :value="__('Department')" />
                                 <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="" disabled>Select a department</option>
@@ -137,7 +146,7 @@
                         </div>
 
                         <!-- Program Row -->
-                        <div class="">
+                        <div class="col-span-1">
                             <x-input-label for="program_id" :value="__('Program')" class="text-lg font-semibold" />
                             <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="" disabled>Select a program</option>
@@ -152,69 +161,73 @@
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
                         </div>
 
-                        <!-- Position and Units Row -->
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                            <!-- Position -->
+                        <!-- Role Information Section -->
+                        {{-- <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-900 mt-3">Role Information</h3>
+                        </div> --}}
+
+                        <!-- User Type Section -->
+                        <div class="col-span-2 grid grid-cols-2 gap-4" x-data="{ userType: '{{ old('user_type', $user->user_type) }}' }">
                             <div>
-                                <x-input-label for="position" :value="__('Position')" class="text-base" />
-                                <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                    <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>
-                                    <option value="Temporary" {{ old('position', $user->position) === 'Temporary' ? 'selected' : '' }}>Temporary</option>
-                                    <option value="Part-Timer" {{ old('position', $user->position) === 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
+                                <x-input-label for="user_type" :value="__('User Type')" />
+                                <select id="user_type" name="user_type" 
+                                    x-model="userType"
+                                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                    required>
+                                    <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
+                                    <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="Dean" {{ old('user_type', $user->user_type) === 'Dean' ? 'selected' : '' }}>Dean</option>
+                                    <option value="Program-Head" {{ old('user_type', $user->user_type) === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
                                 </select>
-                                <x-input-error class="mt-2" :messages="$errors->get('position')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('user_type')" />
+                                
+                                <template x-if="userType === 'Admin'">
+                                    <p class="text-sm text-gray-600 mt-2">{{ __('Always use your Admin-ID when switching from Faculty to Admin.') }}</p>
+                                </template>
+                                <template x-if="userType === 'Faculty'">
+                                    <p class="text-sm text-gray-600 mt-2">{{ __('You are now in Faculty user type.') }}</p>
+                                </template>
+                                <template x-if="userType === 'Program-Head'">
+                                    <p class="text-sm text-gray-600 mt-2">{{ __('You are now in Program Head user type.') }}</p>
+                                </template>
+                                <template x-if="userType === 'Dean'">
+                                    <p class="text-sm text-gray-600 mt-2">{{ __('You are now in Dean user type.') }}</p>
+                                </template>
                             </div>
 
-                            <!-- Units -->
+                            <!-- Role-specific ID fields -->
                             <div>
-                                <x-input-label for="units" :value="__('Units')" class="text-base" />
-                                <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
-                                <x-input-error class="mt-2" :messages="$errors->get('units')" />
-                                <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
-                                    {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
-                                </div>
+                                <template x-if="userType === 'Admin'">
+                                    <div>
+                                        <x-input-label for="admin_id" :value="__('Admin ID')" />
+                                        <x-text-input id="admin_id" name="admin_id" type="text" class="mt-1 block w-full" :value="old('admin_id', $user->admin_id_registered)" />
+                                        <x-input-error class="mt-2" :messages="$errors->get('admin_id')" />
+                                        <p class="text-sm text-gray-600 mt-2">{{ __('Save your Admin-ID for future use when switching from Admin to Faculty.') }}</p>
+                                    </div>
+                                </template>
+
+                                <template x-if="userType === 'Program-Head'">
+                                    <div>
+                                        <x-input-label for="program_head_id" :value="__('Program Head ID')" />
+                                        <x-text-input id="program_head_id" name="program_head_id" type="text" class="mt-1 block w-full" :value="old('program_head_id', $user->program_head_id)" />
+                                        <x-input-error class="mt-2" :messages="$errors->get('program_head_id')" />
+                                        <p class="text-sm text-gray-600 mt-2">{{ __('Save your Program Head ID for future use when switching roles.') }}</p>
+                                    </div>
+                                </template>
+
+                                <template x-if="userType === 'Dean'">
+                                    <div>
+                                        <x-input-label for="dean_id" :value="__('Dean ID')" />
+                                        <x-text-input id="dean_id" name="dean_id" type="text" class="mt-1 block w-full" :value="old('dean_id', $user->dean_id)" />
+                                        <x-input-error class="mt-2" :messages="$errors->get('dean_id')" />
+                                        <p class="text-sm text-gray-600 mt-2">{{ __('Save your Dean ID for future use when switching roles.') }}</p>
+                                    </div>
+                                </template>
                             </div>
                         </div>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const departmentSelect = document.getElementById('department_id');
-                                const programSelect = document.getElementById('program_id');
-                                const programOptions = programSelect.querySelectorAll('option');
-                                const positionSelect = document.getElementById('position');
-                                const unitsInput = document.getElementById('units');
-                                const unitsWarning = document.getElementById('units-warning');
-                        
-                                function updateProgramOptions() {
-                                    const selectedDepartmentId = departmentSelect.value;
-                                    programOptions.forEach(option => {
-                                        if (option.value === "" || option.dataset.department === selectedDepartmentId) {
-                                            option.style.display = '';
-                                        } else {
-                                            option.style.display = 'none';
-                                        }
-                                    });
-                                    programSelect.value = "{{ old('program_id', $user->program_id) }}";
-                                }
-
-                                function checkPosition() {
-                                    if (positionSelect.value === 'Part-Timer') {
-                                        unitsWarning.classList.remove('hidden');
-                                        unitsInput.setAttribute('required', 'required');
-                                    } else {
-                                        unitsWarning.classList.add('hidden');
-                                        unitsInput.removeAttribute('required');
-                                    }
-                                }
-                        
-                                departmentSelect.addEventListener('change', updateProgramOptions);
-                                positionSelect.addEventListener('change', checkPosition);
-                                updateProgramOptions();
-                                checkPosition();
-                            });
-                        </script>
                     </div>
 
+                    <!-- Profile Picture Section -->
                     <div class="ml-8 flex-shrink-0">
                         <div class="profile-picture-section flex flex-col items-center">
                             <x-input-label for="profile_picture" :value="__('Profile Picture')" class="mb-2 text-lg font-semibold" />
@@ -239,23 +252,9 @@
                             <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
                         </div>
                     </div>
-
-                    <script>
-                        document.getElementById('profile_picture').addEventListener('change', function(e) {
-                            var fileName = e.target.files[0].name;
-                            document.getElementById('file-name').textContent = fileName;
-
-                            var reader = new FileReader();
-                            reader.onload = function(event) {
-                                document.getElementById('preview-image').src = event.target.result;
-                                document.getElementById('default-image').style.display = 'none';
-                                document.getElementById('preview-image').style.display = 'block';
-                            }
-                            reader.readAsDataURL(e.target.files[0]);
-                        });
-                    </script>
                 </div>
 
+                <!-- Save Changes Section -->
                 <div class="flex items-center justify-between mt-8 bg-white p-6 rounded-lg">
                     <div class="flex items-center gap-4">
                         <x-primary-button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 transition ease-in duration-200">
@@ -264,7 +263,7 @@
                             </svg>
                             {{ __('Save Changes') }}
                         </x-primary-button>
-            
+
                         @if (session('status') === 'profile-updated' && !$errors->any())
                             <p
                                 x-data="{ show: true }"
@@ -330,17 +329,57 @@
                     </div>
                 </div>
 
-                <!-- Script for Admin ID -->
+                <!-- Scripts -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        const userType = "{{ $user->user_type }}";
-                        const adminIdField = document.getElementById('admin_id_field');
-                        adminIdField.style.display = userType === 'Admin' ? 'block' : 'none';
+                        const departmentSelect = document.getElementById('department_id');
+                        const programSelect = document.getElementById('program_id');
+                        const programOptions = programSelect.querySelectorAll('option');
+                        const positionSelect = document.getElementById('position');
+                        const unitsInput = document.getElementById('units');
+                        const unitsWarning = document.getElementById('units-warning');
+                
+                        function updateProgramOptions() {
+                            const selectedDepartmentId = departmentSelect.value;
+                            programOptions.forEach(option => {
+                                if (option.value === "" || option.dataset.department === selectedDepartmentId) {
+                                    option.style.display = '';
+                                } else {
+                                    option.style.display = 'none';
+                                }
+                            });
+                            programSelect.value = "{{ old('program_id', $user->program_id) }}";
+                        }
+
+                        function checkPosition() {
+                            if (positionSelect.value === 'Part-Timer') {
+                                unitsWarning.classList.remove('hidden');
+                                unitsInput.setAttribute('required', 'required');
+                            } else {
+                                unitsWarning.classList.add('hidden');
+                                unitsInput.removeAttribute('required');
+                            }
+                        }
+                
+                        departmentSelect.addEventListener('change', updateProgramOptions);
+                        positionSelect.addEventListener('change', checkPosition);
+                        updateProgramOptions();
+                        checkPosition();
                     });
-                </script>
-            
-                <!-- Script for Notification -->
-                <script>
+
+                    document.getElementById('profile_picture').addEventListener('change', function(e) {
+                        var fileName = e.target.files[0].name;
+                        document.getElementById('file-name').textContent = fileName;
+
+                        var reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('preview-image').src = event.target.result;
+                            document.getElementById('default-image').style.display = 'none';
+                            document.getElementById('preview-image').style.display = 'block';
+                        }
+                        reader.readAsDataURL(e.target.files[0]);
+                    });
+
                     document.addEventListener('DOMContentLoaded', function () {
                         @if (session('status') === 'profile-updated')
                             showNotificationModern('{{ __('Profile updated successfully.') }}', 'success');
@@ -348,7 +387,7 @@
                             showNotificationModern('{{ __('There was an error updating the profile.') }}', 'error');
                         @endif
                     });
-            
+
                     function showNotificationModern(message, type) {
                         const notification = document.getElementById('notification');
                         const notificationMessage = document.getElementById('notificationMessage');
