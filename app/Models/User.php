@@ -110,4 +110,9 @@ class User extends Authenticatable //implements MustVerifyEmail
     {
         return $this->belongsToMany(User::class, 'admin_faculty', 'faculty_id', 'admin_id');
     }
+    
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class);
+    }
 }

@@ -9,7 +9,40 @@
             <div class="p-8 text-gray-900">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Submitted Reports</h3>
                 <p class="text-gray-600 mb-6">Here you can view and manage submitted reports.</p>
-
+                <form action="{{ url('/admin/reports/generate') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="mb-4">
+                            <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
+                            <div class="relative">
+                                <input type="date" id="start_date" name="start_date" 
+                                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
+                            <div class="relative">
+                                <input type="date" id="end_date" name="end_date" 
+                                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            <i class="fas fa-file-download mr-2"></i>Generate Report
+                        </button>
+                    </div>
+                </form>
                 <!-- Filter Options -->
                 {{-- <div class="mb-6 flex gap-4 bg-gray-50 p-4 rounded-lg">
                     <input type="text" 
@@ -54,13 +87,16 @@
                                             'bg-purple-100 text-purple-800' :
                                             (str_contains(strtolower($report->transaction_type), 'delete') ?
                                             'bg-red-100 text-red-800' :
+                                            (str_contains(strtolower($report->transaction_type), 'upload') ?
+                                            'bg-indigo-100 text-indigo-800' :
                                             (str_contains(strtolower($report->transaction_type), 'generate') ||
                                                 str_contains(strtolower($report->transaction_type), 'add') ||
+                                                str_contains(strtolower($report->transaction_type), 'aquire') ||
                                                 str_contains(strtolower($report->transaction_type), 'validated') ?
                                             'bg-green-100 text-green-800' :
                                             (str_contains(strtolower($report->transaction_type), 'edit') || 
                                                 str_contains(strtolower($report->transaction_type), 'edited') ?
-                                            'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
+                                            'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'))))) }}">
                                             {{ $report->transaction_type }}
                                         </span>
                                     </td>

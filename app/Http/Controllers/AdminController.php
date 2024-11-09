@@ -105,13 +105,21 @@ class AdminController extends Controller
 
     public function clearances(Request $request): View
     {
-        $adminId = Auth::id(); // Get the current admin's ID
+        $user = Auth::user();
+        
+        // Start building the query
+        $query = User::with('program');
 
-        // Fetch only the users managed by the current admin and eager load the program
-        $query = User::with('program')->whereHas('managingAdmins', function($q) use ($adminId) {
-            $q->where('admin_id', $adminId);
-        });
-    
+        // Apply filters based on user type
+        if ($user->user_type === 'Admin') {
+            $query->where('campus_id', $user->campus_id);
+        } elseif ($user->user_type === 'Dean') {
+            $query->where('department_id', $user->department_id);
+        } elseif ($user->user_type === 'Program-Head') {
+            $query->where('program_id', $user->program_id);
+        }
+
+        // Handle search
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
@@ -123,40 +131,50 @@ class AdminController extends Controller
                   ->orWhere('id', 'like', "%{$search}%");
             });
         }
-    
+
+        // Handle sorting
         if ($request->has('sort')) {
             $sort = $request->input('sort');
             $query->orderBy('id', $sort);
         }
-    
+
         $clearance = $query->get();
-        //foreach ($clearance as $user) {
-          //  Log::info('User Program:', ['user_id' => $user->id, 'program' => $user->program ? $user->program->name : 'None']);
-        //}
+
         return view('admin.views.clearances', compact('clearance'));
-    }   
+    }
 
     public function submittedReports(): View
     {
-        // Get the current admin's ID
-        $adminId = Auth::id();
+        // Get the current admin's ID and user type
+        $user = Auth::user();
         
-        // Get reports from managed faculty
-        $reports = SubmittedReport::with('user')
+        // Start building the query
+        $query = SubmittedReport::with('user')
             ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
             ->leftJoin('users as faculty', 'submitted_reports.user_id', '=', 'faculty.id')
-            ->leftJoin('admin_faculty', function($join) use ($adminId) {
-                $join->on('submitted_reports.user_id', '=', 'admin_faculty.faculty_id')
-                     ->where('admin_faculty.admin_id', '=', $adminId);
-            })
             ->select(
                 'submitted_reports.*',
                 'admins.name as admin_name',
                 'faculty.name as faculty_name'
-            )
-            ->whereNotNull('admin_faculty.faculty_id')
-            ->orderBy('submitted_reports.created_at', 'desc')
-            ->get();
+            );
+
+        // Apply filters based on user type
+        if ($user->user_type === 'Admin') {
+            $query->whereHas('user', function($q) use ($user) {
+                $q->where('campus_id', $user->campus_id);
+            });
+        } elseif ($user->user_type === 'Dean') {
+            $query->whereHas('user', function($q) use ($user) {
+                $q->where('department_id', $user->department_id);
+            });
+        } elseif ($user->user_type === 'Program-Head') {
+            $query->whereHas('user', function($q) use ($user) {
+                $q->where('program_id', $user->program_id);
+            });
+        }
+
+        // Get the final results
+        $reports = $query->orderBy('submitted_reports.created_at', 'desc')->get();
     
         return view('admin.views.submitted-reports', compact('reports'));
     }
@@ -178,6 +196,18 @@ class AdminController extends Controller
         $query = User::with(['department', 'program', 'managingAdmins']);
         // Get the currently authenticated admin's name
         $adminName = Auth::user()->name;
+        $user = Auth::user();
+
+        // Filter based on user type
+        if ($user->user_type === 'Admin') {
+            $query->whereHas('department', function($q) use ($user) {
+                $q->where('campus_id', $user->campus_id);
+            });
+        } elseif ($user->user_type === 'Dean') {
+            $query->where('department_id', $user->department_id);
+        } elseif ($user->user_type === 'Program-Head') {
+            $query->where('program_id', $user->program_id);
+        }
 
         if ($request->has('search')) {
             $search = $request->input('search');

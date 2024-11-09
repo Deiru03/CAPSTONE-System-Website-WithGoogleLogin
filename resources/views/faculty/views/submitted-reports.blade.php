@@ -89,13 +89,16 @@
                                                     'bg-purple-100 text-purple-800' :
                                                     (str_contains(strtolower($report->transaction_type), 'delete') ?
                                                     'bg-red-100 text-red-800' :
+                                                    (str_contains(strtolower($report->transaction_type), 'upload') ?
+                                                    'bg-indigo-100 text-indigo-800' :
                                                     (str_contains(strtolower($report->transaction_type), 'generate') ||
                                                         str_contains(strtolower($report->transaction_type), 'add') ||
+                                                        str_contains(strtolower($report->transaction_type), 'aquire') ||
                                                         str_contains(strtolower($report->transaction_type), 'validated') ?
                                                     'bg-green-100 text-green-800' :
                                                     (str_contains(strtolower($report->transaction_type), 'edit') || 
                                                         str_contains(strtolower($report->transaction_type), 'edited') ?
-                                                    'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800')))) }}">
+                                                    'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'))))) }}">
                                                     {{ $report->transaction_type }}
                                                 </span>
                                             </td>
