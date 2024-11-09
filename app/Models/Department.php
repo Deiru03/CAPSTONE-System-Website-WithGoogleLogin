@@ -20,4 +20,9 @@ class Department extends Model
     {
         return $this->hasMany(Program::class);
     }
+
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class);
+    }
 }

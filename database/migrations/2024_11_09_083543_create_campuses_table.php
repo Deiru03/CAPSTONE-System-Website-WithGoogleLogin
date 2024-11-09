@@ -11,8 +11,9 @@ class CreateCampusesTable extends Migration
         Schema::create('campuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('location')->nullable();
             $table->string('description')->nullable();
+            $table->string('location')->nullable();
+            $table->string('profile_picture')->nullable();
             $table->timestamps();
         });
     }

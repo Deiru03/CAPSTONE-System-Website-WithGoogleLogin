@@ -10,6 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\JsonResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
 use App\Models\Clearance;
 use App\Models\Department;
@@ -17,10 +20,8 @@ use App\Models\Program;
 use App\Models\SubmittedReport;
 use App\Models\UserClearance;
 use App\Models\UploadedClearance;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\JsonResponse;
 use App\Models\AdminId;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Campus;
 use App\Services\FileDeletionService;
 
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////

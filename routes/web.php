@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\Admin\ClearanceController as AdminClearanceController;
 use App\Http\Controllers\Faculty\ClearanceController as FacultyClearanceController;
+use App\Http\Controllers\Admin\CampusController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\OptimizationController;
@@ -19,11 +20,30 @@ Route::get('/', function () {
     return view('welcome');
 });
 /////////////////////////////////////////////// File View Route ////////////////////////////////////////////////
+// General file view route
 Route::get('/file-view/{path}', function($path) {
     $fullPath = storage_path('app/public/' . $path);
     
     if (!File::exists($fullPath)) {
         abort(404);
+    }
+    
+    return response()->file($fullPath, [
+        'Content-Type' => File::mimeType($fullPath),
+        'Content-Disposition' => 'inline; filename="' . basename($path) . '"'
+    ]);
+})->where('path', '.*')->middleware('auth');
+
+// Profile pictures route 
+Route::get('/profile_pictures/{path}', function($path) {
+    $fullPath = storage_path('app/public/profile_pictures/' . $path);
+    
+    if (!File::exists($fullPath)) {
+        // Return default profile picture if requested one doesn't exist
+        $fullPath = public_path('images/default-profile.png');
+        if (!File::exists($fullPath)) {
+            abort(404);
+        }
     }
     
     return response()->file($fullPath, [
@@ -102,9 +122,7 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::get('/action-reports', [AdminController::class, 'actionReports'])->name('admin.views.actionReports');
     Route::get('/archive', [AdminController::class, 'archive'])->name('admin.views.archive');
     Route::get('/profile', [AdminController::class, 'profileEdit'])->name('admin.profile.edit');
-    Route::middleware(['Admin'])->group(function () {
-        Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
-    });
+    Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
 
     ///////////////////// Admin ID Management /////////////////////
     Route::post('/admin-id-management', [AdminController::class, 'createAdminId'])->name('admin.createAdminId');
@@ -171,6 +189,13 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::post('/admin/admin/assign-faculty', [AdminController::class, 'assignFaculty'])->name('admin.assignFaculty');
     Route::get('/admin/manage-faculty', [AdminController::class, 'manageFaculty'])->name('admin.manageFaculty');
     Route::get('/admin/admin/manage-faculty', [AdminController::class, 'manageFaculty'])->name('admin.manageFaculty');
+
+    /////////////////////////////////////////// Campus Management ///////////////////////////////////////////
+    Route::get('/campuses', [CampusController::class, 'viewCampuses'])->name('admin.views.campuses');
+    Route::post('/campuses', [CampusController::class, 'store'])->name('admin.campuses.store');
+    Route::match(['get', 'put'], '/campuses/{campus}', [CampusController::class, 'update'])->name('admin.campuses.update');
+    Route::delete('/campuses/{campus}', [CampusController::class, 'destroy'])->name('admin.campuses.destroy');
+
 });
 
 

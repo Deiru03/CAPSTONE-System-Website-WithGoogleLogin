@@ -11,8 +11,9 @@ class Campus extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'location',
-        'description'
+        'profile_picture',
     ];
 
     public function users()
