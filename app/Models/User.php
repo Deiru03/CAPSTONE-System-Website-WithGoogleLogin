@@ -32,6 +32,7 @@ class User extends Authenticatable //implements MustVerifyEmail
         'department_id', // Added date 10/19/2024 // department id
         'program_id', // Added date 10/19/2024 // program id
         'admin_id_registered', // Added date 10/30/2024 // admin id registered
+        'campus_id', // Added date 11/09/2024 // campus id
     ];
 
     /**

@@ -13,7 +13,8 @@ class Program extends Model
         'name',
         'description',
         'department_id',
-        'profile_picture' // Add line 10/22/2024
+        'profile_picture', // Add line 10/22/2024
+        'campus_id', // Add line 11/09/2024
     ];
 
     public function department()

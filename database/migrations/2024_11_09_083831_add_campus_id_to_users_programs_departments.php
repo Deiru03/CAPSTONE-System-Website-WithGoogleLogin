@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddCampusIdToUsersProgramsDepartments extends Migration
+{
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('campus_id')->nullable()->constrained()->onDelete('set null');
+        });
+
+        Schema::table('programs', function (Blueprint $table) {
+            $table->foreignId('campus_id')->nullable()->constrained()->onDelete('set null');
+        });
+
+        Schema::table('departments', function (Blueprint $table) {
+            $table->foreignId('campus_id')->nullable()->constrained()->onDelete('set null');
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['campus_id']);
+            $table->dropColumn('campus_id');
+        });
+
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropForeign(['campus_id']);
+            $table->dropColumn('campus_id');
+        });
+
+        Schema::table('departments', function (Blueprint $table) {
+            $table->dropForeign(['campus_id']);
+            $table->dropColumn('campus_id');
+        });
+    }
+};
