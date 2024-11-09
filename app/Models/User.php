@@ -33,6 +33,8 @@ class User extends Authenticatable //implements MustVerifyEmail
         'program_id', // Added date 10/19/2024 // program id
         'admin_id_registered', // Added date 10/30/2024 // admin id registered
         'campus_id', // Added date 11/09/2024 // campus id
+        'program_head_id', // Added date 11/09/2024 // program head id
+        'dean_id', // Added date 11/09/2024 // dean id
     ];
 
     /**
@@ -57,7 +59,6 @@ class User extends Authenticatable //implements MustVerifyEmail
             'password' => 'hashed',
             'last_clearance_update' => 'datetime', // Cast to date
             'clearances_status' => 'string', // Cast to string (if using enum)
-
         ];
     }
 

@@ -134,6 +134,8 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     ///////////////////// Admin ID Management /////////////////////
     Route::post('/admin-id-management', [AdminController::class, 'createAdminId'])->name('admin.createAdminId');
     Route::delete('/delete-admin-id/{id}', [AdminController::class, 'deleteAdminId'])->name('admin.deleteAdminId');
+    Route::post('/create-program-head-dean-id', [AdminController::class, 'createProgramHeadDeanId'])->name('admin.createProgramHeadDeanId');
+    Route::delete('/delete-program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
 
     //////////////////////// Edit Faculty //////////////////////
     Route::get('/faculty/edit/{id}', [AdminController::class, 'getFacultyData'])->name('admin.faculty.getData'); // Get Faculty Data

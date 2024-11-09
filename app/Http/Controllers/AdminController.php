@@ -22,6 +22,7 @@ use App\Models\UserClearance;
 use App\Models\UploadedClearance;
 use App\Models\AdminId;
 use App\Models\Campus;
+use App\Models\ProgramHeadDeanId;
 use App\Services\FileDeletionService;
 
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
@@ -324,8 +325,9 @@ class AdminController extends Controller
 
     public function adminIdManagement(): View
     {
-        $adminIds = AdminId::all();
-        return view('admin.views.admin-id-management', compact('adminIds'));
+        $adminIds = AdminId::orderBy('is_assigned', 'asc')->get(); // Sort by is_assigned
+        $programHeadDeanIds = ProgramHeadDeanId::orderBy('is_assigned', 'asc')->get(); // Sort by is_assigned
+        return view('admin.views.admin-id-management', compact('adminIds', 'programHeadDeanIds'));
     }
 
     public function profileEdit(): View
@@ -365,6 +367,33 @@ class AdminController extends Controller
         return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID deleted successfully.');
     }
 
+    public function createProgramHeadDeanId(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|unique:program_head_dean_ids,identifier',
+            'type' => 'nullable|in:Program-Head,Dean',
+        ]);
+
+        ProgramHeadDeanId::create([
+            'identifier' => $request->input('identifier'),
+            'type' => $request->input('type') ?? null,
+            'is_assigned' => false,
+            'user_id' => null,
+        ]);
+
+        return redirect()->route('admin.adminIdManagement')->with('success', 'Program Head/Dean ID created successfully.');
+    }
+
+    public function deleteProgramHeadDeanId($id)
+    {
+        $programHeadDeanId = ProgramHeadDeanId::findOrFail($id);
+        if ($programHeadDeanId->is_assigned) {
+            return redirect()->route('admin.adminIdManagement')->withErrors(['error' => 'Cannot delete an assigned Program Head/Dean ID.']);
+        }
+        $programHeadDeanId->delete();
+
+        return redirect()->route('admin.adminIdManagement')->with('success', 'Program Head/Dean ID deleted successfully.');
+    }
 
     ////////////////////////////////////////////// Archive Controller /////////////////////////////////////////////////
     
