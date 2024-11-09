@@ -134,11 +134,16 @@
                             <h4 class="text-xs font-semibold text-gray-800 truncate w-full text-center">{{ $user->name }}</h4>
                         </div>
                     </div>
-                    <p class="text-xs font-medium text-indigo-600 mb-1 truncate w-full text-center">
+                    <p class="text-xs font-medium text-indigo-600 mb-1 w-full text-center relative group">
                         @if($user->userClearances->isEmpty())
-                            {{ 'Checklist not yet acquired' }}
+                            <span class="text-red-500">{{ 'No Clearance Yet' }}</span>
                         @else
-                            {{ Str::limit(optional($user->userClearances->first()->sharedClearance->clearance)->document_name, 20) }}
+                            <span class="truncate w-full inline-block">
+                                {{ Str::limit(optional($user->userClearances->first()->sharedClearance->clearance)->document_name, 255) }}
+                            </span>
+                            <span class="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-white p-2 rounded shadow-lg border text-sm z-50 min-w-[200px] max-w-xs whitespace-normal">
+                                {{ optional($user->userClearances->first()->sharedClearance->clearance)->document_name }}
+                            </span>
                         @endif
                     </p>
                     <p class="text-xs text-gray-500 mb-2">

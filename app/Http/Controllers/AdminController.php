@@ -528,23 +528,37 @@ class AdminController extends Controller
     public function manageFaculty()
     {
         try {
-            $allFaculty = User::with(['department', 'program', 'managingAdmins'])
-                ->where('user_type', 'Faculty')
-                ->get()
+            $query = User::with(['department', 'program', 'managingAdmins'])
+                ->where('user_type', 'Faculty');
+
+            // Filter based on user role
+            $user = Auth::user();
+            if ($user->user_type === 'Admin') {
+                // Admin can only see faculty in their campus
+                $query->where('campus_id', $user->campus_id);
+            } elseif ($user->user_type === 'Dean') {
+                // Dean can only see faculty in their department
+                $query->where('department_id', $user->department_id);
+            } elseif ($user->user_type === 'Program-Head') {
+                // Program Head can only see faculty in their program
+                $query->where('program_id', $user->program_id);
+            }
+
+            $allFaculty = $query->get()
                 ->map(function ($faculty) {
                     $faculty->managed_by = $faculty->managingAdmins->pluck('name')->join(', ') ?: 'None';
                     return $faculty;
                 });
-        
+
             $managedFaculty = DB::table('admin_faculty')
                 ->where('admin_id', Auth::id())
                 ->pluck('faculty_id')
                 ->toArray();
-        
+
             return response()->json([
                 'allFaculty' => $allFaculty,
                 'managedFaculty' => $managedFaculty,
-            ]);        
+            ]);
         } catch (\Exception $e) {
             Log::error('Error fetching faculty data: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch faculty data.'], 500);

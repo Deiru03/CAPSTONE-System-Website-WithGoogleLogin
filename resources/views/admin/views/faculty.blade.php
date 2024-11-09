@@ -198,8 +198,10 @@
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Managed By</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
+                                @if(Auth::user()->user_type === 'Admin')
+                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-500"> 
@@ -215,25 +217,27 @@
                                 <td class="px-1 py-2 whitespace-nowrap">
                                     {{ $member->managingAdmins->pluck('name')->join(', ') ?? 'N/A' }}
                                 </td>
-                                <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->user_type }}</td>
-                                <td class="py-2 px-1 border-b flex space-x-2 justify-center">
-                                    <button 
-                                        onclick="openEditModal({{ $member->id }})" 
-                                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                        </svg>
-                                        Edit
-                                    </button>
-                                    <button 
-                                        onclick="openDeleteModal({{ $member->id }}, '{{ addslashes($member->name) }}')" 
-                                        class="bg-red-100 hover:bg-red-200 text-red-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 000 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
-                                        </svg>
-                                        Dispose
-                                    </button>
-                                </td>
+                                @if(Auth::user()->user_type === 'Admin')
+                                    <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->user_type }}</td>
+                                    <td class="py-2 px-1 border-b flex space-x-2 justify-center">
+                                        <button 
+                                            onclick="openEditModal({{ $member->id }})" 
+                                            class="bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                            </svg>
+                                            Edit
+                                        </button>
+                                        <button 
+                                            onclick="openDeleteModal({{ $member->id }}, '{{ addslashes($member->name) }}')" 
+                                            class="bg-red-100 hover:bg-red-200 text-red-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 000 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
+                                            </svg>
+                                            Dispose
+                                        </button>
+                                    </td>
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
