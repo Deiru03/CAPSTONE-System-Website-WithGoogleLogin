@@ -31,10 +31,10 @@
             <div>
                 <x-input-label for="user_type" :value="__('User Type')" class="text-xs font-medium text-gray-700" />
                 <select id="user_type" name="user_type" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" onchange="toggleAdminIdField()">
-                    <option value="Faculty" selected>Faculty</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Dean">Dean</option>
-                    <option value="Program-Head">Program Head</option>
+                    <option value="Faculty" {{ old('user_type') == 'Faculty' ? 'selected' : '' }}>Faculty</option>
+                    <option value="Admin" {{ old('user_type') == 'Admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="Dean" {{ old('user_type') == 'Dean' ? 'selected' : '' }}>Dean</option>
+                    <option value="Program-Head" {{ old('user_type') == 'Program-Head' ? 'selected' : '' }}>Program Head</option>
                 </select>
                 @error('user_type')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -45,9 +45,9 @@
             <div>
                 <x-input-label for="position" :value="__('Position')" class="text-xs font-medium text-gray-700" />
                 <select id="position" name="position" :value="old('position')" required autocomplete="position" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
-                    <option value="Permanent">Permanent</option>
-                    <option value="Temporary">Temporary</option>
-                    <option value="Part-Timer">Part-Timer</option>
+                        <option value="Permanent" {{ old('position') == 'Permanent' ? 'selected' : '' }}>Permanent</option>
+                        <option value="Temporary" {{ old('position') == 'Temporary' ? 'selected' : '' }}>Temporary</option>
+                        <option value="Part-Timer" {{ old('position') == 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
                 </select>
                 @error('position')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -96,9 +96,9 @@
             <div>
                 <x-input-label for="department_id" :value="__('Department')" class="text-xs font-medium text-gray-700" />
                 <select id="department_id" name="department_id" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" required>
-                    <option value="" disabled selected>Select a department</option>
+                    <option value="" disabled>Select a department</option>
                     @foreach($departments as $department)
-                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                        <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
                     @endforeach
                 </select>
                 @error('department_id')
@@ -108,7 +108,7 @@
             <div>
                 <x-input-label for="program_id" :value="__('Program')" class="text-xs font-medium text-gray-700" />
                 <select id="program_id" name="program_id" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm" required>
-                    <option value="" disabled selected>Select a program</option>
+                    <option value="" disabled>Select a program</option>
                 </select>
                 @error('program_id')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -144,9 +144,9 @@
                     </div>
                 </div>
                 <p id="password-hint" class="text-xs text-gray-600 mt-1">Password must be at least 8 characters long, include a letter, a number, and a special character.</p>
-                @error('password')
+                {{-- @error('password')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+                @enderror --}}
             </div>
             <!-- Confirm Password -->
             <div class="relative">
@@ -174,11 +174,68 @@
                         </button>
                     </div>
                 </div>
-                @error('password_confirmation')
+                {{-- @error('password_confirmation')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+                @enderror --}}
             </div>
         </div>
+
+        <script>
+            function validateForm() {
+                let isValid = true;
+                const password = document.getElementById('password').value;
+                const passwordConfirmation = document.getElementById('password_confirmation').value;
+                const email = document.getElementById('email').value;
+                const adminIdField = document.getElementById('admin_id_field');
+                const adminId = document.getElementById('admin_id') ? document.getElementById('admin_id').value : null;
+
+                // Validate password
+                if (password !== passwordConfirmation) {
+                    alert('Passwords do not match.');
+                    isValid = false;
+                }
+
+                // Validate email
+                if (!email.includes('@')) {
+                    alert('Please enter a valid email address.');
+                    isValid = false;
+                }
+
+                // Validate admin ID if visible
+                if (adminIdField.style.display === 'block' && !adminId) {
+                    alert('Admin ID is required for Admin user type.');
+                    isValid = false;
+                }
+
+                // Add more validation checks as needed
+
+                return isValid;
+            }
+
+            function toggleAdminIdField() {
+                const userType = document.getElementById('user_type').value;
+                const adminIdField = document.getElementById('admin_id_field');
+                adminIdField.style.display = userType === 'Admin' ? 'block' : 'none';
+            }
+            toggleAdminIdField();
+
+            document.getElementById('department_id').addEventListener('change', function() {
+                const departmentId = this.value;
+                const programs = @json($departments->pluck('programs', 'id'));
+                const programSelect = document.getElementById('program_id');
+ 
+                programSelect.innerHTML = '<option value="" disabled>Select a program</option>';
+                if (programs[departmentId]) {
+                    programs[departmentId].forEach(program => {
+                        const option = document.createElement('option');
+                        option.value = program.id;
+                        option.textContent = program.name;
+                        option.selected = program.id == {{ old('program_id') }}; // Preserve selected program
+                        programSelect.appendChild(option);
+                    });
+                }
+            });
+        </script>
 
         <script>
             function validatePassword(password) {
@@ -198,10 +255,12 @@
                     hint.classList.add('text-gray-600');
                 }
             }
+            // Trigger change event to populate programs on page load
+            document.getElementById('department_id').dispatchEvent(new Event('change'));
         </script>
 
         <div class="flex items-center justify-between mb-4">
-            <a class="text-xs text-blue-600 hover:text-blue-500" href="{{ route('login') }}">
+            <a class="text-md text-blue-600 hover:text-blue-600" href="{{ route('login') }}">
                 {{ __('Sign In') }}
             </a>
             <x-primary-button class="ml-3 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700">

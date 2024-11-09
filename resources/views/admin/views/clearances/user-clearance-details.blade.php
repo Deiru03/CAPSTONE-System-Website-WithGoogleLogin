@@ -155,8 +155,10 @@
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Document<br>Status</th>
-                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
-                    <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+                    @if(Auth::user()->user_type === 'Admin')
+                        <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
+                        <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -205,18 +207,20 @@
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
                             @endif
                         </td>
-                        <td class="px-4 py-4">
-                            @if($feedback && !$feedback->is_archived && !empty($feedback->message) && $uploadedFile && !$uploadedFile->is_archived)
-                                <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
-                            @else
-                                <p class="text-gray-400 italic">No comments yet.</p>
-                            @endif
-                        </td>
-                        <td class="px-4 py-4">
-                            <button onclick="openFeedbackModal({{ $requirement->id }})" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-colors duration-200 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50">
-                                Actions Document
-                            </button>
-                        </td>
+                        @if(Auth::user()->user_type === 'Admin')
+                            <td class="px-4 py-4">
+                                @if($feedback && !$feedback->is_archived && !empty($feedback->message) && $uploadedFile && !$uploadedFile->is_archived)
+                                    <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
+                                @else
+                                    <p class="text-gray-400 italic">No comments yet.</p>
+                                @endif
+                            </td>
+                            <td class="px-4 py-4">
+                                <button onclick="openFeedbackModal({{ $requirement->id }})" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full transition-colors duration-200 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50">
+                                    Actions Document
+                                </button>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
