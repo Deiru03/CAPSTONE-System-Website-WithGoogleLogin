@@ -1,4 +1,5 @@
- <link rel="preconnect" href="https://fonts.bunny.net">
+<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">    
+    <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
@@ -449,13 +450,13 @@
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" onclick="closeUploadModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
+                    <button type="button" onclick="closeUploadModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         Close
                     </button>
-                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700">
+                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
@@ -871,391 +872,391 @@
 
         /**
          * Function to close the View Files modal.
-         */
-        function closeViewFilesModal() {
-            document.getElementById('viewFilesModal').classList.add('hidden');
+            */
+            function closeViewFilesModal() {
+                document.getElementById('viewFilesModal').classList.add('hidden');
+            }
+
+            function viewFile(path, filename) {
+                const previewModal = document.getElementById('previewModal');
+                const previewFrame = document.getElementById('previewFrame');
+                const previewFileName = document.getElementById('previewFileName');
+                console.log('File path:', path); 
+
+                
+                // Remove comments if hosted na ang project
+                const fileUrl = `/file-view/${path}`;
+                console.log('File URL:', fileUrl);
+
+                previewFrame.src = fileUrl;
+                // previewFrame.src = url;
+                previewFileName.textContent = filename;
+                
+                previewModal.classList.remove('hidden');
+                previewModal.classList.add('flex');
+            }
+
+            function closePreviewModal() {
+                const previewModal = document.getElementById('previewModal');
+                const previewFrame = document.getElementById('previewFrame');
+                
+                previewModal.classList.add('hidden');
+                previewModal.classList.remove('flex');
+                previewFrame.src = '';
+            }
+
+            /**
+             * Function to delete a single uploaded file from the modal.
+             *
+             * @param {number} sharedClearanceId
+             * @param {number} requirementId
+             * @param {number} fileId
+             */
+            let currentFileId;
+            let currentSharedClearanceId;
+            let currentRequirementId;
+
+            function openSingleFileDeleteModal(sharedClearanceId, requirementId, fileId) {
+                currentFileId = fileId;
+                currentSharedClearanceId = sharedClearanceId;
+                currentRequirementId = requirementId;
+                document.getElementById('singleFileDeleteModal').classList.remove('hidden');
+            }
+
+            function closeSingleFileDeleteModal() {
+                document.getElementById('singleFileDeleteModal').classList.add('hidden');
+            }
+
+            document.getElementById('confirmSingleFileDeleteButton').onclick = function() {
+                deleteSingleFile(currentSharedClearanceId, currentRequirementId, currentFileId);
+                closeSingleFileDeleteModal();
+            };
+
+            function deleteSingleFile(sharedClearanceId, requirementId, fileId) {
+                fetch(`/faculty/clearances/${sharedClearanceId}/upload/${requirementId}/delete/${fileId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        // Refresh the file list in the modal
+                        viewFilesModal(sharedClearanceId, requirementId);
+                    } else {
+                        showNotification(data.message || 'Failed to delete the file.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting file:', error);
+                    showNotification('An error occurred while deleting the file.', 'error');
+                });
+            }
+
+            // Drag and Drop functionality
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('uploadFiles');
+
+            dropArea.addEventListener('click', () => fileInput.click());
+
+            dropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropArea.classList.add('border-blue-500');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('border-blue-500');
+            });
+
+            dropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropArea.classList.remove('border-blue-500');
+                const files = event.dataTransfer.files;
+                fileInput.files = files;
+                // Manually trigger change event to update file input
+                const changeEvent = new Event('change');
+                fileInput.dispatchEvent(changeEvent);
+            });
+
+            // Handle file input change event
+            fileInput.addEventListener('change', () => {
+                const files = fileInput.files;
+                if (files.length > 0) {
+                    dropArea.querySelector('p').innerText = `${files.length} file(s) selected`;
+                } else {
+                    dropArea.querySelector('p').innerText = 'Drag & drop files here or click to select files';
+                }
+            });
+        </script>
+        <script>
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            });
+
+            function confirmDelete(url) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the delete action
+                        axios.delete(url)
+                            .then(response => {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                );
+                                // Optionally, refresh the page or update the UI
+                            })
+                            .catch(error => {
+                                Swal.fire(
+                                    'Error!',
+                                    'There was a problem deleting the file.',
+                                    'error'
+                                );
+                            });
+                    }
+                });
+            }
+        </script>
+
+    <script>
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('uploadNotification');
+            const notificationMessage = document.getElementById('notificationMessage');
+            const notificationIcon = document.getElementById('notificationIcon');
+
+            notificationMessage.textContent = message;
+
+            // Reset classes
+            notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
+            notificationIcon.innerHTML = '';
+
+            if (type === 'success') {
+                notification.classList.add('bg-green-100/90', 'border-l-4', 'border-green-500', 'text-green-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-100/90', 'border-l-4', 'border-red-500', 'text-red-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            } else if (type === 'successDelete') {
+                notification.classList.add('bg-yellow-100/90', 'border-l-4', 'border-yellow-500', 'text-yellow-700', 'z-50');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-7 7-3-3"></path></svg>';
+            } else if (type === 'info') {
+                notification.classList.add('bg-blue-100/80', 'border-l-4', 'border-blue-500', 'text-blue-700');
+                notificationIcon.innerHTML = '<svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            }
+
+            notification.classList.remove('hidden', 'translate-x-full');
+            notification.classList.add('translate-x-0');
+
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                    notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700', 'bg-yellow-100', 'border-yellow-500', 'text-yellow-700');
+                }, 500);
+            }, 3000);
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                showNotification('{{ session('success') }}', 'success');
+            @endif
 
-        function viewFile(path, filename) {
-            const previewModal = document.getElementById('previewModal');
-            const previewFrame = document.getElementById('previewFrame');
-            const previewFileName = document.getElementById('previewFileName');
-            console.log('File path:', path); 
+            @if(session('successDelete'))
+                showNotification('{{ session('successDelete') }}', 'successDelete');
+            @endif
 
-            
-            // Remove comments if hosted na ang project
-            const fileUrl = `/file-view/${path}`;
-            console.log('File URL:', fileUrl);
+            @if(session('error'))
+                showNotification('{{ session('error') }}', 'error');
+            @endif
+            @if (session('info'))
+                showNotification('{{ session('info') }}', 'info');
+            @endif
+        });
+    </script>
 
-            previewFrame.src = fileUrl;
-            // previewFrame.src = url;
-            previewFileName.textContent = filename;
-            
-            previewModal.classList.remove('hidden');
-            previewModal.classList.add('flex');
-        }
-
-        function closePreviewModal() {
-            const previewModal = document.getElementById('previewModal');
-            const previewFrame = document.getElementById('previewFrame');
-            
-            previewModal.classList.add('hidden');
-            previewModal.classList.remove('flex');
-            previewFrame.src = '';
-        }
-
+    <!-- Script for Upload Tracker -->
+    <script>
+    /////////////////////////////////////////////////////// START OF UPLOAD MODAL ///////////////////////////////////////////////////////
         /**
-         * Function to delete a single uploaded file from the modal.
+         * Function to open the Upload modal.
          *
          * @param {number} sharedClearanceId
          * @param {number} requirementId
-         * @param {number} fileId
          */
-        let currentFileId;
-        let currentSharedClearanceId;
-        let currentRequirementId;
-
-        function openSingleFileDeleteModal(sharedClearanceId, requirementId, fileId) {
-            currentFileId = fileId;
-            currentSharedClearanceId = sharedClearanceId;
-            currentRequirementId = requirementId;
-            document.getElementById('singleFileDeleteModal').classList.remove('hidden');
+        function openUploadModal(sharedClearanceId, requirementId) {
+            const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
+            
+            document.getElementById('uploadModal').classList.remove('hidden');
+            document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
+            document.getElementById('uploadRequirementId').innerText = requirementId;
+            document.getElementById('uploadRequirementIdInput').value = requirementId;
+            document.getElementById('uploadRequirementName').textContent = requirements[requirementId];
         }
 
-        function closeSingleFileDeleteModal() {
-            document.getElementById('singleFileDeleteModal').classList.add('hidden');
+        // Function to close the upload modal
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+            document.getElementById('uploadForm').reset();
+            document.getElementById('uploadNotification').classList.add('hidden');
+            document.getElementById('uploadLoader').classList.add('hidden');
         }
 
-        document.getElementById('confirmSingleFileDeleteButton').onclick = function() {
-            deleteSingleFile(currentSharedClearanceId, currentRequirementId, currentFileId);
-            closeSingleFileDeleteModal();
-        };
+        function createUploadProgress(fileName, fileSize) {
+            const uploadList = document.getElementById('uploadList');
+            const uploadItem = document.createElement('div');
+            uploadItem.className = 'mb-2';
+            uploadItem.innerHTML = `
+                <div class="font-medium text-sm mb-1">${fileName}</div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                    <div class="bg-blue-500 h-2 rounded-full" style="width: 0%" data-progress="0"></div>
+                </div>
+                <div class="flex justify-end">
+                    <div class="text-xs text-gray-600">0% (0 MB of ${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
+                </div>
+            `;
+            uploadList.appendChild(uploadItem);
+            return uploadItem;
+        }
 
-        function deleteSingleFile(sharedClearanceId, requirementId, fileId) {
-            fetch(`/faculty/clearances/${sharedClearanceId}/upload/${requirementId}/delete/${fileId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    // Refresh the file list in the modal
-                    viewFilesModal(sharedClearanceId, requirementId);
-                } else {
-                    showNotification(data.message || 'Failed to delete the file.', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting file:', error);
-                showNotification('An error occurred while deleting the file.', 'error');
+        function updateUploadProgress(uploadItem, percentComplete, loaded, total) {
+            const progressBar = uploadItem.querySelector('.bg-blue-500');
+            const progressText = uploadItem.querySelector('.text-xs');
+            progressBar.style.width = percentComplete + '%';
+            progressBar.setAttribute('data-progress', percentComplete);
+            progressText.textContent = `${Math.round(percentComplete)}% (${(loaded / (1024 * 1024)).toFixed(2)} MB of ${(total / (1024 * 1024)).toFixed(2)} MB)`;
+        }
+
+        function showUploadTracker() {
+            const uploadTracker = document.getElementById('uploadTracker');
+            uploadTracker.classList.remove('hidden');
+        }
+
+        function hideUploadTracker() {
+            const uploadTracker = document.getElementById('uploadTracker');
+            uploadTracker.classList.add('hidden');
+        }
+
+        function checkAllUploadsComplete() {
+            const progressBars = document.querySelectorAll('#uploadList .bg-blue-500');
+            if (progressBars.length === 0) return false;
+            
+            return Array.from(progressBars).every(bar => {
+                const progress = parseFloat(bar.getAttribute('data-progress'));
+                return progress === 100;
             });
         }
 
-        // Drag and Drop functionality
-        const dropArea = document.getElementById('dropArea');
-        const fileInput = document.getElementById('uploadFiles');
-
-        dropArea.addEventListener('click', () => fileInput.click());
-
-        dropArea.addEventListener('dragover', (event) => {
+        // Single Upload Form Submit Handler with completion tracking
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            dropArea.classList.add('border-blue-500');
-        });
 
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.classList.remove('border-blue-500');
-        });
+            const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
+            const requirementId = document.getElementById('uploadRequirementIdInput').value;
+            const fileInput = document.getElementById('uploadFiles');
 
-        dropArea.addEventListener('drop', (event) => {
-            event.preventDefault();
-            dropArea.classList.remove('border-blue-500');
-            const files = event.dataTransfer.files;
-            fileInput.files = files;
-            // Manually trigger change event to update file input
-            const changeEvent = new Event('change');
-            fileInput.dispatchEvent(changeEvent);
-        });
-
-        // Handle file input change event
-        fileInput.addEventListener('change', () => {
-            const files = fileInput.files;
-            if (files.length > 0) {
-                dropArea.querySelector('p').innerText = `${files.length} file(s) selected`;
-            } else {
-                dropArea.querySelector('p').innerText = 'Drag & drop files here or click to select files';
-            }
-        });
-    </script>
-    <script>
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-
-        function confirmDelete(url) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Perform the delete action
-                    axios.delete(url)
-                        .then(response => {
-                            Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
-                                'success'
-                            );
-                            // Optionally, refresh the page or update the UI
-                        })
-                        .catch(error => {
-                            Swal.fire(
-                                'Error!',
-                                'There was a problem deleting the file.',
-                                'error'
-                            );
-                        });
-                }
-            });
-        }
-    </script>
-
-<script>
-    function showNotification(message, type = 'success') {
-        const notification = document.getElementById('uploadNotification');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const notificationIcon = document.getElementById('notificationIcon');
-
-        notificationMessage.textContent = message;
-
-        // Reset classes
-        notification.className = 'hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50';
-        notificationIcon.innerHTML = '';
-
-        if (type === 'success') {
-            notification.classList.add('bg-green-100/90', 'border-l-4', 'border-green-500', 'text-green-700');
-            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-        } else if (type === 'error') {
-            notification.classList.add('bg-red-100/90', 'border-l-4', 'border-red-500', 'text-red-700');
-            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-        } else if (type === 'successDelete') {
-            notification.classList.add('bg-yellow-100/90', 'border-l-4', 'border-yellow-500', 'text-yellow-700', 'z-50');
-            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-7 7-3-3"></path></svg>';
-        } else if (type === 'info') {
-            notification.classList.add('bg-blue-100/80', 'border-l-4', 'border-blue-500', 'text-blue-700');
-            notificationIcon.innerHTML = '<svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        notification.classList.remove('hidden', 'translate-x-full');
-        notification.classList.add('translate-x-0');
-
-        setTimeout(() => {
-            notification.classList.remove('translate-x-0');
-            notification.classList.add('translate-x-full');
-            setTimeout(() => {
-                notification.classList.add('hidden');
-                notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700', 'bg-yellow-100', 'border-yellow-500', 'text-yellow-700');
-            }, 500);
-        }, 3000);
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        @if(session('success'))
-            showNotification('{{ session('success') }}', 'success');
-        @endif
-
-        @if(session('successDelete'))
-            showNotification('{{ session('successDelete') }}', 'successDelete');
-        @endif
-
-        @if(session('error'))
-            showNotification('{{ session('error') }}', 'error');
-        @endif
-        @if (session('info'))
-            showNotification('{{ session('info') }}', 'info');
-        @endif
-    });
-</script>
-
-<!-- Script for Upload Tracker -->
-<script>
-/////////////////////////////////////////////////////// START OF UPLOAD MODAL ///////////////////////////////////////////////////////
-    /**
-     * Function to open the Upload modal.
-     *
-     * @param {number} sharedClearanceId
-     * @param {number} requirementId
-     */
-    function openUploadModal(sharedClearanceId, requirementId) {
-        const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
-        
-        document.getElementById('uploadModal').classList.remove('hidden');
-        document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
-        document.getElementById('uploadRequirementId').innerText = requirementId;
-        document.getElementById('uploadRequirementIdInput').value = requirementId;
-        document.getElementById('uploadRequirementName').textContent = requirements[requirementId];
-    }
-
-    // Function to close the upload modal
-    function closeUploadModal() {
-        document.getElementById('uploadModal').classList.add('hidden');
-        document.getElementById('uploadForm').reset();
-        document.getElementById('uploadNotification').classList.add('hidden');
-        document.getElementById('uploadLoader').classList.add('hidden');
-    }
-
-    function createUploadProgress(fileName, fileSize) {
-        const uploadList = document.getElementById('uploadList');
-        const uploadItem = document.createElement('div');
-        uploadItem.className = 'mb-2';
-        uploadItem.innerHTML = `
-            <div class="font-medium text-sm mb-1">${fileName}</div>
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
-                <div class="bg-blue-500 h-2 rounded-full" style="width: 0%" data-progress="0"></div>
-            </div>
-            <div class="flex justify-end">
-                <div class="text-xs text-gray-600">0% (0 MB of ${(fileSize / (1024 * 1024)).toFixed(2)} MB)</div>
-            </div>
-        `;
-        uploadList.appendChild(uploadItem);
-        return uploadItem;
-    }
-
-    function updateUploadProgress(uploadItem, percentComplete, loaded, total) {
-        const progressBar = uploadItem.querySelector('.bg-blue-500');
-        const progressText = uploadItem.querySelector('.text-xs');
-        progressBar.style.width = percentComplete + '%';
-        progressBar.setAttribute('data-progress', percentComplete);
-        progressText.textContent = `${Math.round(percentComplete)}% (${(loaded / (1024 * 1024)).toFixed(2)} MB of ${(total / (1024 * 1024)).toFixed(2)} MB)`;
-    }
-
-    function showUploadTracker() {
-        const uploadTracker = document.getElementById('uploadTracker');
-        uploadTracker.classList.remove('hidden');
-    }
-
-    function hideUploadTracker() {
-        const uploadTracker = document.getElementById('uploadTracker');
-        uploadTracker.classList.add('hidden');
-    }
-
-    function checkAllUploadsComplete() {
-        const progressBars = document.querySelectorAll('#uploadList .bg-blue-500');
-        if (progressBars.length === 0) return false;
-        
-        return Array.from(progressBars).every(bar => {
-            const progress = parseFloat(bar.getAttribute('data-progress'));
-            return progress === 100;
-        });
-    }
-
-    // Single Upload Form Submit Handler with completion tracking
-    document.getElementById('uploadForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const sharedClearanceId = document.getElementById('uploadUserClearanceId').value;
-        const requirementId = document.getElementById('uploadRequirementIdInput').value;
-        const fileInput = document.getElementById('uploadFiles');
-
-        if (fileInput.files.length === 0) {
-            showNotification('Please select at least one file to upload.', 'error');
-            return;
-        }
-
-        const files = fileInput.files;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type !== 'application/pdf' && files[i].type !== 'image/*' && files[i].type !== 'application/msword' && files[i].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') { // Only allow PDF only but for Testing Images, Word, and Excel files
-                showNotification('Only PDF files are allowed.', 'error');
+            if (fileInput.files.length === 0) {
+                showNotification('Please select at least one file to upload.', 'error');
                 return;
             }
-        }
 
-        showUploadTracker();
-
-        for (let i = 0; i < files.length; i++) {
-            const formData = new FormData();
-            formData.append('files[]', files[i]);
-
-            const uploadItem = createUploadProgress(files[i].name, files[i].size);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
-            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
-            xhr.upload.onprogress = function(event) {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    updateUploadProgress(uploadItem, percentComplete, event.loaded, event.total);
-                    
-                    // Check if all uploads are complete after each progress update
-                    if (checkAllUploadsComplete()) {
-                        setTimeout(() => {
-                            closeUploadModal();
-                            location.reload();
-                        }, 1000);
-                    }
+            const files = fileInput.files;
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type !== 'application/pdf' && files[i].type !== 'image/*' && files[i].type !== 'application/msword' && files[i].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') { // Only allow PDF only but for Testing Images, Word, and Excel files
+                    showNotification('Only PDF files are allowed.', 'error');
+                    return;
                 }
-            };
+            }
 
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        showNotification(response.message, 'success');
-                        updateUploadProgress(uploadItem, 100, files[i].size, files[i].size);
+            showUploadTracker();
+
+            for (let i = 0; i < files.length; i++) {
+                const formData = new FormData();
+                formData.append('files[]', files[i]);
+
+                const uploadItem = createUploadProgress(files[i].name, files[i].size);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `/faculty/clearances/${sharedClearanceId}/upload/${requirementId}`, true);
+                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+
+                xhr.upload.onprogress = function(event) {
+                    if (event.lengthComputable) {
+                        const percentComplete = (event.loaded / event.total) * 100;
+                        updateUploadProgress(uploadItem, percentComplete, event.loaded, event.total);
+                        
+                        // Check if all uploads are complete after each progress update
+                        if (checkAllUploadsComplete()) {
+                            setTimeout(() => {
+                                closeUploadModal();
+                                location.reload();
+                            }, 1000);
+                        }
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            showNotification(response.message, 'success');
+                            updateUploadProgress(uploadItem, 100, files[i].size, files[i].size);
+                        } else {
+                            showNotification(response.message || 'Failed to upload files.', 'error');
+                        }
                     } else {
-                        showNotification(response.message || 'Failed to upload files.', 'error');
+                        showNotification('An error occurred while uploading the files.', 'error');
                     }
-                } else {
+                    
+                    if (document.getElementById('uploadList').children.length === 0) {
+                        hideUploadTracker();
+                    }
+                };
+
+                xhr.onerror = function() {
                     showNotification('An error occurred while uploading the files.', 'error');
-                }
-                
-                if (document.getElementById('uploadList').children.length === 0) {
-                    hideUploadTracker();
-                }
-            };
+                    uploadItem.remove();
+                    if (document.getElementById('uploadList').children.length === 0) {
+                        hideUploadTracker();
+                    }
+                };
 
-            xhr.onerror = function() {
-                showNotification('An error occurred while uploading the files.', 'error');
-                uploadItem.remove();
-                if (document.getElementById('uploadList').children.length === 0) {
-                    hideUploadTracker();
-                }
-            };
-
-            xhr.send(formData);
-        }
-    });
-</script>
-
-<!-- Return to Top Button -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const returnToTopButton = document.getElementById('returnToTop');
-
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 200) {
-                returnToTopButton.classList.remove('hidden');
-            } else {
-                returnToTopButton.classList.add('hidden');
+                xhr.send(formData);
             }
         });
+    </script>
 
-        returnToTopButton.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    <!-- Return to Top Button -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const returnToTopButton = document.getElementById('returnToTop');
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 200) {
+                    returnToTopButton.classList.remove('hidden');
+                } else {
+                    returnToTopButton.classList.add('hidden');
+                }
+            });
+
+            returnToTopButton.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
-    });
-</script>
-    
+    </script>
+</div>

@@ -387,7 +387,7 @@
 
         
         <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm hidden z-50">
+        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm hidden z-50">
             <div class="relative flex flex-col items-center">
                 <!-- Logo Container with Animation -->
                 <div class="w-32 h-32 mb-8 relative animate-bounce">
@@ -434,68 +434,73 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const loadingSpinner = document.getElementById('loadingSpinner');
-                const progressBar = document.getElementById('progressBar');
-                const progressText = document.getElementById('progressText');
-                let progress = 0;
+                // Check if the clearance-show container is present
+                const isClearanceShow = document.getElementById('clearanceShowContainer') !== null;
 
-                function updateProgress(percent) {
-                    progressBar.style.width = `${percent}%`;
-                    progressText.textContent = `Loading... ${Math.round(percent)}%`;
-                }
+                if (!isClearanceShow) {
+                    const loadingSpinner = document.getElementById('loadingSpinner');
+                    const progressBar = document.getElementById('progressBar');
+                    const progressText = document.getElementById('progressText');
+                    let progress = 0;
 
-                function simulateProgress() {
-                    const interval = setInterval(() => {
-                        if (progress < 90) {
-                            progress += Math.random() * 30;
-                            if (progress > 90) progress = 90;
-                            updateProgress(progress);
-                        }
-                    }, 500);
-                    return interval;
-                }
+                    function updateProgress(percent) {
+                        progressBar.style.width = `${percent}%`;
+                        progressText.textContent = `Loading... ${Math.round(percent)}%`;
+                    }
 
-                function showLoading() {
-                    progress = 0;
-                    updateProgress(0);
-                    loadingSpinner.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
-                    return simulateProgress();
-                }
+                    function simulateProgress() {
+                        const interval = setInterval(() => {
+                            if (progress < 90) {
+                                progress += Math.random() * 30;
+                                if (progress > 90) progress = 90;
+                                updateProgress(progress);
+                            }
+                        }, 500);
+                        return interval;
+                    }
 
-                function hideLoading(interval) {
-                    clearInterval(interval);
-                    progress = 100;
-                    updateProgress(100);
-                    setTimeout(() => {
-                        loadingSpinner.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }, 500);
-                }
+                    function showLoading() {
+                        progress = 0;
+                        updateProgress(0);
+                        loadingSpinner.classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                        return simulateProgress();
+                    }
 
-                // Show loading spinner on page unload
-                window.addEventListener('beforeunload', () => {
-                    const interval = showLoading();
-                    setTimeout(() => hideLoading(interval), 1000);
-                });
+                    function hideLoading(interval) {
+                        clearInterval(interval);
+                        progress = 100;
+                        updateProgress(100);
+                        setTimeout(() => {
+                            loadingSpinner.classList.add('hidden');
+                            document.body.style.overflow = '';
+                        }, 500);
+                    }
 
-                // Add loading spinner for all form submissions
-                document.querySelectorAll('form').forEach(form => {
-                    form.addEventListener('submit', () => {
+                    // Show loading spinner on page unload
+                    window.addEventListener('beforeunload', () => {
                         const interval = showLoading();
                         setTimeout(() => hideLoading(interval), 1000);
                     });
-                });
 
-                // Add loading spinner for all links that are not "#" or javascript:void(0)
-                document.querySelectorAll('a').forEach(link => {
-                    if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
-                        link.addEventListener('click', () => {
+                    // Add loading spinner for all form submissions
+                    document.querySelectorAll('form').forEach(form => {
+                        form.addEventListener('submit', () => {
                             const interval = showLoading();
                             setTimeout(() => hideLoading(interval), 1000);
                         });
-                    }
-                });
+                    });
+
+                    // Add loading spinner for all links that are not "#" or javascript:void(0)
+                    document.querySelectorAll('a').forEach(link => {
+                        if (link.href && !link.href.includes('#') && !link.href.includes('javascript:void(0)')) {
+                            link.addEventListener('click', () => {
+                                const interval = showLoading();
+                                setTimeout(() => hideLoading(interval), 1000);
+                            });
+                        }
+                    });
+                }
             });
         </script>
     </body>
