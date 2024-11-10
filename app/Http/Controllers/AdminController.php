@@ -112,7 +112,9 @@ class AdminController extends Controller
         $query = User::with('program');
 
         // Apply filters based on user type
-        if ($user->user_type === 'Admin') {
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Admin with no campus can view all users
+        }elseif ($user->user_type === 'Admin') {
             $query->where('campus_id', $user->campus_id);
         } elseif ($user->user_type === 'Dean') {
             $query->where('department_id', $user->department_id);
@@ -160,7 +162,9 @@ class AdminController extends Controller
             );
 
         // Apply filters based on user type
-        if ($user->user_type === 'Admin') {
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Admin with no campus can view all users
+        }elseif ($user->user_type === 'Admin') {
             $query->whereHas('user', function($q) use ($user) {
                 $q->where('campus_id', $user->campus_id);
             });
@@ -200,7 +204,9 @@ class AdminController extends Controller
         $user = Auth::user();
 
         // Filter based on user type
-        if ($user->user_type === 'Admin') {
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Admin with no campus can view all users
+        }elseif ($user->user_type === 'Admin') {
             $query->whereHas('department', function($q) use ($user) {
                 $q->where('campus_id', $user->campus_id);
             });
@@ -561,7 +567,10 @@ class AdminController extends Controller
 
             // Filter based on user role
             $user = Auth::user();
-            if ($user->user_type === 'Admin') {
+
+            if ($user->user_type === 'Admin' && !$user->campus_id) {
+                // Admin with no campus can view all users
+            } elseif ($user->user_type === 'Admin') {
                 // Admin can only see faculty in their campus
                 $query->where('campus_id', $user->campus_id);
             } elseif ($user->user_type === 'Dean') {

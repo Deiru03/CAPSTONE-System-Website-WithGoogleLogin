@@ -51,7 +51,8 @@
             @endforeach
         </tbody>
     </table>
+    <br>
     <span><strong>As of:</strong> {{ now()->format('M d, Y H:i') }}</span>
-    <span><strong> | By:</strong> {{ Auth::user()->name }}</span>
+    <span><strong> | By:</strong> {{ Auth::user()->name }} - {{ Auth::user()->campus_id ? Auth::user()->user_type : 'Super Admin' }}</span>
 </body>
 </html>

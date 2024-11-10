@@ -1334,8 +1334,7 @@
                     // Optionally, reload the page to reflect changes
                     setTimeout(() => {
                         closeShareModal();
-                        location.reload();
-                    }, 1500);
+                    }, 1000);
                 } else {
                     shareNotification.classList.remove('hidden');
                     shareNotification.innerText = data.message;

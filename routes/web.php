@@ -74,7 +74,9 @@ Route::get('/homepage', function () {
 
 Route::get('/dashboard', function () {
     if (Auth::check()) {
-        if (Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Dean' || Auth::user()->user_type === 'Program-Head') {
+        if (Auth::user()->user_type === 'Admin' ||
+            Auth::user()->user_type === 'Dean' ||
+            Auth::user()->user_type === 'Program-Head') {
             return redirect()->route('admin.dashboard');
         } else {
             return redirect()->route('faculty.dashboard');

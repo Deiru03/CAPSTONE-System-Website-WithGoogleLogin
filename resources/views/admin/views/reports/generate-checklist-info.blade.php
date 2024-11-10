@@ -168,7 +168,7 @@
         <br>
         <br>
         <h2 style="text-align: center; font-size: 18px; font-weight: bold">{{ $clearance->document_name }}</h2>
-        <div class="subtitle" style="text-align: center; font-weight: bold; font-size: 18px; margin-top: -8px; text-decoration: underline;">({{ $clearance->description }})</div>
+        <div class="subtitle" style="text-align: center; font-weight: bold; font-size: 16px; margin-top: -6px; margin-right: 50px; margin-left: 50px; text-decoration: underline;">({{ $clearance->description }})</div>
         <div class="note" style="margin-top: 15px; margin-bottom: 15px; font-size: 15px; text-decoration: italic; text-align: center;">Note: All documents should be printed/photocopied in LONG COUPON BOND.</div>
     </div>
     <table>

@@ -202,14 +202,6 @@ class ClearanceController extends Controller
             SharedClearance::create([
                 'clearance_id' => $clearance->id,
             ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Clearance shared successfully.',
-            ]);
-
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => null,
@@ -217,6 +209,15 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Shared Clearance Checklist',
                 'status' => 'Completed',
             ]);
+
+            DB::commit();
+            
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Clearance shared successfully.',
+            ]);
+
 
             session()->flash('successShared', 'Clearance shared successfully.', $clearance->document_name);
         } catch (\Exception $e) {
