@@ -112,7 +112,7 @@ Route::post('/admin/faculty-report/generate', [AdminController::class, 'generate
 Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');
 Route::get('/admin/clearance/{id}/report', [AdminClearanceController::class, 'generateChecklistInfo'])->name('admin.clearance.report');
 Route::get('/admin/reports', [GenerateReports::class, 'showReportForm'])->name('admin.reports.show');
-Route::post('/admin/reports/generate', [GenerateReports::class, 'generateReport'])->name('admin.reports.generate');
+Route::post('/admin/reports/generate', [GenerateReports::class, 'generateSubmittedReport'])->name('admin.reports.generateSubmittedReport');
 
 /////////////////////////////////////////////// Register Routes ////////////////////////////////////////////////
 Route::get('/departments/{campusId}', [RegisteredUserController::class, 'getDepartments']);
@@ -126,7 +126,7 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::get('/submitted-reports', [AdminController::class, 'submittedReports'])->name('admin.views.submittedReports');
     Route::get('/faculty', [AdminController::class, 'faculty'])->name('admin.views.faculty');
     Route::get('/my-files', [AdminController::class, 'myFiles'])->name('admin.views.myFiles');
-    Route::get('/action-reports', [AdminController::class, 'actionReports'])->name('admin.views.actionReports');
+    Route::get('/action-reports', [AdminController::class, 'adminActionReports'])->name('admin.views.actionReports');
     Route::get('/archive', [AdminController::class, 'archive'])->name('admin.views.archive');
     Route::get('/profile', [AdminController::class, 'profileEdit'])->name('admin.profile.edit');
     Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
@@ -135,7 +135,8 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::post('/admin-id-management', [AdminController::class, 'createAdminId'])->name('admin.createAdminId');
     Route::delete('/delete-admin-id/{id}', [AdminController::class, 'deleteAdminId'])->name('admin.deleteAdminId');
     Route::post('/create-program-head-dean-id', [AdminController::class, 'createProgramHeadDeanId'])->name('admin.createProgramHeadDeanId');
-    Route::delete('/delete-program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
+    // Route::delete('/delete-program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
+    Route::delete('/admin/program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
 
     //////////////////////// Edit Faculty //////////////////////
     Route::get('/faculty/edit/{id}', [AdminController::class, 'getFacultyData'])->name('admin.faculty.getData'); // Get Faculty Data

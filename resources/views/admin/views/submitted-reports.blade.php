@@ -9,7 +9,7 @@
             <div class="p-8 text-gray-900">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Submitted Reports</h3>
                 <p class="text-gray-600 mb-6">Here you can view and manage submitted reports.</p>
-                <form action="{{ url('/admin/reports/generate') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
+                <form action="{{ route('admin.reports.generateSubmittedReport') }}" method="POST" target="_blank" class="bg-white p-6 rounded-lg shadow-md">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="mb-4">

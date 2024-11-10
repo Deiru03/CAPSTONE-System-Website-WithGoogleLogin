@@ -180,7 +180,7 @@ class AdminController extends Controller
         return view('admin.views.submitted-reports', compact('reports'));
     }
 
-    public function actionReports(): View
+    public function adminActionReports(): View
     {
         $reports = SubmittedReport::with('user')
         ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
@@ -387,11 +387,10 @@ class AdminController extends Controller
     public function deleteProgramHeadDeanId($id)
     {
         $programHeadDeanId = ProgramHeadDeanId::findOrFail($id);
-        if ($programHeadDeanId->is_assigned) {
-            return redirect()->route('admin.adminIdManagement')->withErrors(['error' => 'Cannot delete an assigned Program Head/Dean ID.']);
-        }
+    
+        // Forcefully remove the ID, regardless of assignment
         $programHeadDeanId->delete();
-
+    
         return redirect()->route('admin.adminIdManagement')->with('success', 'Program Head/Dean ID deleted successfully.');
     }
 
@@ -449,7 +448,7 @@ class AdminController extends Controller
             'status' => 'Completed',
         ]);
 
-        return $pdf->download(Auth::user()->name.'-report-manage-faculty.pdf');
+        return $pdf->stream(Auth::user()->name.'-report-manage-faculty.pdf');
     }
 
     public function generateManagedFacultyReport()
@@ -473,7 +472,7 @@ class AdminController extends Controller
             'status' => 'Completed',
         ]);
     
-        return $pdf->download('managed-faculty-report.pdf');
+        return $pdf->stream('managed-faculty-report.pdf');
     }
     
     public function generateFacultyReport(Request $request)
@@ -510,7 +509,7 @@ class AdminController extends Controller
             'transaction_type' => 'Generated Report', 
             'status' => 'Completed',
         ]);
-        return $pdf->download(Auth::user()->name.'-report-custom-faculty.pdf');
+        return $pdf->stream(Auth::user()->name.'-report-custom-faculty.pdf');
     }
 
    

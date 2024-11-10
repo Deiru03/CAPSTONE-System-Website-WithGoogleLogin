@@ -95,7 +95,7 @@
                                         </svg>
                                         Share Clearance
                                     </button>
-                                    <button onclick="generateReport({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
+                                    <button onclick="window.open('/admin/clearance/{{ $clearance->id }}/report', '_blank')" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M13 7H7v6h6V7z" />
                                             <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />

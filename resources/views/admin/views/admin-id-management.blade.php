@@ -139,13 +139,13 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
-
+                                
                                 <script>
-                                function confirmDelete(id) {
-                                    if (confirm('Are you sure you want to delete this ID?')) {
-                                        document.getElementById('delete-form-' + id).submit();
+                                    function confirmDelete(id) {
+                                        if (confirm('Are you sure you want to delete this ID?')) {
+                                            document.getElementById('delete-form-' + id).submit();
+                                        }
                                     }
-                                }
                                 </script>
                             </td>
                         </tr>

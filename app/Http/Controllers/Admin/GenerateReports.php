@@ -20,7 +20,7 @@ class GenerateReports extends Controller
         return view('admin.views.submitted-reports');
     }
 
-    public function generateReport(Request $request)
+    public function generateSubmittedReport(Request $request)
     {
         $user = Auth::user();
         $request->validate([
@@ -57,6 +57,6 @@ class GenerateReports extends Controller
         $reports = $query->get();
     
         $pdf = PDF::loadView('admin.views.reports.admin-submitted-reports', compact('reports', 'user'));
-        return $pdf->download(now()->format('Y-m-d') . $user->name . '_submitted_reports.pdf');
+        return $pdf->stream(now()->format('Y-m-d') . $user->name . '_submitted_reports.pdf');
     }
 }

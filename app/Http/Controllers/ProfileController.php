@@ -12,7 +12,7 @@ use App\Models\Department;
 use App\Models\AdminId;
 use App\Models\Campus;
 use App\Models\ProgramHeadDeanId;
-
+use App\Models\User;
 class ProfileController extends Controller
 {
     /**
@@ -65,23 +65,39 @@ class ProfileController extends Controller
                 ]);
 
                 $adminId = AdminId::where('admin_id', $request->admin_id)->first();
-                if ($adminId->is_assigned && $adminId->admin_id !== $user->admin_id_registered) {
-                    return back()->withErrors(['admin_id' => 'The provided Admin ID is already assigned.']);
+                
+                // Check if ID is assigned to another user
+                if ($adminId->is_assigned && $adminId->user_id !== $user->id) {
+                    return back()->withErrors(['admin_id' => 'This Admin ID is already assigned to another user.']);
                 }
 
                 $user->admin_id_registered = $request->admin_id;
-                $adminId->update(['is_assigned' => true, 'user_id' => $user->id]);
+                $adminId->update([
+                    'is_assigned' => true, 
+                    'user_id' => $user->id,
+                ]);
             }
 
             if ($request->has('program_head_id') || $request->has('dean_id')) {
                 $identifier = $request->input('user_type') === 'Program-Head' ? $request->program_head_id : $request->dean_id;
                 $programHeadDeanId = ProgramHeadDeanId::where('identifier', $identifier)->first();
-
-                if ($programHeadDeanId->is_assigned && $programHeadDeanId->user_id !== $user->id) {
-                    return back()->withErrors(['id' => 'The provided ID is already assigned to another user.']);
+            
+                if (!$programHeadDeanId) {
+                    return back()->withErrors(['id' => 'The provided ID does not exist.']);
                 }
-
-                $programHeadDeanId->update(['is_assigned' => true, 'user_id' => $user->id]);
+            
+                // Check if ID is assigned to another user
+                if ($programHeadDeanId->is_assigned && $programHeadDeanId->user_id !== $user->id) {
+                    $idType = $request->input('user_type') === 'Program-Head' ? 'Program Head ID' : 'Dean ID';
+                    return back()->withErrors(['id' => "This {$idType} is already assigned to another user."]);
+                }
+            
+                $programHeadDeanId->update([
+                    'is_assigned' => true, 
+                    'user_id' => $user->id,
+                    'type' => $request->input('user_type')
+                ]);
+                
                 if ($request->input('user_type') === 'Program-Head') {
                     $user->program_head_id = $request->program_head_id;
                 } else {
@@ -89,21 +105,31 @@ class ProfileController extends Controller
                 }
             }
         } else {
-            // If user is Faculty, reset IDs
+            // If user is Faculty, reset IDs and types
             if ($user->admin_id_registered) {
-                AdminId::where('admin_id', $user->admin_id_registered)->update(['is_assigned' => false, 'user_id' => null]);
+                AdminId::where('admin_id', $user->admin_id_registered)->update([
+                    'is_assigned' => false, 
+                    'user_id' => null,
+                ]);
             }
             if ($user->program_head_id) {
-                ProgramHeadDeanId::where('identifier', $user->program_head_id)->update(['is_assigned' => false, 'user_id' => null]);
+                ProgramHeadDeanId::where('identifier', $user->program_head_id)->update([
+                    'is_assigned' => false, 
+                    'user_id' => null,
+                    'type' => null
+                ]);
             }
             if ($user->dean_id) {
-                ProgramHeadDeanId::where('identifier', $user->dean_id)->update(['is_assigned' => false, 'user_id' => null]);
+                ProgramHeadDeanId::where('identifier', $user->dean_id)->update([
+                    'is_assigned' => false, 
+                    'user_id' => null,
+                    'type' => null
+                ]);
             }
             $user->admin_id_registered = null;
             $user->program_head_id = null;
             $user->dean_id = null;
         }
-    
         // $user->clearances_status = 'pending';
         // $user->checked_by = 'System';
         $program = \App\Models\Program::find($request->input('program_id'));

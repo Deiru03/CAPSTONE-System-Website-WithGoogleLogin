@@ -309,12 +309,16 @@ class ClearanceController extends Controller
     {
         $clearance = Clearance::with('requirements')->find($id);
 
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
+
         if (!$clearance) {
             return redirect()->back()->with('error', 'Clearance not found.');
         }
 
-        $pdf = PDF::loadView('admin.views.reports.generate-checklist-info', compact('clearance'));
-        return $pdf->download('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
+        $pdf = PDF::loadView('admin.views.reports.generate-checklist-info', compact('clearance', 'omscLogo', 'iqaLogo'));
+        return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 
     ///////////////////////////////////////// Clearance Requirements ///////////////////////////////////////

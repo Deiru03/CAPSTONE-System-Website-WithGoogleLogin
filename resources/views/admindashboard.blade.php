@@ -245,7 +245,7 @@
              <div class="mt-8 bg-white p-6 rounded-lg shadow-lg border border-gray-200 relative">
                 <h3 class="text-lg font-bold mb-4">Users You Manage</h3>
                 <p class="text-sm text-gray-600 mb-4">Click on a user to view and check their clearance details.</p>
-                <button onclick="window.location='{{ route('admin.generateReport') }}'" class="absolute top-4 right-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                <button onclick="window.open('{{ route('admin.generateReport') }}', '_blank')" class="absolute top-4 right-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                     Generate Report
                 </button>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
