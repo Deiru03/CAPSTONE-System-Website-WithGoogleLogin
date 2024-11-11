@@ -10,7 +10,9 @@ use App\Models\UploadedClearance;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
 use App\Models\ClearanceFeedback;
+use Illuminate\Support\Facades\Log;
 use App\Models\Clearance;
+use App\Models\SharedClearance;
 use App\Models\Program;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -161,15 +163,21 @@ class FacultyController extends Controller
 
     public function generateChecklist($id)
     {
+        // Debugging: Log the ID being used
+        Log::info('Generating checklist for clearance ID: ' . $id);
+
         $clearance = Clearance::with('requirements')->find($id);
+        $sharedClearance = SharedClearance::with('clearance')->find($id);
+
+        // Debugging: Check if clearance is found
+        if (!$sharedClearance || !$sharedClearance->clearance) {
+            return redirect()->back()->with('error', 'Clearance not found.');
+        }
+        $clearance = $sharedClearance->clearance;
         $user = Auth::user();
 
         $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
         $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
-
-        if (!$clearance) {
-            return redirect()->back()->with('error', 'Clearance not found.');
-        }
 
         // Fetch requirements and their statuses
         $requirements = $clearance->requirements->map(function ($requirement) use ($user, $clearance) {
@@ -182,10 +190,12 @@ class FacultyController extends Controller
             $feedback = $requirement->feedback->where('user_id', $user->id)->first();
 
             $status = 'Not Complied';
-            if ($feedback->signature_status == 'Complied') {
+            if ($uploadedFiles->isNotEmpty()) {
                 $status = 'Complied';
-            } elseif ($feedback->signature_status == 'Resubmit' || $feedback->signature_status == 'Checking') {
+            } elseif ($feedback && $feedback->signature_status == 'Resubmit') {
                 $status = 'Resubmit';
+            } elseif ($feedback && $feedback->signature_status == 'Complied') {
+                $status = 'Complied';
             }
 
             return [
@@ -195,11 +205,11 @@ class FacultyController extends Controller
         });
 
         $department = $user->department ? $user->department->name : 'N/A';
-        // $program = $user->program ? $user->program->name : 'N/A';
         $program = User::find($user->program);
         $lastClearanceUpdate = $user->last_clearance_update ? $user->last_clearance_update->format('F j, Y') : 'N/A';
 
-        $pdf = PDF::loadView('faculty.views.reports.generate-checklist', compact('clearance', 'omscLogo', 'iqaLogo', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate'));
+        $pdf = PDF::loadView('faculty.views.reports.generate-checklist', compact('clearance', 'omscLogo', 'iqaLogo', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate'))
+            ->setPaper('legal', 'portrait');
         return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 }

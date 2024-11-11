@@ -318,7 +318,8 @@ class ClearanceController extends Controller
             return redirect()->back()->with('error', 'Clearance not found.');
         }
 
-        $pdf = PDF::loadView('admin.views.reports.generate-checklist-info', compact('clearance', 'omscLogo', 'iqaLogo'));
+        $pdf = PDF::loadView('admin.views.reports.generate-checklist-info', compact('clearance', 'omscLogo', 'iqaLogo'))
+            ->setPaper('legal', 'portrait');
         return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 

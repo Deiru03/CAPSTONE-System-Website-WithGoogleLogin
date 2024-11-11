@@ -106,6 +106,18 @@
     <!-- Notification -->
     <div id="notification" class="hidden fixed bottom-4 right-4 p-3 bg-green-100 text-green-700 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out z-50"></div>
 
+    <!-- Generate My Checklist Button -->
+    <div class="text-center mt-6">
+        <a href="{{ route('faculty.clearanceChecklist', $userClearance->shared_clearance_id) }}" target="_blank" 
+           class="inline-flex items-center px-4 py-2 {{ Auth::user()->clearances_status == 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                <path d="M13 7H7v6h6V7z" />
+                <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+            </svg>
+            Download My Checklist PDF
+        </a>
+    </div>
+
     <!-- Clearance Details -->
     <div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">
         <h2 class="text-3xl mb-6 text-black border-b-2 border-black pb-2">
@@ -220,7 +232,7 @@
                         'Resubmit' => []
                     ];
 
-                    foreach($requirements as $requirement) {
+                    foreach($requirements as $index => $requirement) {
                         $uploadedFiles = App\Models\UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
                             ->where('requirement_id', $requirement->id)
                             ->where('user_id', $userClearance->user_id)
@@ -232,13 +244,18 @@
                             ->where('user_id', $userClearance->user_id)
                             ->where('is_archived', false)
                             ->first();
+                            
+                        $requirementData = [
+                            'requirement' => $requirement,
+                            'originalIndex' => $index + 1 // Store the original index
+                        ];
 
                         if ($feedback && $feedback->signature_status == 'Resubmit') {
-                            $categorizedRequirements['Resubmit'][] = $requirement;
+                            $categorizedRequirements['Resubmit'][] = $requirementData;
                         } elseif ($hasNonArchivedUpload) {
-                            $categorizedRequirements['Uploaded'][] = $requirement;
+                            $categorizedRequirements['Uploaded'][] = $requirementData;
                         } else {
-                            $categorizedRequirements['Missing'][] = $requirement;
+                            $categorizedRequirements['Missing'][] = $requirementData;
                         }
                     }
                 @endphp
@@ -274,7 +291,8 @@
                                 <table class="min-w-full">
                                     <thead class="bg-indigo-600 text-white">
                                         <tr>
-                                            <th class="py-2 px-3 text-left">ID</th>
+                                            <th class="py-2 px-3 text-left hidden">ID</th>
+                                            <th class="py-2 px-3 text-left">No</th>
                                             <th class="py-2 px-3 text-left">Requirement</th>
                                             <th class="py-2 px-3 text-center">Document<br>Status</th>
                                             <th class="py-2 px-3 text-left">Feedback</th>
@@ -282,8 +300,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($requirements as $requirement)
+                                        @foreach($requirements as $requirementData)
                                             @php
+                                                $requirement = $requirementData['requirement'];
+                                                $originalIndex = $requirementData['originalIndex'];
                                                 $uploadedFiles = App\Models\UploadedClearance::where('shared_clearance_id', $userClearance->shared_clearance_id)
                                                     ->where('requirement_id', $requirement->id)
                                                     ->where('user_id', $userClearance->user_id)
@@ -312,7 +332,8 @@
                                             @endphp
 
                                             <tr class="requirement-row hover:bg-gray-50 transition-colors duration-200" data-uploaded="{{ $hasNonArchivedUpload ? 'true' : 'false' }}">
-                                                <td class="border-t px-2 py-1 text-gray-400">{{ $requirement->id }}</td>
+                                                <td class="border-t px-2 py-1 text-gray-400 hidden">{{ $requirement->id }}</td>
+                                                <td class="border-t px-2 py-1 text-gray-500 text-center">{{ $originalIndex }}</td>
                                                 <td class="border-t px-2 py-1">{!! nl2br(e($requirement->requirement)) !!}</td>
                                                 <td class="border-t px-2 py-1 text-center">
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
@@ -392,7 +413,28 @@
                 
                 content.classList.toggle('hidden');
                 icon.classList.toggle('rotate-180');
+
+                // Save the state to local storage
+                const category = header.querySelector('h3').textContent.trim();
+                const isOpen = !content.classList.contains('hidden');
+                localStorage.setItem(`category-${category}`, isOpen);
             }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const folderHeaders = document.querySelectorAll('.folder-header');
+                
+                folderHeaders.forEach(header => {
+                    const category = header.querySelector('h3').textContent.trim();
+                    const isOpen = localStorage.getItem(`category-${category}`) === 'true';
+                    
+                    if (isOpen) {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.folder-icon');
+                        content.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            });
         </script>
     </div>
 
@@ -620,14 +662,34 @@
             returnCountElement.textContent = `Resubmit Documents: ${returnCount} out of ${requirements.length}`;
 
             // Function to toggle folders
-            function toggleFolder(header) {
+           /* function toggleFolder(header) {
                 const content = header.nextElementSibling;
                 const icon = header.querySelector('.folder-icon');
                 
-                // Toggle the clicked folder
                 content.classList.toggle('hidden');
                 icon.classList.toggle('rotate-180');
+
+                // Save the state to local storage
+                const category = header.querySelector('h3').textContent.trim();
+                const isOpen = !content.classList.contains('hidden');
+                localStorage.setItem(`category-${category}`, isOpen);
             }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const folderHeaders = document.querySelectorAll('.folder-header');
+                
+                folderHeaders.forEach(header => {
+                    const category = header.querySelector('h3').textContent.trim();
+                    const isOpen = localStorage.getItem(`category-${category}`) === 'true';
+                    
+                    if (isOpen) {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('.folder-icon');
+                        content.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            }); */
 
             // Function to open a specific category and close others
             function openCategory(categoryName) {

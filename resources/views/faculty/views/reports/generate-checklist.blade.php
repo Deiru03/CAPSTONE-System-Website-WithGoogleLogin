@@ -82,26 +82,27 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            height: 80vh;
+            /* height: 80vh; */
         }
         th, td {
             border: 1px solid black;
             padding: 4px;
             text-align: left;
-            white-space: pre-wrap;
-            margin-top: 2px;
-            margin-bottom: 2px;
+            white-space: pre-wrap;f
+            /* margin-top: 2px; */
+            /* margin-bottom: 2px; */
             font-size: 15px;
-            height: 5px;
+            /* height: 5px; */
         }
         th {
             background-color: #f2f2f2;
             text-align: center;
-            height: 5px;
+            /* height: 5px; */
         }
         tr {
-            margin-top: 2px;
-            margin-bottom: 2px;
+            /* margin-top: 2px; */
+            /* margin-bottom: 2px; */
+            page-break-inside: avoid;
         }
         .footer {
             margin-top: 10px;
@@ -185,7 +186,7 @@
             <tr>
                 <td style="padding-left: 22px; text-indent: -20px;"> {{ $loop->iteration }}. {{ $requirement['requirement']->requirement }}</td>
                 <td style="text-align: center;">{{ $requirement['status'] == 'Complied' ? 'YES' : '' }}</td>
-                <td style="text-align: center;">{{ $requirement['status'] == 'Resubmit' ? 'YES' : '' }}</td>
+                <td style="text-align: center;">{{ $requirement['status'] == 'Resubmit' || $requirement['status'] == 'Not Complied' ? 'YES' : '' }}</td>
                 <td style="text-align: center;">{{ $requirement['status'] == 'Not Applicable' ? 'YES' : '' }}</td>
             </tr>
             @endforeach

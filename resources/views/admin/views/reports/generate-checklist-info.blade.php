@@ -82,26 +82,25 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            height: 80vh;
+            /* height: 80vh; */
         }
         th, td {
             border: 1px solid black;
             padding: 4px;
             text-align: left;
             white-space: pre-wrap;
-            margin-top: 2px;
-            margin-bottom: 2px;
+            /* margin-top: 2px; */
+            /* margin-bottom: 2px; */
             font-size: 15px;
-            height: 5px;
+            /* height: 5px; */
         }
         th {
             background-color: #f2f2f2;
             text-align: center;
-            height: 5px;
+            /* height: 5px; */
         }
         tr {
-            margin-top: 2px;
-            margin-bottom: 2px;
+            page-break-inside: avoid;
         }
         .footer {
             margin-top: 10px;
