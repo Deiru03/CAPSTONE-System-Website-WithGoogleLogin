@@ -9,12 +9,15 @@ use App\Models\UploadedClearance;
 use App\Models\ClearanceRequirement;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
+use App\Models\Clearance;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class ClearanceController extends Controller
 {/**
      * Display a listing of shared clearances for the faculty.
@@ -97,6 +100,7 @@ class ClearanceController extends Controller
         ]);
         return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copied and set as active successfully.');
     }
+    
     public function removeCopy($id)
     {
         $user = Auth::user();
@@ -421,5 +425,47 @@ class ClearanceController extends Controller
                 'message' => 'Failed to fetch uploaded files.',
             ], 500);
         }
-     }
+    }
+
+    /////////////////////////////////////////// Generate Clearance Checklist Faculty ///////////////////////////////////////////
+
+    public function generateChecklistInfo($id)
+    {
+        $clearance = Clearance::with('requirements')->find($id);
+        $user = Auth::user(); // Get the authenticated user
+    
+        if (!$clearance) {
+            return redirect()->back()->with('error', 'Clearance not found.');
+        }
+    
+        // Get the compliance status for each requirement
+        $requirements = $clearance->requirements->map(function ($requirement) use ($user, $clearance) {
+            $uploadedFiles = UploadedClearance::where('requirement_id', $requirement->id)
+                ->where('user_id', $user->id)
+                ->where('shared_clearance_id', $clearance->id)
+                ->where('is_archived', false)
+                ->get();
+    
+            $feedback = $requirement->feedback->where('user_id', $user->id)->first();
+    
+            $status = 'Not Complied';
+            if ($uploadedFiles->isNotEmpty()) {
+                $status = 'Complied';
+            } elseif ($feedback && $feedback->signature_status == 'Resubmit') {
+                $status = 'Resubmit';
+            }
+    
+            return [
+                'requirement' => $requirement,
+                'status' => $status,
+            ];
+        });
+    
+        $department = $user->department ? $user->department->name : 'N/A';
+        $program = $user->program ? $user->program->name : 'N/A';
+        $lastClearanceUpdate = $user->last_clearance_update ? $user->last_clearance_update->format('F j, Y') : 'N/A';
+    
+        $pdf = PDF::loadView('faculty.views.reports.generate-checklist', compact('clearance', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate'));
+        return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
+    }
 }

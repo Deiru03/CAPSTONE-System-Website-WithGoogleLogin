@@ -10,6 +10,7 @@ use App\Models\UploadedClearance;
 use App\Models\UserClearance;
 use App\Models\SubmittedReport;
 use App\Models\ClearanceFeedback;
+use App\Models\Clearance;
 use App\Models\Program;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -156,5 +157,49 @@ class FacultyController extends Controller
         ]);
 
         return $pdf->download('clearance-report.pdf');
+    }
+
+    public function generateChecklist($id)
+    {
+        $clearance = Clearance::with('requirements')->find($id);
+        $user = Auth::user();
+
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
+        if (!$clearance) {
+            return redirect()->back()->with('error', 'Clearance not found.');
+        }
+
+        // Fetch requirements and their statuses
+        $requirements = $clearance->requirements->map(function ($requirement) use ($user, $clearance) {
+            $uploadedFiles = UploadedClearance::where('requirement_id', $requirement->id)
+                ->where('user_id', $user->id)
+                ->where('shared_clearance_id', $clearance->id)
+                ->where('is_archived', false)
+                ->get();
+
+            $feedback = $requirement->feedback->where('user_id', $user->id)->first();
+
+            $status = 'Not Complied';
+            if ($feedback->signature_status == 'Complied') {
+                $status = 'Complied';
+            } elseif ($feedback->signature_status == 'Resubmit' || $feedback->signature_status == 'Checking') {
+                $status = 'Resubmit';
+            }
+
+            return [
+                'requirement' => $requirement,
+                'status' => $status,
+            ];
+        });
+
+        $department = $user->department ? $user->department->name : 'N/A';
+        // $program = $user->program ? $user->program->name : 'N/A';
+        $program = User::find($user->program);
+        $lastClearanceUpdate = $user->last_clearance_update ? $user->last_clearance_update->format('F j, Y') : 'N/A';
+
+        $pdf = PDF::loadView('faculty.views.reports.generate-checklist', compact('clearance', 'omscLogo', 'iqaLogo', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate'));
+        return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 }

@@ -27,12 +27,13 @@
                                 </svg>
                                 Generate Clearance Slip
                             </a>
-                            <a href="{{ route('faculty.generateClearanceReport') }}" class="inline-flex items-center px-4 py-2 {{ $userInfo->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+                            <span class="mx-2"></span>
+                            <a href="{{ route('faculty.clearanceChecklist', $userClearance->id) }}" target="_blank" class="inline-flex items-center px-4 py-2 {{ $userInfo->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                                     <path d="M13 7H7v6h6V7z" />
-                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
                                 </svg>
-                                Download Checklist PDF
+                                Download My Checklist PDF
                             </a>
                             <span class="mx-2"></span>
                             <a href="{{ route('faculty.clearances.index') }}" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
