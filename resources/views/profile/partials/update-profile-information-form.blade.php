@@ -233,7 +233,11 @@
                             <x-input-label for="profile_picture" :value="__('Profile Picture')" class="mb-2 text-lg font-semibold" />
                             <div class="mt-2 flex items-center justify-center w-48 h-48 bg-gray-100 rounded-full overflow-hidden shadow-lg">
                                 @if ($user->profile_picture)
-                                    <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture" class="w-full h-full object-cover" id="preview-image">
+                                    @if (str_contains($user->profile_picture, 'http'))
+                                        <img src="{{ $user->profile_picture }}" alt="Profile Picture" class="w-full h-full object-cover" id="preview-image">
+                                    @else
+                                        <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture" class="w-full h-full object-cover" id="preview-image">
+                                    @endif
                                 @else
                                     <svg class="w-full h-full text-gray-300" fill="currentColor" viewBox="0 0 24 24" id="default-image">
                                         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />

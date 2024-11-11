@@ -16,7 +16,11 @@
     <div class="bg-white bg-opacity-80 p-4 shadow-md">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
-                <img src="{{ Auth::user()->profile_picture ? Auth::user()->profile_picture : asset('images/default-profile.png') }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
+                @if (str_contains(Auth::user()->profile_picture, 'http'))
+                    <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
+                @else
+                    <img src="{{ url('/profile_pictures/' . basename(Auth::user()->profile_picture)) }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
+                @endif
                 <span class="font-bold text-lg">{{ Auth::user()->name }}</span>
             </div>
             <nav class="flex space-x-4">

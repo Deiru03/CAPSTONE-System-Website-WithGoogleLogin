@@ -122,7 +122,11 @@
                 <a href="{{ route('admin.clearances.show', $user->id) }}" class="bg-white rounded-lg shadow p-3 flex flex-col items-center transform hover:scale-105 transition-transform duration-300 ease-in-out border border-gray-200">
                     <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mb-2 flex items-center justify-center p-1">
                         @if ($user->profile_picture)
-                            <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
+                            @if (str_contains($user->profile_picture, 'http'))
+                                <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
+                            @else
+                                <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
+                            @endif
                         @else
                             <div class="w-full h-full flex items-center justify-center rounded-full text-white font-bold text-xl bg-gradient-to-br from-blue-500 to-indigo-600">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -204,7 +208,11 @@
                             <div class="flex items-center ml-3">
                                 <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
                                     @if ($user->profile_picture)
-                                        <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                        @if (str_contains($user->profile_picture, 'http'))
+                                            <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
+                                        @else
+                                            <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full border-2 border-white">
+                                        @endif
                                     @else
                                         <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-semibold">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}

@@ -280,7 +280,9 @@
                             @else
                                 bg-gray-50
                             @endif">
-                            @if ($user->profile_picture)
+                            @if (str_contains($user->profile_picture, 'http'))
+                                <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
+                            @elseif ($user->profile_picture)
                                 <img src="{{ url('/profile_pictures/' . basename($user->profile_picture)) }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
                             @else
                                 <img src="{{ url('/images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">

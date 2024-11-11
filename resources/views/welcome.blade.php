@@ -241,6 +241,7 @@
         <main>
             <div class="header2">
                 <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="logo" />
+                {{-- <img src="{{ asset('images/IQALogo.jpg') }}" alt="IQA Logo" class="logo" /> --}}
                 <h3>OCCIDENTAL MINDORO STATE COLLEGE</h3>
             </div>
             <div class="container">

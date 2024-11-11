@@ -565,8 +565,12 @@
                     
                     let profilePicture;
                     if (faculty.profile_picture) {
-                        // Use url() helper like in app.blade.php
-                        const profilePicturePath = `/profile_pictures/${faculty.profile_picture.split('/').pop()}`;
+                        let profilePicturePath;
+                        if (faculty.profile_picture.includes('http')) {
+                            profilePicturePath = faculty.profile_picture;
+                        } else {
+                            profilePicturePath = `/profile_pictures/${faculty.profile_picture.split('/').pop()}`;
+                        }
                         profilePicture = `<img src="${profilePicturePath}" alt="${faculty.name}" class="w-10 h-10 rounded-full mr-1">`;
                     } else {
                         profilePicture = `<div class="initials w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold mr-1" style="background-color: ${getRandomColor()};">${getInitials(faculty.name)}</div>`;

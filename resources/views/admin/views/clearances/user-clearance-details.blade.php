@@ -20,7 +20,11 @@
         <div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8 p-6">
             <div class="flex-shrink-0">
                 @if ($userClearance->user->profile_picture)
-                    <img src="{{ url('/profile_pictures/' . basename($userClearance->user->profile_picture)) }}" alt="{{ $userClearance->user->name }}" class="w-32 h-32 object-cover rounded-full border-4 border-indigo-200">
+                    @if (str_contains($userClearance->user->profile_picture, 'http'))
+                        <img src="{{ $userClearance->user->profile_picture }}" alt="{{ $userClearance->user->name }}" class="w-32 h-32 object-cover rounded-full border-4 border-indigo-200">
+                    @else
+                        <img src="{{ url('/profile_pictures/' . basename($userClearance->user->profile_picture)) }}" alt="{{ $userClearance->user->name }}" class="w-32 h-32 object-cover rounded-full border-4 border-indigo-200">
+                    @endif
                 @else
                     <div class="w-32 h-32 flex items-center justify-center rounded-full text-white font-bold text-4xl border-4 border-indigo-200" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         {{ strtoupper(substr($userClearance->user->name, 0, 1)) }}
