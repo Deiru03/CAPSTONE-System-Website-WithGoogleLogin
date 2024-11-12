@@ -51,7 +51,7 @@
                     </thead>
                     <tbody>
                         @foreach($adminIds as $adminId)
-                        <tr class="{{ $adminId->is_assigned ? 'bg-green-50' : 'bg-sky-50' }}">
+                        <tr class="{{ $adminId->is_assigned ? 'bg-red-50' : 'bg-sky-50' }}">
                             <td class="px-4 py-2 border-b border-gray-300">{{ $adminId->id }}</td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $adminId->admin_id }}</td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $adminId->is_assigned ? 'Yes' : 'No' }}</td>
@@ -118,7 +118,7 @@
                     </thead>
                     <tbody>
                         @foreach($programHeadDeanIds as $id)
-                        <tr class="{{ $id->is_assigned ? 'bg-green-50' : 'bg-sky-50' }}">
+                        <tr class="{{ $id->is_assigned ? 'bg-red-50' : 'bg-sky-50' }}">
                             <td class="px-4 py-2 border-b border-gray-300">{{ $id->id }}</td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $id->identifier }}</td>
                             <td class="px-4 py-2 border-b border-gray-300">
