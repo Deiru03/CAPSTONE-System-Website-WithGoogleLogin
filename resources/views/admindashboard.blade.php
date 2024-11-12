@@ -91,7 +91,7 @@
                     <div class="mt-2 text-sm text-gray-600 flex justify-between">
                         <span>Pending: {{ $clearancePending }}</span>
                         <span>Complete: {{ $clearanceComplete }}</span>
-                        <span>Return: {{ $clearanceReturn }}</span>
+                        <span>In Progress: {{ $clearanceReturn }}</span>
                     </div>
                 </div>
 
@@ -116,6 +116,8 @@
                     </div>
                     <div class="mt-2 text-sm text-gray-600 flex justify-between">
                         <span>Admin: {{ $facultyAdmin }}</span>
+                        <span>Dean: {{ $facultyDean }}</span>
+                        <span>Program Head: {{ $facultyPH }}</span>
                         <span>Faculty: {{ $facultyFaculty }}</span>
                     </div>
                 </div>
@@ -194,8 +196,8 @@
                         data: {
                             labels: ['Admin', 'Faculty'],
                             datasets: [{
-                                data: [{{ $facultyAdmin }}, {{ $facultyFaculty }}],
-                                backgroundColor: ['#3B82F6', '#10B981']
+                                data: [{{ $facultyAdmin }}, {{ $facultyFaculty }}, {{ $facultyDean }}, {{ $facultyPH }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#F97316', '#8B5CF6']
                             }]
                         },
                         options: {

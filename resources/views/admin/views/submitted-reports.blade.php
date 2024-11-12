@@ -83,11 +83,12 @@
                                             {{ str_contains(strtolower($report->transaction_type), 'reset') || 
                                             str_contains(strtolower($report->transaction_type), 'resubmit') ? 
                                             'bg-orange-100 text-orange-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'remove') ?
+                                            (str_contains(strtolower($report->transaction_type), 'removed checklist') ?
                                             'bg-purple-100 text-purple-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'delete') ?
+                                            (str_contains(strtolower($report->transaction_type), 'removed file') ||
+                                                str_contains(strtolower($report->transaction_type), 'delete') ?
                                             'bg-red-100 text-red-800' :
-                                            (str_contains(strtolower($report->transaction_type), 'upload') ?
+                                            (str_contains(strtolower($report->transaction_type), 'uploaded') ?
                                             'bg-indigo-100 text-indigo-800' :
                                             (str_contains(strtolower($report->transaction_type), 'generate') ||
                                                 str_contains(strtolower($report->transaction_type), 'add') ||

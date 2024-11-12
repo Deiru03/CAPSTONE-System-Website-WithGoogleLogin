@@ -71,6 +71,8 @@ class AdminController extends Controller
         $facultyPartTime = User::where('position', 'Part-Timer')->count();
         $facultyAdmin = User::where('user_type', 'Admin')->count();
         $facultyFaculty = User::where('user_type', 'Faculty')->count();
+        $facultyDean = User::where('user_type', 'Dean')->count();
+        $facultyPH = User::where('user_type', 'Program-Head')->count();
 
         //////////////////////// College Counts //////////////////////////
         $collegeCount = Department::count();
@@ -101,7 +103,7 @@ class AdminController extends Controller
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
-         'managedUsers', 'managedFacultyCount'));
+         'managedUsers', 'managedFacultyCount', 'facultyDean', 'facultyPH'));
     }
 
     public function clearances(Request $request): View

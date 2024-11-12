@@ -87,7 +87,8 @@
                                                     'bg-orange-100 text-orange-800' :
                                                     (str_contains(strtolower($report->transaction_type), 'remove') ?
                                                     'bg-purple-100 text-purple-800' :
-                                                    (str_contains(strtolower($report->transaction_type), 'delete') ?
+                                                    (str_contains(strtolower($report->transaction_type), 'delete') ||
+                                                        str_contains(strtolower($report->transaction_type), 'remove file') ?
                                                     'bg-red-100 text-red-800' :
                                                     (str_contains(strtolower($report->transaction_type), 'upload') ?
                                                     'bg-indigo-100 text-indigo-800' :

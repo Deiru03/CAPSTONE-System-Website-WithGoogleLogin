@@ -210,7 +210,7 @@ class ClearanceController extends Controller
                 SubmittedReport::create([
                     'user_id' => Auth::id(),
                     'title' => "Uploaded {$fileCount} file(s) for requirement: {$requirementName}",
-                    'transaction_type' => 'Upload',
+                    'transaction_type' => 'Uploaded',
                     'status' => 'Okay',
                 ]);
 
@@ -225,7 +225,7 @@ class ClearanceController extends Controller
                 SubmittedReport::create([
                     'user_id' => Auth::id(),
                     'title' => 'Failed to upload files',
-                    'transaction_type' => 'Upload',
+                    'transaction_type' => 'Upload Failed',
                     'status' => 'Failed',
                 ]);
 
@@ -291,7 +291,7 @@ class ClearanceController extends Controller
                 'user_id' => Auth::id(),
                 'admin_id' => null,
                 'title' => "Deleted {$fileCount} file(s) for requirement: {$requirementName}",
-                'transaction_type' => 'Delete',
+                'transaction_type' => 'Removed File',
                 'status' => 'Okay',
             ]);
     
@@ -372,7 +372,7 @@ class ClearanceController extends Controller
                 'user_id' => Auth::id(),
                 'admin_id' => null,
                 'title' => 'Failed to delete file',
-                'transaction_type' => 'Delete', 
+                'transaction_type' => 'Removed', 
                 'status' => 'Failed',
             ]);
 
