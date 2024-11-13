@@ -807,9 +807,8 @@ class ClearanceController extends Controller
                 ], 400);
             }
     
-            // Deactivate other clearances
-            UserClearance::where('user_id', $userId)
-                ->update(['is_active' => false]);
+            // Delete any existing clearance copies
+            UserClearance::where('user_id', $userId)->delete();
     
             // Create a new user clearance and set it as active
             $userClearance = UserClearance::create([
