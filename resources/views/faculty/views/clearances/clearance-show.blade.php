@@ -155,7 +155,7 @@
                 <p class="text-gray-700">
                     <span class="font-semibold">Clearance Status:</span>
                     <span class="font-bold ml-2 {{ Auth::user()->clearances_status == 'complete' ? 'text-green-600' : 'text-yellow-600' }}">
-                        {{ Auth::user()->clearances_status == 'complete' ? 'Checklist Complete' : (Auth::user()->clearances_status ?? 'Pending') }}
+                        {{ Auth::user()->clearances_status == 'complete' ? 'Checklist Complete' : (Auth::user()->clearances_status == 'pending' ? 'In Progress' : Auth::user()->clearances_status) }}
                     </span>
                 </p>
             </div>
