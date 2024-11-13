@@ -8,14 +8,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Original Content -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Quick Actions -->
-            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="mt-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <a href="{{ route('profile.edit') }}" class="bg-green-500 text-white p-4 rounded-lg shadow relative hover:bg-green-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
                         <h3 class="text-lg font-bold">Profile</h3>

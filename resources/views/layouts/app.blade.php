@@ -99,15 +99,15 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
                         </svg>                                                    
-                        <span class="{{ request()->routeIs('faculty.views.submittedReports') ? 'text-indigo-300 font-semibold' : '' }}">Submitted Reports</span>
+                        <span class="{{ request()->routeIs('faculty.views.submittedReports') ? 'text-indigo-300 font-semibold' : '' }}">History of Reports</span>
                     </a> 
 
-                    <!-- My Files -->
+                    <!-- My Submitted Files -->
                     <a href="{{ route('faculty.views.myFiles') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('faculty.views.myFiles') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                         </svg>                                                  
-                        <span class="{{ request()->routeIs('faculty.views.myFiles') ? 'text-indigo-300 font-semibold' : '' }}">My Files</span>
+                        <span class="{{ request()->routeIs('faculty.views.myFiles') ? 'text-indigo-300 font-semibold' : '' }}">My Submitted Files</span>
                     </a>
 
                      <!-- Archive -->
