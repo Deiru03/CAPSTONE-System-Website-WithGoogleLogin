@@ -68,7 +68,7 @@
                 </div>
                 <div class="mt-2 text-sm text-gray-600 flex justify-between">
                     <span>In Progress: {{ $clearance->where('clearances_status', 'pending')->count() }}</span>
-                    <span>Complied: {{ $clearance->where('clearances_status', 'complete')->count() }}</span>
+                    <span>Completed: {{ $clearance->where('clearances_status', 'complete')->count() }}</span>
                     <span>Resubmit: {{ $clearance->where('clearances_status', 'return')->count() }}</span>
                 </div>
             </div>
@@ -143,7 +143,7 @@
         new Chart(document.getElementById('clearanceStatusChart'), {
             type: 'doughnut',
             data: {
-                labels: ['In-Progress', 'Complied', 'Resubmit'],
+                labels: ['In-Progress', 'Completed', 'Resubmit'],
                 datasets: [{
                     data: [
                         {{ $clearance->where('clearances_status', 'pending')->count() }},
@@ -265,7 +265,7 @@
         </form>
     
         <div class="overflow-x-auto">
-            <div class="max-h-[500px] overflow-y-auto">
+            <div class="max-h-[600px] overflow-y-auto">
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-gray-200 text-gray-700 sticky top-0">
                         <tr>
