@@ -140,11 +140,16 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     // Route::delete('/delete-program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
     Route::delete('/admin/program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
 
-    //////////////////////// Edit Faculty //////////////////////
+    //////////////////////// Edit Faculty.view//////////////////////
     Route::get('/faculty/edit/{id}', [AdminController::class, 'getFacultyData'])->name('admin.faculty.getData'); // Get Faculty Data
     Route::post('/faculty/edit', [AdminController::class, 'editFaculty'])->name('admin.faculty.edit'); // Edit Faculty
     Route::delete('/faculty/delete/{id}', [AdminController::class, 'deleteFaculty'])->name('admin.faculty.delete'); // Delete Faculty
-    Route::post('/clearance/update', [AdminController::class, 'updateFacultyClearanceUser'])->name('admin.views.update-clearance'); // Update Clearance
+    // Route::post('/clearance/update', [AdminController::class, 'updateFacultyClearanceUser'])->name('admin.views.update-clearance'); // Update Clearance
+ 
+    //////////////////////// Clearance.view Update Users Clearances //////////////////////
+    Route::post('/admin/clearance/update', [AdminController::class, 'updateUserClearance'])->name('admin.clearanceUserUpdate');
+    Route::get('/admin/clearances', [AdminClearanceController::class, 'showClearances'])->name('admin.clearances');
+    Route::post('/admin/clearance/assign', [AdminClearanceController::class, 'assignClearanceCopy'])->name('admin.clearance.assign');
 
     // Clearance Management
     Route::middleware(['Admin'])->group(function () {

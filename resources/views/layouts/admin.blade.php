@@ -292,7 +292,7 @@
                 if (!isUserClearanceDetails) {
                     // Create loading spinner HTML
                     const spinnerHTML = `
-                        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm hidden z-50">
+                        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm hidden z-30">
                             <div class="relative flex flex-col items-center">
                                 <div class="w-32 h-32 mb-8 relative animate-bounce">
                                     <img src="${window.location.origin}/images/OMSCLogo.png" alt="OMSC Logo" class="w-full h-full object-contain animate-pulse">

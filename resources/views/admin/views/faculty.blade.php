@@ -190,36 +190,36 @@
                     <table class="w-full text-xs"> <!-- Changed from text-sm to text-xs -->
                         <thead class="bg-gray-200 sticky-header">
                             <tr>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dept</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Managed By</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px]">ID</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Name</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Email</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Dept</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Program</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px]">Units</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Position</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Managed By</th>
                                 @if(Auth::user()->user_type === 'Admin')
-                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Action</th>
+                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px]">Type</th>
+                                    <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center max-w-[150px]">Action</th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-500"> 
                             @foreach ($faculty as $member)
                             <tr>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->id }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->name }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->email }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->department->name ?? 'N/A' }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->program_name ?? '' }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->units }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">{{ $member->position }}</td>
-                                <td class="px-1 py-2 whitespace-nowrap">
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[100px]">{{ $member->id }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[200px]">{{ $member->name }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[200px]">{{ $member->email }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[150px]">{{ $member->department->name ?? 'N/A' }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[150px]">{{ $member->program_name ?? '' }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis text-center border-r max-w-[100px]">{{ $member->units }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[150px]">{{ $member->position }}</td>
+                                <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[200px]">
                                     {{ $member->managingAdmins->pluck('name')->join(', ') ?? 'N/A' }}
                                 </td>
                                 @if(Auth::user()->user_type === 'Admin')
-                                    <td class="px-1 py-2 whitespace-nowrap text-center">{{ $member->user_type }}</td>
-                                    <td class="py-2 px-1 border-b flex space-x-2 justify-center">
+                                    <td class="px-1 py-2 overflow-hidden text-ellipsis text-center border-r max-w-[100px]">{{ $member->user_type }}</td>
+                                    <td class="py-2 px-1 border-b flex space-x-2 justify-center max-w-[150px]">
                                         <button 
                                             onclick="openEditModal({{ $member->id }})" 
                                             class="bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
