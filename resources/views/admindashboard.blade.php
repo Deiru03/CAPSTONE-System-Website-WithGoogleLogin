@@ -194,7 +194,7 @@
                     new Chart(document.getElementById('userTypeChart'), {
                         type: 'pie',
                         data: {
-                            labels: ['Admin', 'Faculty'],
+                            labels: ['Admin', 'Faculty', 'Dean', 'Program Head'],
                             datasets: [{
                                 data: [{{ $facultyAdmin }}, {{ $facultyFaculty }}, {{ $facultyDean }}, {{ $facultyPH }}],
                                 backgroundColor: ['#3B82F6', '#10B981', '#F97316', '#8B5CF6']
@@ -289,9 +289,9 @@
                             @else
                                 <img src="{{ url('/images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
                             @endif
-                            <div>
-                                <h4 class="text-lg font-semibold">{{ $user->name }}</h4>
-                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-lg font-semibold truncate">{{ $user->name }}</h4>
+                                <p class="text-sm text-gray-500 truncate max-w-full">{{ $user->email }}</p>
                                 <p class="text-sm font-medium
                                     @if($hasComplied)
                                         text-blue-600
@@ -307,13 +307,19 @@
                                 ">
                                     @if($hasComplied)
                                         Return Complied
+                                    @elseif($user->clearances_status == 'pending')
+                                        In Progress
+                                    @elseif($user->clearances_status == 'complete')
+                                        Complied
+                                    @elseif($user->clearances_status == 'return')
+                                        Resubmit
                                     @else
-                                        {{ $user->clearances_status }}
+                                        {{ ucfirst($user->clearances_status) }}
                                     @endif
                                 </p>
                                 <p class="text-xs text-gray-500 mb-2">
                                     @if($latestUpload)
-                                        Recent: {{ $latestUpload->created_at->format('m/d/Y') }}
+                                        Recent: {{ ucfirst($latestUpload->created_at->format('m/d/Y')) }}
                                     @else
                                         Recent: N/A
                                     @endif

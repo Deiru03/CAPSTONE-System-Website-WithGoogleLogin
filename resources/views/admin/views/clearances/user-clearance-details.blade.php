@@ -17,7 +17,7 @@
   
     {{-- Display User ID and Name --}}
     <div class="mb-8 p-6 flex items-center space-x-8 border border-gray-300">
-        <div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8 p-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8 p-6 w-full">
             <div class="flex-shrink-0">
                 @if ($userClearance->user->profile_picture)
                     @if (str_contains($userClearance->user->profile_picture, 'http'))
@@ -31,7 +31,7 @@
                     </div>
                 @endif
             </div>
-            <div class="flex-grow">
+            <div class="flex-grow w-1/2">
                 <h3 class="text-3xl font-extrabold text-gray-800 mb-2">{{ $userClearance->user->name }}</h3>
                 <p class="text-lg text-indigo-600 mb-4">{{ $userClearance->user->email }}</p>
                 <div class="grid grid-cols-2 gap-y-3 gap-x-8 text-gray-700">
@@ -48,6 +48,10 @@
                         <span>{{ $userClearance->user->units }}</span>
                     </div>
                     <div>
+                        <span class="font-semibold text-gray-900">Campus:</span>
+                        <span>{{ $userClearance->user->campus->name ?? 'N/A' }}</span>
+                    </div>
+                    <div>
                         <span class="font-semibold text-gray-900">College:</span>
                         <span>{{ $college->name ?? 'N/A' }}</span>
                     </div>
@@ -61,7 +65,7 @@
         
         <div class="border-l-2 border-gray-400 h-52 mx-6"></div>
         
-        <div class="mt-8">
+        <div class="w-3/4">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="text-2xl font-semibold text-gray-800">Clearance Details</h4>
                 <div class="h-1 flex-grow mx-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded"></div>
