@@ -59,24 +59,51 @@ class AdminController extends Controller
 
     public function dashboard(): View
     {
+        $user = Auth::user();
+
+        //////////////////////// Base Query Setup //////////////////////////
+        $userQuery = User::query();
+
+        // Apply filters based on user type and scope
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Admin with no campus (super admin) can see all
+        } elseif ($user->user_type === 'Admin') {
+            $userQuery->where('campus_id', $user->campus_id);
+        } elseif ($user->user_type === 'Dean') {
+            $userQuery->where('department_id', $user->department_id);
+        } elseif ($user->user_type === 'Program-Head') {
+            $userQuery->where('program_id', $user->program_id);
+        }
+
         //////////////////////// Clearance Counts //////////////////////////
-        $TotalUser = User::count();
-        $clearancePending = User::where('clearances_status', 'Pending')->count();
-        $clearanceComplete = User::where('clearances_status', 'Complete')->count();
-        $clearanceReturn = User::where('clearances_status', 'Return')->count();
+        $TotalUser = (clone $userQuery)->count();
+        $clearancePending = (clone $userQuery)->where('clearances_status', 'Pending')->count();
+        $clearanceComplete = (clone $userQuery)->where('clearances_status', 'Complete')->count();
+        $clearanceReturn = (clone $userQuery)->where('clearances_status', 'Return')->count();
         $clearanceTotal = $clearancePending + $clearanceComplete + $clearanceReturn;
         $clearanceChecklist = Clearance::count();
+
         //////////////////////// Faculty Counts //////////////////////////
-        $facultyPermanent = User::where('position', 'Permanent')->count();
-        $facultyTemporary = User::where('position', 'Temporary')->count();
-        $facultyPartTime = User::where('position', 'Part-Timer')->count();
-        $facultyAdmin = User::where('user_type', 'Admin')->count();
-        $facultyFaculty = User::where('user_type', 'Faculty')->count();
-        $facultyDean = User::where('user_type', 'Dean')->count();
-        $facultyPH = User::where('user_type', 'Program-Head')->count();
+        $facultyPermanent = (clone $userQuery)->where('position', 'Permanent')->count();
+        $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
+        $facultyPartTime = (clone $userQuery)->where('position', 'Part-Timer')->count();
+        $facultyAdmin = (clone $userQuery)->where('user_type', 'Admin')->count();
+        $facultyFaculty = (clone $userQuery)->where('user_type', 'Faculty')->count();
+        $facultyDean = (clone $userQuery)->where('user_type', 'Dean')->count();
+        $facultyPH = (clone $userQuery)->where('user_type', 'Program-Head')->count();
 
         //////////////////////// College Counts //////////////////////////
-        $collegeCount = Department::count();
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            $collegeCount = Department::count();
+        } elseif ($user->user_type === 'Admin') {
+            $collegeCount = Department::where('campus_id', $user->campus_id)->count();
+        } elseif ($user->user_type === 'Dean') {
+            $collegeCount = Department::where('id', $user->department_id)->count();
+        } elseif ($user->user_type === 'Program-Head') {
+            $collegeCount = Department::whereHas('programs', function($query) use ($user) {
+                $query->where('id', $user->program_id);
+            })->count();
+        }
 
         //////////////////////// Admin Management Counts //////////////////////////
         $adminManagementCounts = DB::table('admin_faculty')
@@ -99,6 +126,7 @@ class AdminController extends Controller
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
         }
+
         //////////////////////// Dashboard Throw Variables //////////////////////////
         return view('admin-dashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
