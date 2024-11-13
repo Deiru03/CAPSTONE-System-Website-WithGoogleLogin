@@ -14,7 +14,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
-                <span class="text-xl">Check Clearances</span>
+                <span class="text-xl">Check Faculty Clearances Checklist</span>
             </span>
         </a>
         @if(Auth::user()->user_type === 'Admin')
@@ -23,7 +23,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-spin" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
-                    <span class="text-xl">Manage Clearances</span>
+                    <span class="text-xl">Manage Clearances Checklist</span>
                 </span>
             </a>
         @endif
@@ -31,7 +31,7 @@
     <div class="py-10">
         <h2 class="text-3xl font-bold mb-4 text-indigo-600 border-b pb-2">Clearance Management</h2>
         <p class="text-gray-600 mb-6">Here you can view and manage faculty clearances efficiently.</p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-green-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
                 <h3 class="text-lg font-semibold text-green-700 mb-2">Complete</h3>
                 <p class="text-3xl font-bold text-green-800">{{ $clearance->where('clearances_status', 'complete')->count() }}</p>
@@ -40,12 +40,217 @@
                 <h3 class="text-lg font-semibold text-yellow-700 mb-2">Pending</h3>
                 <p class="text-3xl font-bold text-yellow-800">{{ $clearance->where('clearances_status', 'pending')->count() }}</p>
             </div>
-            <div class="bg-red-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                <h3 class="text-lg font-semibold text-red-700 mb-2">Total Users</h3>
-                <p class="text-3xl font-bold text-red-800">{{ $clearance->count() }}</p>
+            <div class="bg-blue-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+                <h3 class="text-lg font-semibold text-blue-700 mb-2">Checklist Copies</h3>
+                @php
+                    $totalUsers = $clearance->count();
+                    $usersWithCopy = $clearance->filter(function($user) {
+                        return $user->userClearances->where('is_active', true)->isNotEmpty();
+                    })->count();
+                @endphp
+                <p class="text-3xl font-bold text-blue-800">
+                    {{ $usersWithCopy }}/{{ $totalUsers }}
+                </p>
+                <p class="text-sm text-blue-600 mt-1">
+                    {{ number_format(($usersWithCopy / ($totalUsers ?: 1)) * 100, 1) }}% have copies
+                </p>
+            </div>
+        </div> --}}
+    
+    
+        <!-- Add this after your existing statistics cards -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Clearance Status Chart -->
+            <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-2">Clearance Status</h3>
+                <div class="h-52">
+                    <canvas id="clearanceStatusChart"></canvas>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 flex justify-between">
+                    <span>In Progress: {{ $clearance->where('clearances_status', 'pending')->count() }}</span>
+                    <span>Complied: {{ $clearance->where('clearances_status', 'complete')->count() }}</span>
+                    <span>Resubmit: {{ $clearance->where('clearances_status', 'return')->count() }}</span>
+                </div>
+            </div>
+
+            <!-- Checklist Distribution Chart -->
+            <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-2">Checklist Distribution</h3>
+                <div class="h-52">
+                    <canvas id="checklistChart"></canvas>
+                </div>
+                @php
+                    $totalUsers = $clearance->count();
+                    $usersWithCopy = $clearance->filter(function($user) {
+                        return $user->userClearances->where('is_active', true)->isNotEmpty();
+                    })->count();
+                    $usersWithoutCopy = $totalUsers - $usersWithCopy;
+                @endphp
+                <div class="mt-2 text-sm text-gray-600 flex justify-between">
+                    <span>With Copy: {{ $usersWithCopy }}</span>
+                    <span>Without Copy: {{ $usersWithoutCopy }}</span>
+                </div>
+            </div>
+
+            <!-- Recent Activity Chart -->
+            <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
+                <h3 class="text-lg font-bold mb-2">Recent Activities</h3>
+                <div class="h-48">
+                    <canvas id="activityChart"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="font-semibold">Total Activities:</span> 
+                            {{ $totalActivities }}
+                        </div>
+                        <div>
+                            <span class="font-semibold">Today's Activities:</span> 
+                            {{ end($activityData) }}
+                        </div>
+                    </div>
+                    
+                    <!-- Hover trigger area -->
+                    <div class="relative group">
+                        <div class="cursor-pointer text-blue-600 hover:text-blue-800 mt-2">
+                            Hover to see breakdown
+                        </div>
+                        
+                        <!-- Hidden breakdown that shows on hover -->
+                        <div class="absolute left-0 mt-1 bg-white shadow-lg rounded-lg p-3 invisible group-hover:visible 
+                                transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 w-64 border border-gray-200">
+                            <span class="font-semibold">Activity Breakdown:</span>
+                            <ul class="mt-1 space-y-1">
+                                @foreach($activityBreakdown as $type => $count)
+                                    <li class="flex justify-between">
+                                        <span>{{ $type }}:</span>
+                                        <span>{{ $count }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Add this before closing body tag -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clearance Status Chart
+        new Chart(document.getElementById('clearanceStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['In-Progress', 'Complied', 'Resubmit'],
+                datasets: [{
+                    data: [
+                        {{ $clearance->where('clearances_status', 'pending')->count() }},
+                        {{ $clearance->where('clearances_status', 'complete')->count() }},
+                        {{ $clearance->where('clearances_status', 'return')->count() }}
+                    ],
+                    backgroundColor: ['#FCD34D', '#10B981', '#F97316'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+
+        // Checklist Distribution Chart
+        new Chart(document.getElementById('checklistChart'), {
+            type: 'pie',
+            data: {
+                labels: ['With Copy', 'Without Copy'],
+                datasets: [{
+                    data: [{{ $usersWithCopy }}, {{ $usersWithoutCopy }}],
+                    backgroundColor: ['#3B82F6', '#EF4444'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+            // Recent Activity Chart with real submitted reports data
+            new Chart(document.getElementById('activityChart'), {
+                type: 'line',
+                data: {
+                    labels: @json($labels),
+                    datasets: [{
+                        label: 'Submitted Reports',
+                        data: @json($activityData),
+                        borderColor: '#8B5CF6',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Activities: ${context.raw}`;
+                                },
+                                title: function(context) {
+                                    return context[0].label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        });
+    </script>
         
 
          <!-- Search and Filter Form -->

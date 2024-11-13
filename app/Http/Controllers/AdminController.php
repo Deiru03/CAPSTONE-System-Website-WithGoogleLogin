@@ -216,9 +216,75 @@ class AdminController extends Controller
             }
         ])->get();
 
-        $clearance = $query->paginate(100);
+        // Get submitted reports activity for the last 7 days with user type filtering
+        $submittedReportsQuery = SubmittedReport::where('created_at', '>=', now()->subDays(6));
 
-        return view('admin.views.clearances', compact('clearance', 'clearances', 'users', 'sharedClearances'));
+        // Apply filters based on user type
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Super Admin can see all reports
+        } elseif ($user->user_type === 'Admin') {
+            // Campus Admin: only see reports from their campus
+            $submittedReportsQuery->whereHas('user', function($query) use ($user) {
+                $query->where('campus_id', $user->campus_id);
+            });
+        } elseif ($user->user_type === 'Dean') {
+            // Dean: only see reports from their department
+            $submittedReportsQuery->whereHas('user', function($query) use ($user) {
+                $query->where('department_id', $user->department_id);
+            });
+        } elseif ($user->user_type === 'Program-Head') {
+            // Program Head: only see reports from their program
+            $submittedReportsQuery->whereHas('user', function($query) use ($user) {
+                $query->where('program_id', $user->program_id);
+            });
+        }
+    
+        // Get the filtered activity data
+        $submittedReportsActivity = $submittedReportsQuery
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Create arrays for the last 7 days with counts and labels
+        $activityData = [];
+        $labels = [];
+        
+        // Get total counts for the summary
+        $totalActivities = 0;
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $count = $submittedReportsActivity
+                ->where('date', $date)
+                ->first()
+                ->count ?? 0;
+            
+            $activityData[] = $count;
+            $labels[] = now()->subDays($i)->format('M d');
+            $totalActivities += $count;
+        }
+    
+        // Get activity breakdown by transaction type
+        $activityBreakdown = $submittedReportsQuery
+            ->selectRaw('transaction_type, COUNT(*) as count')
+            ->groupBy('transaction_type')
+            ->get()
+            ->pluck('count', 'transaction_type')
+            ->toArray();
+
+        $clearance = $query->paginate(100);
+    
+        return view('admin.views.clearances', compact(
+            'clearance',
+            'clearances',
+            'users',
+            'sharedClearances',
+            'activityData',
+            'labels',
+            'totalActivities',
+            'activityBreakdown'
+        ));
     }
 
     public function submittedReports(): View
