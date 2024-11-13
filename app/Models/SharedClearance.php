@@ -44,4 +44,13 @@ class SharedClearance extends Model
     {
         return $this->hasMany(UploadedClearance::class, 'shared_clearance_id');
     }
+
+    public function showClearances()
+    {
+        // Fetch all shared clearances
+        $sharedClearances = SharedClearance::all();
+
+        // Pass the shared clearances to the view
+        return view('admin.views.clearances', compact('sharedClearances'));
+    }
 }

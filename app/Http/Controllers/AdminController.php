@@ -24,6 +24,7 @@ use App\Models\AdminId;
 use App\Models\Campus;
 use App\Models\ProgramHeadDeanId;
 use App\Services\FileDeletionService;
+use App\Models\SharedClearance;
 
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
@@ -99,7 +100,7 @@ class AdminController extends Controller
             return view('dashboard');
         }
         //////////////////////// Dashboard Throw Variables //////////////////////////
-        return view('admindashboard', compact('TotalUser', 'clearancePending',
+        return view('admin-dashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
@@ -111,7 +112,9 @@ class AdminController extends Controller
         $user = Auth::user();
         
         // Start building the query
-        $query = User::with('program');
+        $query = User::with(['program', 'department', 'campus', 'uploadedClearances' => function($query) {
+            $query->latest(); // Get the most recent uploads
+        }]);
 
         // Apply filters based on user type
         if ($user->user_type === 'Admin' && !$user->campus_id) {
@@ -133,19 +136,61 @@ class AdminController extends Controller
                   ->orWhere('program', 'like', "%{$search}%")
                   ->orWhere('position', 'like', "%{$search}%")
                   ->orWhere('clearances_status', 'like', "%{$search}%")
-                  ->orWhere('id', 'like', "%{$search}%");
+                  ->orWhere('id', 'like', "%{$search}%")
+                  ->orWhereHas('department', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('campus', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
             });
         }
+
+        // Fetch users with their latest clearance activities
+        $users = User::with([
+            'userClearances.sharedClearance.clearance',
+            'uploadedClearances' => function($query) {
+                $query->latest()->take(1); // Get only the most recent upload
+            }
+        ])->get();
+        
+        $sharedClearances = SharedClearance::with('clearance')->get();
 
         // Handle sorting
         if ($request->has('sort')) {
             $sort = $request->input('sort');
-            $query->orderBy('id', $sort);
+            if ($sort === 'latest_upload') {
+                $query->orderBy(
+                    UploadedClearance::select('created_at')
+                        ->whereColumn('user_id', 'users.id')
+                        ->latest()
+                        ->limit(1),
+                    'desc'
+                );
+            } else {
+                $query->orderBy('id', $sort);
+            }
+        } else {
+            // Default sort by latest upload
+            $query->orderBy(
+                UploadedClearance::select('created_at')
+                    ->whereColumn('user_id', 'users.id')
+                    ->latest()
+                    ->limit(1),
+                'desc'
+            );
         }
 
-        $clearance = $query->get();
+        $clearances = UserClearance::with([
+            'sharedClearance',
+            'user.uploadedClearances' => function($query) {
+                $query->latest();
+            }
+        ])->get();
 
-        return view('admin.views.clearances', compact('clearance'));
+        $clearance = $query->paginate(100);
+
+        return view('admin.views.clearances', compact('clearance', 'clearances', 'users', 'sharedClearances'));
     }
 
     public function submittedReports(): View
@@ -272,7 +317,7 @@ class AdminController extends Controller
             }
         }
 
-        $faculty = $query->paginate(30);
+        $faculty = $query->paginate(100); // Show 100 records per page to handle larger datasets while maintaining performance
 
         foreach ($faculty as $member) {
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
@@ -901,60 +946,27 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete faculty member.'], 500);
         }
     }
-    ///////////////////////////////////////////// Clearance User Update /////////////////////////////////////////////
-    public function updateFacultyClearanceUser(Request $request)
+    ///////////////////////////////////////////// Clearance.view Checklist User Update/////////////////////////////////////////////
+    public function updateUserClearance(Request $request)
     {
         try {
-            // Validate the incoming request data
             $validated = $request->validate([
-                'id' => 'required|exists:users,id',
-                'clearances_status' => 'required|in:pending,complete,return',
-                'checked_by' => 'required|string|max:255',
-                // Note: 'last_clearance_update' is managed server-side
+                'id' => 'required|exists:user_clearances,id',
+                'shared_clearance_id' => 'required|exists:shared_clearances,id',
             ]);
-            
-            // Retrieve the user
-            $user = User::findOrFail($validated['id']);
-            Log::info('Before setting, last_clearance_update:', [
-                'type' => gettype($user->last_clearance_update),
-                'value' => $user->last_clearance_update,
-            ]);
-            // Update clearance status and checked by fields
-            $user->clearances_status = $validated['clearances_status'];
-            $user->checked_by = $validated['checked_by'];
     
-            // Set 'last_clearance_update' to the current timestamp using Carbon
-            $user->last_clearance_update = now();
-            Log::info('After setting, last_clearance_update:', [
-                'type' => gettype($user->last_clearance_update),
-                'value' => $user->last_clearance_update,
-            ]);
-            // Save the changes
-            $user->save();
-            
-            // Log after saving
-            Log::info('After saving, last_clearance_update:', [
-                'type' => gettype($user->last_clearance_update),
-                'value' => $user->last_clearance_update,
-            ]);
-
-
-            // Return a success response with the updated user data
+            $userClearance = UserClearance::findOrFail($validated['id']);
+            $userClearance->shared_clearance_id = $validated['shared_clearance_id'];
+            $userClearance->save();
+    
             return response()->json([
                 'success' => true,
                 'message' => 'Clearance updated successfully.',
-                'user' => [
-                    'id' => $user->id,
-                    'clearances_status' => $user->clearances_status,
-                    'checked_by' => $user->checked_by,
-                    'last_clearance_update' => $user->last_clearance_update->format('Y-m-d H:i:s'),
-                ],
+                'userClearance' => $userClearance,
             ]);
         } catch (\Exception $e) {
-            // Log the error for debugging
             Log::error('Clearance Update Error: ' . $e->getMessage());
     
-            // Return an error response
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update clearance.',

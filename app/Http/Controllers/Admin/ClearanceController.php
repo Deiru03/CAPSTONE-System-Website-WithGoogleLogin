@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\Department;
 use App\Models\Program;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\View\View;
 
 class ClearanceController extends Controller
 {
@@ -782,5 +783,84 @@ class ClearanceController extends Controller
             Log::error('Resetting User Clearance Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to reset user clearances.'], 500);
         }
+    }
+
+    /////////////////////////////////// Clearance.view Show Methods ////////////////////////////////////////////////
+    public function assignClearanceCopy(Request $request)
+    {
+        try {
+            $userId = $request->input('id');
+            $sharedClearanceId = $request->input('shared_clearance_id');
+            
+            $user = User::findOrFail($userId);
+            $sharedClearance = SharedClearance::findOrFail($sharedClearanceId);
+    
+            // Check if the user already has this clearance
+            $existingCopy = UserClearance::where('shared_clearance_id', $sharedClearanceId)
+                ->where('user_id', $userId)
+                ->first();
+    
+            if ($existingCopy) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User already has a copy of this clearance.'
+                ], 400);
+            }
+    
+            // Deactivate other clearances
+            UserClearance::where('user_id', $userId)
+                ->update(['is_active' => false]);
+    
+            // Create a new user clearance and set it as active
+            $userClearance = UserClearance::create([
+                'shared_clearance_id' => $sharedClearanceId,
+                'user_id' => $userId,
+                'is_active' => true,
+            ]);
+    
+            SubmittedReport::create([
+                'admin_id' => Auth::id(),
+                'user_id' => $userId,
+                'title' => 'Assigned clearance copy to ' . $user->name,
+                'transaction_type' => 'Assigned Checklist',
+                'status' => 'Completed',
+            ]);
+    
+            // Load the relationships we need
+            $userClearance->load('sharedClearance.clearance');
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Clearance assigned successfully.',
+                'userClearance' => $userClearance
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Assigning Clearance Copy Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to assign clearance copy: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchUserClearances(Request $request)
+    {
+        $query = $request->input('search');
+        $adminId = Auth::id();
+
+        $users = User::with([
+            'userClearances.sharedClearance.clearance',
+            'managingAdmins'
+        ])
+            ->whereHas('managingAdmins', function ($q) use ($adminId) {
+                $q->where('admin_id', $adminId);
+            })
+            ->when($query, function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                ->orWhere('id', 'like', '%' . $query . '%');
+            })
+            ->get();
+
+        return view('admin.views.clearances', compact('users', 'query'));
     }
 }
