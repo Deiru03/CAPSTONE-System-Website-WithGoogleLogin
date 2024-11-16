@@ -327,9 +327,12 @@
                             <div class="col-span-5">
                                 <label for="editPosition" class="block text-sm font-medium text-gray-700 mb-1">Status/Position</label>
                                 <select name="position" id="editPosition" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
-                                    <option value="Permanent">Permanent</option>
                                     <option value="Part-Timer">Part-Timer</option>
                                     <option value="Temporary">Temporary</option>
+                                    <option value="Permanent-PartTime">Permanent (Part-Time)</option>
+                                    <option value="Permanent-FullTime">Permanent (Full-Time)</option>
+                                    <option value="Dean">Dean</option>
+                                    <option value="Program-Head">Program-Head</option>
                                 </select>
                             </div>
                             <div class="col-span-4">
@@ -498,9 +501,12 @@
                             <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
                             <select name="position" id="position" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="">All Positions</option>
-                                <option value="Permanent">Permanent</option>
                                 <option value="Temporary">Temporary</option>
                                 <option value="Part-Timer">Part-Timer</option>
+                                <option value="Permanent-PartTime">Permanent (Part-Time)</option>
+                                <option value="Permanent-FullTime">Permanent (Full-Time)</option>
+                                <option value="Dean">Dean</option>
+                                <option value="Program-Head">Program-Head</option>
                             </select>
                         </div>
                     </div>

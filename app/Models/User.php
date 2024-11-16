@@ -24,7 +24,7 @@ class User extends Authenticatable //implements MustVerifyEmail
         'profile_picture', // Added date 10/18/2024 // profile picture
         'user_type', // Added date 09/16/2024 // Admin, Faculty
         'program', // Added date 09/16/2024 // BSIT, COMSC, etc.
-        'position', // Added date 09/16/2024 // Permanent, Temporary, Part-Timer
+        'position', // Added date 09/16/2024 // Permanent, Temporary, Part-Timer //Modified date 11/16/2024 // Permanent-FullTime, Permanent-PartTime, Temporary, Part-Timer, Dean, Program-Head
         'units', // Added date 09/16/2024 // 3 units, 2 units, etc.
         'clearances_status', // Added date 09/16/2024 // pending, return, complete
         'last_clearance_update', // Added date 09/16/2024 // date when last clearance update was made

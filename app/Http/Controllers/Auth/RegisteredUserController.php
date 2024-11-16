@@ -60,7 +60,7 @@ class RegisteredUserController extends Controller
             'user_type' => ['required', 'string', 'in:Admin,Faculty,Program-Head,Dean'],
             'units' => ['nullable', 'integer'],
             'program' => ['nullable', 'string'],
-            'position' => ['required', 'string', 'in:Permanent,Temporary,Part-Timer'],
+            'position' => ['required', 'string', 'in:Permanent-FullTime,Permanent-PartTime,Temporary,Part-Timer,Dean,Program-Head'],
             'department_id' => ['required', 'exists:departments,id'],
             'program_id' => ['required', 'exists:programs,id'],
             'campus_id' => ['required', 'exists:campuses,id'],

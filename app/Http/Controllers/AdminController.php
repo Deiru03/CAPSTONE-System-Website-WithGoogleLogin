@@ -84,13 +84,16 @@ class AdminController extends Controller
         $clearanceChecklist = Clearance::count();
 
         //////////////////////// Faculty Counts //////////////////////////
-        $facultyPermanent = (clone $userQuery)->where('position', 'Permanent')->count();
+        $facultyDean = (clone $userQuery)->where('position', 'Dean')->count();
+        $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->count();
+        $facultyPermanentPT = (clone $userQuery)->where('position', 'Permanent-PartTime')->count();
+        $facultyPermanent = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
         $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
         $facultyPartTime = (clone $userQuery)->where('position', 'Part-Timer')->count();
         $facultyAdmin = (clone $userQuery)->where('user_type', 'Admin')->count();
         $facultyFaculty = (clone $userQuery)->where('user_type', 'Faculty')->count();
-        $facultyDean = (clone $userQuery)->where('user_type', 'Dean')->count();
-        $facultyPH = (clone $userQuery)->where('user_type', 'Program-Head')->count();
+        $usersDean = (clone $userQuery)->where('user_type', 'Dean')->count();
+        $usersPH = (clone $userQuery)->where('user_type', 'Program-Head')->count();
 
         //////////////////////// College Counts //////////////////////////
         if ($user->user_type === 'Admin' && !$user->campus_id) {

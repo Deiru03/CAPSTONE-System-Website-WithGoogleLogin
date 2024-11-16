@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('user_type', ['Admin', 'Faculty', 'Dean', 'Program-Head'])->after('email');
             $table->string('program')->nullable()->after('user_type');
-            $table->enum('position', ['Permanent', 'Temporary', 'Part-Timer'])->nullable()->after('program');
+            $table->enum('position', ['Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer'])->nullable()->after('program');
             $table->integer('units')->nullable()->after('position');
             $table->enum('clearances_status', ['pending', 'return', 'complete'])->default('pending')->after('units');
             $table->timestamp('last_clearance_update')->nullable()->after('clearances_status');

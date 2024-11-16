@@ -116,7 +116,8 @@
         </div>
     
         <div class="bullet-points">
-            <li>{!! $user->position === 'Permanent' || $user->position === 'Temporary' ? '<strong style="background-color: yellow;">PERMANENT/TEMPORARY</strong>' : 'PERMANENT/TEMPORARY' !!}</li>
+            <li>{!! $user->position === 'Permanent-FullTime' || $user->position === 'Permanent-PartTime' || $user->position === 'Temporary' ? '<strong style="background-color: yellow;">PERMANENT/TEMPORARY</strong>' : 'PERMANENT/TEMPORARY' !!}</li>
+            <li>{!! $user->position === 'Dean' || $user->position === 'Program-Head' ? '<strong style="background-color: yellow;">DEAN/PROGRAM HEAD</strong>' : 'DEAN/PROGRAM HEAD' !!}</li>
             <li>{!! $user->position === 'Part-Timer' && $user->units >= 12 ? '<strong style="background-color: yellow;">PART-TIME W/ 12 UNITS LOAD AND ABOVE</strong>' : 'PART-TIME W/ 12 UNITS LOAD AND ABOVE' !!}</li>
             <li>{!! $user->position === 'Part-Timer' && $user->units >= 9 && $user->units < 12 ? '<strong style="background-color: yellow;">PART-TIME W/ 9 UNITS LOAD AND ABOVE</strong>' : 'PART-TIME W/ 9 UNITS LOAD AND ABOVE' !!}</li>
         </div>

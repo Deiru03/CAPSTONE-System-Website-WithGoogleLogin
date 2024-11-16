@@ -149,7 +149,8 @@
                             data: [
                                 {{ $users->where('position', 'Dean')->count() }},
                                 {{ $users->where('position', 'Program Head')->count() }},
-                                {{ $users->where('position', 'Permanent')->count() }},
+                                {{ $users->where('position', 'Permanent-FullTime')->count() }},
+                                {{ $users->where('position', 'Permanent-PartTime')->count() }},
                                 {{ $users->where('position', 'Part-Timer')->count() }},
                                 {{ $users->where('position', 'Temporary')->count() }}
                             ],

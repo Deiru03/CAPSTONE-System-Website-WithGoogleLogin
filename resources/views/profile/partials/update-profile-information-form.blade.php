@@ -98,9 +98,12 @@
                             <div class="col-span-1">
                                 <x-input-label for="position" :value="__('Position')" class="text-base" />
                                 <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                    <option value="Permanent" {{ old('position', $user->position) === 'Permanent' ? 'selected' : '' }}>Permanent</option>
                                     <option value="Temporary" {{ old('position', $user->position) === 'Temporary' ? 'selected' : '' }}>Temporary</option>
                                     <option value="Part-Timer" {{ old('position', $user->position) === 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
+                                    <option value="Permanent-PartTime" {{ old('position', $user->position) === 'Permanent-PartTime' ? 'selected' : '' }}>Permanent (Part-Time)</option>
+                                    <option value="Permanent-FullTime" {{ old('position', $user->position) === 'Permanent-FullTime' ? 'selected' : '' }}>Permanent (Full-Time)</option>
+                                    <option value="Dean" {{ old('position', $user->position) === 'Dean' ? 'selected' : '' }}>Dean</option>
+                                    <option value="Program-Head" {{ old('position', $user->position) === 'Program-Head' ? 'selected' : '' }}>Program-Head</option>
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('position')" />
                             </div>
