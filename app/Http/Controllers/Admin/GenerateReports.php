@@ -26,6 +26,10 @@ class GenerateReports extends Controller
     public function generateSubmittedReport(Request $request)
     {
         $user = Auth::user();
+
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
         $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -62,7 +66,7 @@ class GenerateReports extends Controller
 
         $reports = $query->get();
 
-        $pdf = PDF::loadView('admin.views.reports.admin-submitted-reports', compact('reports', 'user'));
+        $pdf = PDF::loadView('admin.views.reports.admin-submitted-reports', compact('reports', 'user', 'omscLogo', 'iqaLogo'));
         return $pdf->stream(now()->format('Y-m-d') . $user->name . '_submitted_reports.pdf');
     }
 }

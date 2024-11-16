@@ -594,6 +594,9 @@ class AdminController extends Controller
         // Get the current admin's ID
         $adminId = Auth::id();
 
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
         // Get only users managed by this admin
         $users = User::with('managingAdmins')
             ->whereHas('managingAdmins', function($query) use ($adminId) {
@@ -601,7 +604,7 @@ class AdminController extends Controller
             })
             ->get();
 
-        $pdf = Pdf::loadView('admin.views.reports.admin-generate', compact('users'));
+        $pdf = Pdf::loadView('admin.views.reports.admin-generate', compact('users', 'omscLogo', 'iqaLogo'));
 
         SubmittedReport::create([
             'admin_id' => Auth::id(),
@@ -617,6 +620,9 @@ class AdminController extends Controller
     public function generateManagedFacultyReport()
     {
         $adminId = Auth::id();
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
         $faculty = User::whereHas('managingAdmins', function($query) use ($adminId) {
             $query->where('admin_id', $adminId);
         })->get();
@@ -625,7 +631,7 @@ class AdminController extends Controller
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
         }
     
-        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty'));
+        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty', 'omscLogo', 'iqaLogo'));
     
         SubmittedReport::create([
             'admin_id' => Auth::id(),
@@ -641,6 +647,9 @@ class AdminController extends Controller
     public function generateFacultyReport(Request $request)
     {
         $query = User::with(['department', 'program']);
+
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
     
         if ($request->filled('department')) {
             $query->where('department_id', $request->department);
@@ -660,7 +669,7 @@ class AdminController extends Controller
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
         }
     
-        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty'));
+        $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty', 'omscLogo', 'iqaLogo'));
     
         $departmentName = $request->filled('department') ? Department::find($request->department)->name : 'All';
         $programName = $request->filled('program') ? Program::find($request->program)->name : 'All';
