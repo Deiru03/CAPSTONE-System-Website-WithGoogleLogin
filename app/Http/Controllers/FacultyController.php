@@ -109,10 +109,11 @@ class FacultyController extends Controller
 
     public function submittedReports(): View
     {
-        $reports = SubmittedReport::where('user_id', Auth::id())
-        ->get();
+        $reports = SubmittedReport::with('admin')
+            ->where('user_id', Auth::id())
+            ->get();
 
-        return view('faculty.views.submitted-reports', compact('reports'));
+        return view('faculty.views.history-reports', compact('reports'));
     }
     
     public function archive(Request $request): View

@@ -7,7 +7,7 @@
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-8 text-gray-900">
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">Submitted Reports</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">History of Report Actions Recorded</h3>
                 <p class="text-gray-600 mb-6">Here you can view and manage submitted reports.</p>
                 <form action="{{ route('admin.reports.generateSubmittedReport') }}" method="POST" target="_blank" class="bg-white p-6 rounded-lg shadow-md">
                     @csrf
@@ -56,13 +56,13 @@
                 <!-- Reports Table -->
                <!-- Reports Table -->
                 <div class="max-h-[790px] overflow-y-auto">
-                    <table class="w-full table-fixed divide-y divide-gray-200">
+                    <table class="w-full table-fixed divide-y divide-gray-200 border-2 border-gray-200 rounded-lg mt-4">
                         <thead class="bg-gray-50 sticky top-0">
                             <tr>
                                 <th class="hidden w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
                                 <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Faculty</th>
                                 <th class="w-2/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
+                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider items-center text-center">Transaction Type</th>
                                 <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
@@ -78,31 +78,31 @@
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         {{ $report->title }}
                                     </td>
-                                    <td class="px-6 py-4 text-xs text-gray-600 truncate">
+                                    <td class="px-6 py-4 text-xs text-gray-600 truncate items-center text-center">
                                         <span class="px-2 py-1 rounded-full text-[10px] font-medium 
                                             {{ str_contains(strtolower($report->transaction_type), 'reset') || 
                                             str_contains(strtolower($report->transaction_type), 'resubmit') ? 
-                                            'bg-orange-100 text-orange-800' :
+                                            'bg-orange-100 text-orange-800 border-2 border-orange-300' :
                                             (str_contains(strtolower($report->transaction_type), 'removed checklist') ?
-                                            'bg-purple-100 text-purple-800' :
+                                            'bg-purple-100 text-purple-800 border-2 border-purple-300' :
                                             (str_contains(strtolower($report->transaction_type), 'removed file') ||
                                                 str_contains(strtolower($report->transaction_type), 'delete') ?
-                                            'bg-red-100 text-red-800' :
+                                            'bg-red-100 text-red-800 border-2 border-red-300' :
                                             (str_contains(strtolower($report->transaction_type), 'uploaded') ?
-                                            'bg-indigo-100 text-indigo-800' :
+                                            'bg-indigo-100 text-indigo-800 border-2 border-indigo-300' :
                                             (str_contains(strtolower($report->transaction_type), 'generate') ||
                                                 str_contains(strtolower($report->transaction_type), 'add') ||
                                                 str_contains(strtolower($report->transaction_type), 'aquire') ||
                                                 str_contains(strtolower($report->transaction_type), 'validated') ?
-                                            'bg-green-100 text-green-800' :
+                                            'bg-green-100 text-green-800 border-2 border-green-300' :
                                             (str_contains(strtolower($report->transaction_type), 'edit') || 
                                                 str_contains(strtolower($report->transaction_type), 'edited') ?
-                                            'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'))))) }}">
+                                            'bg-yellow-100 text-yellow-800 border-2 border-yellow-300' : 'bg-blue-100 text-blue-800 border-2 border-blue-300'))))) }}">
                                             {{ $report->transaction_type }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate">
-                                        {{ $report->created_at->format('M d, Y H:i') }}
+                                        {{ $report->created_at->format('M d, Y h:i A') }}
                                     </td>
                                 </tr>
                             @endforeach

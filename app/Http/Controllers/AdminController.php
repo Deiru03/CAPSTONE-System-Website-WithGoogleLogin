@@ -338,7 +338,7 @@ class AdminController extends Controller
         // Get the final results
         $reports = $query->orderBy('submitted_reports.created_at', 'desc')->get();
     
-        return view('admin.views.submitted-reports', compact('reports'));
+        return view('admin.views.history-reports', compact('reports'));
     }
 
     public function adminActionReports(): View
