@@ -122,7 +122,7 @@
     </script>
 
     <!-- Add Modal -->
-    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
+    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -150,7 +150,9 @@
                         <label for="addType" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                         <select name="type" id="addType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
                             <option value="" disabled selected>Select Type</option>
-                            <option value="Permanent">Permanent</option>
+                            <option value="Dean">Dean</option>
+                            <option value="Program-Head">Program-Head</option>
+                            <option value="Permanent">Permanent (Full-Time/Part-Time)</option>
                             <option value="Part-Timer">Part-Timer</option>
                             <option value="Temporary">Temporary</option>
                         </select>
@@ -181,7 +183,7 @@
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
+    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -209,7 +211,9 @@
                         <label for="editType" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                         <select name="type" id="editType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" required>
                             <option value="" disabled>Select Type</option>
-                            <option value="Permanent">Permanent</option>
+                            <option value="Dean">Dean</option>
+                            <option value="Program-Head">Program-Head</option>
+                            <option value="Permanent">Permanent (Full-Time/Part-Time)</option>
                             <option value="Part-Timer">Part-Timer</option>
                             <option value="Temporary">Temporary</option>
                         </select>
@@ -240,8 +244,8 @@
     </div>
 
      <!-- Edit Requirements Modal -->
-     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
+     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-purple-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -262,7 +266,8 @@
                     <table class="min-w-full text-sm border-collapse">
                         <thead class="bg-gray-100 sticky top-0">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-2 py-3 text-left text-xs font-medium text-red-900 uppercase tracking-wider">ID</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># of<br>Req</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requirement</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -279,7 +284,7 @@
             </div>
 
             <!-- Add Requirement Modal (Nested) -->
-            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden z-100">
+            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden z-20">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full relative">
                     <h4 class="text-xl font-semibold mb-4 text-gray-800">Add Requirement</h4>
                     <form id="addRequirementForm">
@@ -374,7 +379,7 @@
     </div>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
+    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -414,7 +419,7 @@
     </div>
     
     <!-- Shared Clearances Modal ID -->
-    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50">
+    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20">
         <div class="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -451,7 +456,7 @@
     </div>
 
     <!-- Remove Shared Clearance Confirmation Modal -->
-    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50">
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30">
         <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
             <h3 class="text-xl font-bold mb-4 text-gray-800">Confirm Removal</h3>
             <p class="mb-6">Are you sure you want to remove this shared clearance?</p>
@@ -467,7 +472,7 @@
     </div>
 
     <!-- View Details Modal -->
-    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-50 transition-opacity duration-300">
+    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
         <div class="bg-white p-5 rounded-2xl shadow-2xl max-w-2xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -1065,9 +1070,10 @@
             requirements.forEach(req => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="px-4 py-2 border">${req.id}</td>
-                    <td class="px-4 py-2 border preserve-whitespace">${req.requirement}</td>
-                    <td class="px-4 py-2 border">
+                    <td class="px-2 py-2 border text-sm text-gray-300">${req.id}</td>
+                    <td class="px-4 py-2 border text-sm">${tbody.children.length + 1}</td>
+                    <td class="px-4 py-2 border preserve-whitespace text-sm text-black">${req.requirement}</td>
+                    <td class="px-4 py-2 border text-sm">
                         <button onclick="openEditRequirementModal(${currentClearanceId}, ${req.id})" class="text-blue-500 mr-2">
                             Edit
                         </button>

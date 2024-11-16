@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('position', ['Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer', 'Dean', 'Program-Head'])->nullable()->change();
         });
+        Schema::table('clearances', function (Blueprint $table) {
+            $table->enum('type', ['Permanent', 'Part-Timer', 'Temporary', 'Dean', 'Program-Head'])->nullable()->change();
+        });
     }
 
     /**
@@ -23,6 +26,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table){
             $table->enum('position', ['Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer'])->nullable()->change();
+        });
+        Schema::table('clearances', function (Blueprint $table) {
+            $table->enum('type', ['Permanent', 'Part-Timer', 'Temporary'])->nullable()->change();
         });
     }
 };
