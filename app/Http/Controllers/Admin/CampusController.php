@@ -3,16 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Campus;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class CampusController extends Controller
 {
     public function viewCampuses()
     {
-        $campuses = Campus::all();
-        return view('admin.views.campus-management', compact('campuses'));
+        $campuses = Campus::with(['users' => function($query) {
+            $query->select('id', 'campus_id', 'clearances_status');
+        }])->get(); // Eager load users
+
+        foreach ($campuses as $campus) {
+            $campus->completeCount = $campus->users->where('clearances_status', 'complete')->count();
+            $campus->pendingCount = $campus->users->where('clearances_status', 'pending')->count();
+        }
+
+        $totalUsers = User::count();
+        return view('admin.views.campus-management', compact('campuses', 'totalUsers'));
     }
 
     public function store(Request $request)

@@ -5,7 +5,11 @@
 
     <div class="container mx-auto px-4 py-8">
         <div class="mb-8 flex justify-between items-center">
-            <h2 class="text-3xl font-bold text-gray-800">Manage Campuses</h2>
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Manage Campuses</h2>
+                <hr class="w-full border-2 border-yellow-500">
+                <p class="text-sm text-gray-500">Total Affiliated Users: {{ $totalUsers }}</p>
+            </div>
             <div>
                 <button onclick="openModal('campusModal')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
                     Add Campus
@@ -41,6 +45,15 @@
                                     <h3 class="text-xl font-semibold text-gray-800">{{ $campus->name }}</h3>
                                     <p class="text-gray-600">{{ $campus->location }}</p>
                                 </div>
+                            </div>
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800">Clearance Progress:</h4>
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-green-500 h-4 rounded-full" style="width: {{ $campus->completeCount / max($campus->users->count(), 1) * 100 }}%"></div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">
+                                    Complete: {{ $campus->completeCount }} / {{ $campus->users->count() }} users
+                                </p>
                             </div>
                             <div class="flex space-x-2">
                                 <button onclick="openConfirmModal('removeCampus', '{{ $campus->id }}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600">
