@@ -219,8 +219,14 @@
 
                 <!-- Page Content -->
                 <main class="min-h-screen overflow-x-hidden">
-                    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {{ $slot }} <!-- This is where the content will be injected -->
+                    <div class="py-12">
+                        <div class="{{--max-w-7xl--}}max-w-screen-2xl mx-auto sm:px-6 lg:px-8">
+                            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div class="p-6 text-gray-900">
+                                    {{ $slot }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </main>
                 <footer class="bg-white py-6 mt-auto">

@@ -1,4 +1,4 @@
-<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">    
+<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-white rounded-lg">    
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Clearance Details -->
-    <div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-md">
+    <div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg">
         <h2 class="text-3xl mb-6 text-black border-b-2 border-black pb-2">
             <span>Clearance Checklist:</span>
             <span class="font-bold">{{ $userClearance->sharedClearance->clearance->document_name }}</span>
@@ -272,12 +272,12 @@
 
                 @foreach($categorizedRequirements as $category => $requirements)
                     @if(count($requirements) > 0)
-                        <div class="folder-container mb-4">
+                        <div class="folder-container mb-4 rounded-lg overflow-hidden bg-white">
                             <!-- Folder Header -->
                             <div class="folder-header p-3 cursor-pointer flex items-center justify-between transition-colors duration-200 
-                                {{ $category === 'Missing' ? 'bg-yellow-100 hover:bg-yellow-200' : '' }}
-                                {{ $category === 'Uploaded' ? 'bg-green-100 hover:bg-green-200' : '' }}
-                                {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200' : '' }}"
+                                {{ $category === 'Missing' ? 'bg-yellow-100 hover:bg-yellow-200 border-l-4 border-yellow-500' : '' }}
+                                {{ $category === 'Uploaded' ? 'bg-green-100 hover:bg-green-200 border-l-4 border-green-500' : '' }}
+                                {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200 border-l-4 border-red-500' : '' }}"
                                 onclick="toggleFolder(this)">
                                 <div class="flex items-center">
                                     <svg class="folder-icon h-5 w-5 mr-2 transform transition-transform duration-200
@@ -288,9 +288,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                     <h3 class="text-lg font-semibold 
-                                        {{ $category === 'Missing' ? 'text-yellow-700' : '' }}
-                                        {{ $category === 'Uploaded' ? 'text-green-700' : '' }}
-                                        {{ $category === 'Resubmit' ? 'text-red-700' : '' }}">
+                                        {{ $category === 'Missing' ? 'text-yellow-800' : '' }}
+                                        {{ $category === 'Uploaded' ? 'text-green-800' : '' }}
+                                        {{ $category === 'Resubmit' ? 'text-red-800' : '' }}">
                                         {{ $category }} ({{ count($requirements) }})
                                     </h3>
                                 </div>
@@ -298,7 +298,7 @@
 
                             <!-- Folder Content -->
                             <div class="folder-content hidden">
-                                <table class="min-w-full">
+                                <table class="min-w-full text-sm">
                                     <thead class="bg-indigo-600 text-white">
                                         <tr>
                                             <th class="py-2 px-3 text-left hidden">ID</th>
@@ -363,7 +363,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="border-t px-2 py-1">
-                                                    @if($hasNonArchivedUpload)
+                                                    {{-- @if($hasNonArchivedUpload)
                                                         <div class="flex justify-center">
                                                             <div class="flex justify-center">
                                                                 <button 
@@ -383,8 +383,6 @@
                                                                 </svg>
                                                                 <span class="tooltip invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs whitespace-nowrap">Delete File</span>
                                                             </button>
-                                                        </div>
-                                                        <div class="p-1 flex justify-center">
                                                             <button
                                                                 onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
                                                                 class="group relative bg-green-500 hover:bg-green-800 text-white p-2 rounded-full transition-colors duration-200">
@@ -399,13 +397,55 @@
                                                         <div class="flex flex-col items-center">
                                                             <button 
                                                                 onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
-                                                                class="group relative bg-blue-500 hover:bg-blue-700 text-white p-2 rounded-full transition-colors duration-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                class="group relative bg-blue-500 hover:bg-blue-700 text-white p-2 rounded-full transition-colors duration-200 flex items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                                                 </svg>
                                                                 <span class="tooltip invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs whitespace-nowrap">Upload File</span>
+                                                                Upload
                                                             </button>
                                                             <span class="text-sm text-gray-600 mt-1">{{ $requirement->name }}</span>
+                                                        </div>
+                                                    @endif --}}
+                                                    @if($hasNonArchivedUpload)
+                                                        <div class="flex justify-start">
+                                                            <div class="flex justify-start">
+                                                                <button 
+                                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                    class="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                                    </svg>
+                                                                    Upload
+                                                                </button>
+                                                            </div>
+                                                            <button 
+                                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                class="bg-red-500 hover:bg-red-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center ml-1">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                                <span>Delete</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="p-1 flex justify-start space-x-1">
+                                                            <button style="width: 120px;"
+                                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                class="bg-green-500 hover:bg-green-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center justify-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                </svg>
+                                                                <span class="whitespace-nowrap">View Uploads</span>
+                                                            </button>
+                                                        </div>
+                                                    @else
+                                                        <div class="flex justify-center">
+                                                            <button style="width: 90px;"
+                                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
+                                                                Upload
+                                                            </button>
                                                         </div>
                                                     @endif
                                                 </td>
