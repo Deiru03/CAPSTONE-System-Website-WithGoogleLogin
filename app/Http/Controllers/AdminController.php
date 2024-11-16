@@ -25,7 +25,7 @@ use App\Models\Campus;
 use App\Models\ProgramHeadDeanId;
 use App\Services\FileDeletionService;
 use App\Models\SharedClearance;
-
+use Carbon\Carbon;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
 {
@@ -87,7 +87,7 @@ class AdminController extends Controller
         $facultyDean = (clone $userQuery)->where('position', 'Dean')->count();
         $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->count();
         $facultyPermanentPT = (clone $userQuery)->where('position', 'Permanent-PartTime')->count();
-        $facultyPermanent = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
+        $facultyPermanentFT = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
         $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
         $facultyPartTime = (clone $userQuery)->where('position', 'Part-Timer')->count();
         $facultyAdmin = (clone $userQuery)->where('user_type', 'Admin')->count();
@@ -126,6 +126,16 @@ class AdminController extends Controller
 
         $managedFacultyCount = $managedUsers->count();
 
+        //////////////////////// Data Analytics //////////////////////////
+        $completedClearancesThisMonth = User::where('clearances_status', 'complete')
+            ->whereMonth('updated_at', Carbon::now()->month)
+            ->count();
+
+        $newUsersThisMonth = User::whereMonth('created_at', Carbon::now()->month)->count();
+
+        $recentLogins = User::whereMonth('last_clearance_update', Carbon::now()->month)->count();
+
+
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
         }
@@ -133,9 +143,12 @@ class AdminController extends Controller
         //////////////////////// Dashboard Throw Variables //////////////////////////
         return view('admin-dashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
-         'facultyPermanent', 'facultyTemporary', 'facultyPartTime',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
-         'managedUsers', 'managedFacultyCount', 'facultyDean', 'facultyPH'));
+         'managedUsers', 'managedFacultyCount', 
+         'facultyTemporary', 'facultyPartTime',
+         'facultyDean', 'facultyPH', 'facultyPermanentFT', 'facultyPermanentPT', 
+         'usersDean', 'usersPH',
+         'completedClearancesThisMonth', 'newUsersThisMonth', 'recentLogins'));
     }
 
     public function clearances(Request $request): View

@@ -85,7 +85,7 @@
                 <!-- Clearance Status -->
                 <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Clearance Status</h3>
-                    <div class="h-32">
+                    <div class="h-48">
                         <canvas id="clearanceStatusChart"></canvas>
                     </div>
                     <div class="mt-2 text-sm text-gray-600 flex justify-between">
@@ -98,20 +98,69 @@
                 <!-- Faculty Status -->
                 <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Faculty Status</h3>
-                    <div class="h-32">
+                    <div class="h-48">
                         <canvas id="facultyStatusChart"></canvas>
                     </div>
-                    <div class="mt-2 text-sm text-gray-600 flex justify-between">
-                        <span>Permanent: {{ $facultyPermanent }}</span>
-                        <span>Part-Time: {{ $facultyPartTime }}</span>
-                        <span>Temporary: {{ $facultyTemporary }}</span>
+                    <div class="mt-2 text-sm text-gray-600 relative">
+                        <button 
+                            id="facultyButton"
+                            class="w-full py-2 text-blue-500 hover:underline"
+                            onmouseenter="showFacultyPopup()"
+                            onmouseleave="hideFacultyPopup()"
+                        >
+                            View Faculty Breakdown
+                        </button>
+                        
+                        <div 
+                            id="facultyPopup"
+                            class="hidden absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 w-72"
+                        >
+                            <div class="grid grid-cols-1 gap-2">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Permanent (Full-Time):</span>
+                                    <span>{{ $facultyPermanentFT }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Permanent (Part-Time):</span>
+                                    <span>{{ $facultyPermanentPT }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Temporary:</span>
+                                    <span>{{ $facultyTemporary }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Part-Time:</span>
+                                    <span>{{ $facultyPartTime }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Dean:</span>
+                                    <span>{{ $usersDean }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Program Head:</span>
+                                    <span>{{ $usersPH }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <script>
+                function showFacultyPopup() {
+                    const popup = document.getElementById('facultyPopup');
+                    popup.classList.remove('hidden');
+                }
+
+                function hideFacultyPopup() {
+                    const popup = document.getElementById('facultyPopup');
+                    popup.classList.add('hidden');
+                }
+                </script>
 
                 <!-- User Type Distribution -->
                 <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">User Types</h3>
-                    <div class="h-32">
+                    <div class="h-48">
                         <canvas id="userTypeChart"></canvas>
                     </div>
                     <div class="mt-2 text-sm text-gray-600 flex justify-between">
@@ -125,15 +174,68 @@
                 <!-- Overall Analytics -->
                 <div class="bg-white p-4 rounded-lg shadow-lg border-2 border-indigo-200">
                     <h3 class="text-lg font-bold mb-2">Overall Analytics</h3>
-                    <div class="h-32">
+                    <div class="h-48">
                         <canvas id="overallAnalyticsChart"></canvas>
                     </div>
-                    <div class="mt-2 text-sm text-gray-600 grid grid-cols-2 gap-2">
-                        <span>Users: {{ $TotalUser }}</span>
-                        <span>Clearances: {{ $clearanceTotal }}</span>
-                        <span>Checklists: {{ $clearanceChecklist }}</span>
-                        <span>Faculty: {{ $facultyAdmin + $facultyFaculty }}</span>
+                    <div class="mt-2 text-sm text-gray-600 relative">
+                        <button 
+                            id="analyticsButton"
+                            class="w-full py-2 text-blue-500 hover:underline"
+                            onmouseenter="showAnalyticsPopup()"
+                            onmouseleave="hideAnalyticsPopup()"
+                        >
+                            View Analytics Breakdown
+                        </button>
+                        
+                        <!-- Tooltip/Popup Content -->
+                        <div 
+                            id="analyticsPopup"
+                            class="hidden absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 w-72"
+                        >
+                            <div class="grid grid-cols-1 gap-2">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Users:</span>
+                                    <span>{{ $TotalUser }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Clearances:</span>
+                                    <span>{{ $clearanceTotal }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Checklists:</span>
+                                    <span>{{ $clearanceChecklist }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Faculty:</span>
+                                    <span>{{ $facultyAdmin + $facultyFaculty }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Completed Clearances (This Month):</span>
+                                    <span>{{ $completedClearancesThisMonth }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">New Users (This Month):</span>
+                                    <span>{{ $newUsersThisMonth }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Recent Logins (This Month):</span>
+                                    <span>{{ $recentLogins }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <script>
+                    function showAnalyticsPopup() {
+                        const popup = document.getElementById('analyticsPopup');
+                        popup.classList.remove('hidden');
+                    }
+
+                    function hideAnalyticsPopup() {
+                        const popup = document.getElementById('analyticsPopup');
+                        popup.classList.add('hidden');
+                    }
+                    </script>
                 </div>
             </div>
 
@@ -165,10 +267,10 @@
                     new Chart(document.getElementById('facultyStatusChart'), {
                         type: 'bar',
                         data: {
-                            labels: ['Permanent', 'Part-Timer', 'Temporary'],
+                            labels: ['Dean', 'Program Head', 'Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer'],
                             datasets: [{
-                                data: [{{ $facultyPermanent }}, {{ $facultyPartTime }}, {{ $facultyTemporary }}],
-                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444']
+                                data: [{{ $usersDean }}, {{ $usersPH }}, {{ $facultyPermanentFT }}, {{ $facultyPermanentPT }}, {{ $facultyTemporary }}, {{ $facultyPartTime }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#EC4899']
                             }]
                         },
                         options: {
@@ -181,10 +283,11 @@
                             },
                             scales: {
                                 y: {
-                                    display: false
+                                    beginAtZero: true,
+                                    display: true
                                 },
                                 x: {
-                                    display: false
+                                    display: true
                                 }
                             }
                         }
@@ -213,12 +316,12 @@
 
                     // Overall Analytics Chart
                     new Chart(document.getElementById('overallAnalyticsChart'), {
-                        type: 'polarArea',
+                        type: 'line',
                         data: {
-                            labels: ['Users', 'Clearances', 'Checklists', 'Faculty'],
+                            labels: ['Users', 'Clearances', 'Checklists', 'Faculty', 'Completed Clearances', 'New Users', 'Recent Logins'],
                             datasets: [{
-                                data: [{{ $TotalUser }}, {{ $clearanceTotal }}, {{ $clearanceChecklist }}, {{ $facultyAdmin + $facultyFaculty }}],
-                                backgroundColor: ['#3B82F6', '#10B981', '#FCD34D', '#8B5CF6']
+                                data: [{{ $TotalUser }}, {{ $clearanceTotal }}, {{ $clearanceChecklist }}, {{ $facultyAdmin + $facultyFaculty }}, {{ $completedClearancesThisMonth }}, {{ $newUsersThisMonth }}, {{ $recentLogins }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#FCD34D', '#8B5CF6', '#EC4899', '#F59E0B', '#34D399']
                             }]
                         },
                         options: {
@@ -226,12 +329,27 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    display: false
+                                    display: true,
+                                    position: 'right'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.raw !== null) {
+                                                label += context.raw;
+                                            }
+                                            return label;
+                                        }
+                                    }
                                 }
                             },
                             scales: {
                                 r: {
-                                    display: false
+                                    display: true
                                 }
                             }
                         }
