@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\User;
 use Faker\Provider\ar_EG\Address;
 use Illuminate\Support\Facades\File;
+use App\Http\Controllers\AboutController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -248,5 +249,7 @@ Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(fun
     Route::delete('/faculty/clearances/delete/{sharedClearanceId}/{requirementId}/{fileId}', [FacultyClearanceController::class, 'deleteSingleFile'])->name('faculty.clearances.deleteSingleFile');
 }); 
 /////////////////////////////////////////////// End of Faculty Routes ////////////////////////////////////////////////
+
+Route::get('/about-us', [AboutController::class, 'index'])->name('about-us');
 
 require __DIR__.'/auth.php';
