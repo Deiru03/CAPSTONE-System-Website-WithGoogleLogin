@@ -436,7 +436,20 @@ class ClearanceController extends Controller
                 'message' => 'nullable|string',
                 'signature_status' => 'required|in:Checking,Complied,Resubmit',
             ]);
-        
+            
+            // Determine the role identifier
+            $roleIdentifier = '';
+            if (Auth::user()->user_type === 'Admin') {
+                $roleIdentifier = 'Admin: ';
+            } elseif (Auth::user()->user_type === 'Program-Head') {
+                $roleIdentifier = 'Program Head: ';
+            } elseif (Auth::user()->user_type === 'Dean') {
+                $roleIdentifier = 'Dean: ';
+            }
+
+            // Prepend the role identifier to the message
+            $message = $validatedData['message'] ? $roleIdentifier . $validatedData['message'] : null;
+
             // Find the feedback record
             $feedback = ClearanceFeedback::firstOrNew([
                 'requirement_id' => $validatedData['requirement_id'],
@@ -444,11 +457,15 @@ class ClearanceController extends Controller
             ]);
         
             // Update the fields
-            $feedback->message = $validatedData['message'];
+            $feedback->message = $message;
             $feedback->signature_status = $validatedData['signature_status'];
             $feedback->is_archived = false; // Set to false
             $feedback->save();
 
+            //  Log the feedback update
+            Log::info('Feedback updated:', $feedback->toArray());
+
+            // Additional Logic for storing reports and updating user status
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => $validatedData['user_id'],

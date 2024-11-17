@@ -163,7 +163,7 @@
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Document<br>Status</th>
-                    @if(Auth::user()->user_type === 'Admin')
+                    @if(Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Program-Head' || Auth::user()->user_type === 'Dean')
                         <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
                         <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
                     @endif
@@ -215,7 +215,7 @@
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
                             @endif
                         </td>
-                        @if(Auth::user()->user_type === 'Admin')
+                        @if(Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Program-Head' || Auth::user()->user_type === 'Dean')
                             <td class="px-4 py-4">
                                 @if($feedback && !$feedback->is_archived && !empty($feedback->message) && $uploadedFile && !$uploadedFile->is_archived)
                                     <p class="text-yellow-800"><strong> {{ $feedback->message }}</strong></p>
@@ -257,11 +257,15 @@
                 </div>
                 <div class="mb-6">
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Document Status</label>
-                    <select name="signature_status" id="signatureStatus" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <select name="signature_status" id="signatureStatus" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        @if(Auth::user()->user_type !== 'Admin') disabled @endif>
                         <option value="Checking">Checking</option>
                         <option value="Complied">Complied</option>
                         <option value="Resubmit">Resubmit</option>
                     </select>
+                    @if(Auth::user()->user_type !== 'Admin')
+                        <p class="mt-2 text-sm text-gray-500 italic">Only <strong class="text-indigo-500">Admin</strong> can validate documents. You may still leave feedback below.</p>
+                    @endif
                 </div>
                 <div class="mb-6">
                     <label for="feedbackMessage" class="block text-sm font-medium text-gray-700 mb-2">Feedback (Optional)</label>
@@ -314,7 +318,10 @@
             document.getElementById('requirementId').value = requirementId;
             document.getElementById('requirementName').textContent = `Requirement ID: ${requirementId}\n${requirements[requirementId]}`;
             document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'Checking';
-            document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
+            // document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
+            
+            // Clear the feedback when the modal is opened
+            document.getElementById('feedbackMessage').value = '';
 
             document.getElementById('feedbackModal').classList.remove('hidden');
         }
@@ -343,6 +350,13 @@
 
         document.getElementById('feedbackForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            
+            // Enable the dropdown before submission
+            const signatureStatus = document.getElementById('signatureStatus');
+                if (signatureStatus.hasAttribute('disabled')) {
+                    signatureStatus.removeAttribute('disabled');
+                }
+
             const formData = new FormData(this);
 
             // showLoading();
