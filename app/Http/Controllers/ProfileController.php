@@ -42,6 +42,17 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
+         // Skip validation for admins without a campus_id
+        if (!($user->user_type === 'Admin' && is_null($user->campus_id) ||
+              $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+              $user->user_type === 'Dean' && is_null($user->campus_id))) {
+            $request->validate([
+                'campus_id' => 'required',
+                'department_id' => 'required',
+                'program_id' => 'required',
+            ]);
+        }
+
         $user->fill($request->validated());
         $campuses = Campus::all();
     
@@ -57,50 +68,66 @@ class ProfileController extends Controller
     
          // Handle ID based on user type
         if (in_array($request->input('user_type'), ['Admin', 'Dean', 'Program-Head'])) {
-            if ($request->has('admin_id')) {
-                $request->validate([
-                    'admin_id' => ['required', 'exists:admin_ids,admin_id'],
-                ], [
-                    'admin_id.exists' => 'The provided Admin ID does not exist.',
-                ]);
+            // Skip ID validation for admin without campus_id (superadmin)
+            if (!($user->user_type === 'Admin' && is_null($user->campus_id) ||
+                  $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                  $user->user_type === 'Dean' && is_null($user->campus_id))) {
+                if ($request->has('admin_id')) {
+                    $request->validate([
+                        'admin_id' => ['required', 'exists:admin_ids,admin_id'],
+                    ], [
+                        'admin_id.exists' => 'The provided Admin ID does not exist.',
+                    ]);
 
-                $adminId = AdminId::where('admin_id', $request->admin_id)->first();
+                    $adminId = AdminId::where('admin_id', $request->admin_id)->first();
+                    
+                    // Check if ID is assigned to another user
+                    if ($adminId->is_assigned && $adminId->user_id !== $user->id) {
+                        return back()->withErrors(['admin_id' => 'This Admin ID is already assigned to another user.']);
+                    }
+
+                    $user->admin_id_registered = $request->admin_id;
+                    $adminId->update([
+                        'is_assigned' => true, 
+                        'user_id' => $user->id,
+                    ]);
+                }
+
+                if ($request->has('program_head_id') || $request->has('dean_id')) {
+                    $identifier = $request->input('user_type') === 'Program-Head' ? $request->program_head_id : $request->dean_id;
+                    $programHeadDeanId = ProgramHeadDeanId::where('identifier', $identifier)->first();
                 
-                // Check if ID is assigned to another user
-                if ($adminId->is_assigned && $adminId->user_id !== $user->id) {
-                    return back()->withErrors(['admin_id' => 'This Admin ID is already assigned to another user.']);
-                }
-
-                $user->admin_id_registered = $request->admin_id;
-                $adminId->update([
-                    'is_assigned' => true, 
-                    'user_id' => $user->id,
-                ]);
-            }
-
-            if ($request->has('program_head_id') || $request->has('dean_id')) {
-                $identifier = $request->input('user_type') === 'Program-Head' ? $request->program_head_id : $request->dean_id;
-                $programHeadDeanId = ProgramHeadDeanId::where('identifier', $identifier)->first();
-            
-                if (!$programHeadDeanId) {
-                    return back()->withErrors(['id' => 'The provided ID does not exist.']);
-                }
-            
-                // Check if ID is assigned to another user
-                if ($programHeadDeanId->is_assigned && $programHeadDeanId->user_id !== $user->id) {
-                    $idType = $request->input('user_type') === 'Program-Head' ? 'Program Head ID' : 'Dean ID';
-                    return back()->withErrors(['id' => "This {$idType} is already assigned to another user."]);
-                }
-            
-                $programHeadDeanId->update([
-                    'is_assigned' => true, 
-                    'user_id' => $user->id,
-                    'type' => $request->input('user_type')
-                ]);
+                    if (!$programHeadDeanId) {
+                        return back()->withErrors(['id' => 'The provided ID does not exist.']);
+                    }
                 
-                if ($request->input('user_type') === 'Program-Head') {
+                    // Check if ID is assigned to another user
+                    if ($programHeadDeanId->is_assigned && $programHeadDeanId->user_id !== $user->id) {
+                        $idType = $request->input('user_type') === 'Program-Head' ? 'Program Head ID' : 'Dean ID';
+                        return back()->withErrors(['id' => "This {$idType} is already assigned to another user."]);
+                    }
+                
+                    $programHeadDeanId->update([
+                        'is_assigned' => true, 
+                        'user_id' => $user->id,
+                        'type' => $request->input('user_type')
+                    ]);
+                    
+                    if ($request->input('user_type') === 'Program-Head') {
+                        $user->program_head_id = $request->program_head_id;
+                    } else {
+                        $user->dean_id = $request->dean_id;
+                    }
+                }
+            } else {
+                // For superadmin, just update the IDs without validation
+                if ($request->has('admin_id')) {
+                    $user->admin_id_registered = $request->admin_id;
+                }
+                if ($request->has('program_head_id')) {
                     $user->program_head_id = $request->program_head_id;
-                } else {
+                }
+                if ($request->has('dean_id')) {
                     $user->dean_id = $request->dean_id;
                 }
             }

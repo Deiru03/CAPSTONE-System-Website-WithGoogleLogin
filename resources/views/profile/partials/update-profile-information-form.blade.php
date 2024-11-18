@@ -127,7 +127,10 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-1">
                                 <x-input-label for="campus_id" :value="__('Campus')" />
-                                <select id="campus_id" name="campus_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <select id="campus_id" name="campus_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                    @if($user->user_type === 'Admin' && is_null($user->campus_id) ||
+                                        $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                                        $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
                                     <option value="" disabled>Select a campus</option>
                                     @foreach($campuses as $campus)
                                         <option value="{{ $campus->id }}" {{ old('campus_id', $user->campus_id) == $campus->id ? 'selected' : '' }}>{{ $campus->name }}</option>
@@ -138,7 +141,10 @@
 
                             <div class="col-span-1">
                                 <x-input-label for="department_id" :value="__('Department')" />
-                                <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                    @if($user->user_type === 'Admin' && is_null($user->campus_id) ||
+                                        $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                                        $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
                                     <option value="" disabled>Select a department</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
@@ -151,7 +157,10 @@
                         <!-- Program Row -->
                         <div class="col-span-1">
                             <x-input-label for="program_id" :value="__('Program')" class="text-lg font-semibold" />
-                            <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+                                @if($user->user_type === 'Admin' && is_null($user->campus_id) || 
+                                    $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                                    $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
                                 <option value="" disabled>Select a program</option>
                                 @foreach($departments as $department)
                                     @foreach($department->programs as $program)
@@ -177,7 +186,11 @@
                                     x-model="userType"
                                     class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
                                     required>
+                                    @if(!($user->user_type === 'Admin' && is_null($user->campus_id) ||
+                                        $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                                        $user->user_type === 'Dean' && is_null($user->campus_id)))
                                     <option value="Faculty" {{ old('user_type', $user->user_type) === 'Faculty' ? 'selected' : '' }}>Faculty</option>
+                                    @endif
                                     <option value="Admin" {{ old('user_type', $user->user_type) === 'Admin' ? 'selected' : '' }}>Admin</option>
                                     <option value="Dean" {{ old('user_type', $user->user_type) === 'Dean' ? 'selected' : '' }}>Dean</option>
                                     <option value="Program-Head" {{ old('user_type', $user->user_type) === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
