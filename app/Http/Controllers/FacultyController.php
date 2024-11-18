@@ -124,6 +124,8 @@ class FacultyController extends Controller
         $archivedClearances = UploadedClearance::where('user_id', $user->id)
             ->where('is_archived', true)
             ->with('requirement')
+            ->orderBy('academic_year', $sortOrder)
+            ->orderBy('semester', $sortOrder)
             ->orderBy('updated_at', $sortOrder)
             ->get();
 
