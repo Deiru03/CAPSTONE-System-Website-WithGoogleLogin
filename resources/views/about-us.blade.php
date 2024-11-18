@@ -80,8 +80,8 @@
 }
 
 .member-avatar {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     margin: 0 auto 1.5rem;
     overflow: hidden;
