@@ -16,6 +16,9 @@ class UploadedClearance extends Model
         'file_path',
         'status',
         'is_archived', // Added Line On 28-10-2024
+        'academic_year', // Added Line On 18-11-2024
+        'semester', // Added Line On 18-11-2024
+        'archive_date', // Added Line On 18-11-2024
     ];
 
     // Check if the user has uploaded a file for a specific requirement
