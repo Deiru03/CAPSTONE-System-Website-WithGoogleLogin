@@ -723,6 +723,7 @@ class ClearanceController extends Controller
         }
     }
 
+    /////////////////////////////// Reset Specific User Clearance |||| View: User-Clearance-Details.blade.php ///////////////////////////////
     public function resetSpecificUserClearance(Request $request, $userId)
     {
         $request->validate([
@@ -770,9 +771,16 @@ class ClearanceController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to reset user clearance.'], 500);
         }
     }
-
+    
+    /////////////////////////////// Reset Selected Users Clearance |||| View: Clearance-Check.blade.php ///////////////////////////////
     public function resetSelected(Request $request)
     {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'academicYear' => 'required|string',
+            'semester' => 'required|in:1,2,3',
+        ]);
+    
         $userIds = $request->input('user_ids', []);
     
         if (empty($userIds)) {
@@ -780,10 +788,7 @@ class ClearanceController extends Controller
         }
     
         try {
-            DB::transaction(function () use ($userIds) {
-
-                $user = User::findOrFail($userIds);
-                
+            DB::transaction(function () use ($userIds, $request) {
                 foreach ($userIds as $userId) {
                     // Archive all feedback and uploaded files for this user
                     ClearanceFeedback::where('user_id', $userId)->update([
@@ -791,14 +796,21 @@ class ClearanceController extends Controller
                         'signature_status' => 'Checking' // Reset signature status
                     ]);
     
-                    UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);
+                    UploadedClearance::where('user_id', $userId)
+                        ->whereNull('archive_date') // Ensure only new records are updated
+                        ->update([
+                            'is_archived' => true,
+                            'academic_year' => $request->academicYear,
+                            'semester' => $request->semester,
+                            'archive_date' => now(),
+                        ]);
     
                     // Reset user clearance status to pending in the users table
                     User::where('id', $userId)->update(['clearances_status' => 'Pending']);
-
+    
                     // Get the user record for this ID
                     $currentUser = User::find($userId);
-
+    
                     SubmittedReport::create([
                         'admin_id' => Auth::id(),
                         'user_id' => $userId,

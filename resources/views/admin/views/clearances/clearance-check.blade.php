@@ -201,6 +201,25 @@
                 Update User Clearances
             </h3>
             <form id="resetUserForm">
+                <div class="mb-4">
+                    <label for="academicYear" class="block text-sm font-medium text-gray-700">Academic Year</label>
+                    <select id="academicYear" name="academicYear" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="2023 - 2024">2023 - 2024</option>
+                        <option value="2024 - 2025">2024 - 2025</option>
+                        <option value="2025 - 2026">2025 - 2026</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
+                    <select id="semester" name="semester" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                    </select>
+                </div>
+
                 <div class="max-h-96 overflow-y-auto mb-6">
                     @foreach($users as $user)
                         <div class="flex items-center mb-2 p-2 hover:bg-gray-200 rounded-lg transition duration-200 cursor-pointer" onclick="document.getElementById('checkbox-{{ $user->id }}').click()">
@@ -324,6 +343,8 @@
             const form = document.getElementById('resetUserForm');
             const formData = new FormData(form);
             const userIds = formData.getAll('user_ids[]');
+            const academicYear = formData.get('academicYear');
+            const semester = formData.get('semester');
 
             document.getElementById('confirmationModal').classList.add('hidden');
 
@@ -333,11 +354,10 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_ids: userIds })
+                body: JSON.stringify({ user_ids: userIds, academicYear, semester })
             })
             .then(response => response.json())
             .then(data => {
-
                 if (data.success) {
                     showNotification('Selected user clearances reset successfully.', true);
                     location.reload();
