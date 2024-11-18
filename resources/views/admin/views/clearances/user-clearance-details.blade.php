@@ -97,13 +97,25 @@
             <h3 id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></h3>
             
             <!-- Academic Year and Semester Selection -->
+            @php
+                $currentYear = date('Y');
+                $currentMonth = date('m');
+                $currentAcademicYear = $currentMonth >= 8 ? "$currentYear - " . ($currentYear + 1) : ($currentYear - 1) . " - $currentYear";
+            
+                $academicYears = [];
+                for ($i = -1; $i < 5; $i++) { // Include the previous year and 5 years ahead
+                    $startYear = $currentYear + $i;
+                    $endYear = $startYear + 1;
+                    $academicYears[] = "$startYear - $endYear";
+                }
+            @endphp
+            
             <div class="mb-4">
                 <label for="academicYear" class="block text-sm font-medium text-gray-700">Academic Year</label>
                 <select id="academicYear" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    <option value="2023 - 2024">2023 - 2024</option>
-                    <option value="2024 - 2025">2024 - 2025</option>
-                    <option value="2025 - 2026">2025 - 2026</option>
-                    <!-- Add more options as needed -->
+                    @foreach($academicYears as $year)
+                        <option value="{{ $year }}" {{ $year === $currentAcademicYear ? 'selected' : '' }}>{{ $year }}</option>
+                    @endforeach
                 </select>
             </div>
             

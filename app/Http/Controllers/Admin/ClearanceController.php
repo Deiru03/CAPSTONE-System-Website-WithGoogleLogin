@@ -346,7 +346,9 @@ class ClearanceController extends Controller
             abort(404, 'User not found.');
         }
 
-        return view('admin.views.clearances.user-clearance-details', compact('userClearance', 'user', 'college', 'program'));
+        $academicYears = $this->getAcademicYears();
+
+        return view('admin.views.clearances.user-clearance-details', compact('userClearance', 'user', 'college', 'program', 'academicYears'));
     }
     
     public function checkClearances(Request $request)
@@ -359,9 +361,10 @@ class ClearanceController extends Controller
                 $q->where('admin_id', $adminId);
             })
             ->get();
-    
             
-        return view('admin.views.clearances.clearance-check', compact('users'));
+        $academicYears = $this->getAcademicYears();
+            
+        return view('admin.views.clearances.clearance-check', compact('users', 'academicYears'));
     }
 
     public function approveClearance($id)
@@ -679,6 +682,19 @@ class ClearanceController extends Controller
             Log::error('Archiving Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to archive clearances.'], 500);
         }
+    }
+
+    /////////////////////////////// Get Academic Years ///////////////////////////////
+    public function getAcademicYears($yearsAhead = 5)
+    {
+        $currentYear = date('Y');
+        $academicYears = [];
+        for ($i = -1; $i < $yearsAhead; $i++) { // Start from -1 to include the previous year
+            $startYear = $currentYear + $i;
+            $endYear = $startYear + 1;
+            $academicYears[] = "$startYear - $endYear";
+        }
+        return $academicYears;
     }
 
     /////////////////////////////////// User Clearance Reset ////////////////////////////////////////////////

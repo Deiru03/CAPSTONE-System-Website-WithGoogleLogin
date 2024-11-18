@@ -202,12 +202,17 @@
             </h3>
             <form id="resetUserForm">
                 <div class="mb-4">
+                    @php
+                        $currentYear = date('Y');
+                        $currentMonth = date('m');
+                        $currentAcademicYear = $currentMonth >= 8 ? "$currentYear - " . ($currentYear + 1) : ($currentYear - 1) . " - $currentYear";
+                    @endphp
+
                     <label for="academicYear" class="block text-sm font-medium text-gray-700">Academic Year</label>
                     <select id="academicYear" name="academicYear" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="2023 - 2024">2023 - 2024</option>
-                        <option value="2024 - 2025">2024 - 2025</option>
-                        <option value="2025 - 2026">2025 - 2026</option>
-                        <!-- Add more options as needed -->
+                        @foreach($academicYears as $year)
+                            <option value="{{ $year }}" {{ $year === $currentAcademicYear ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
                     </select>
                 </div>
                 
