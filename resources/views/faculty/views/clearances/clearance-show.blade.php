@@ -229,7 +229,7 @@
             </div>
         </div>
         
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto border-2 border-gray-400 rounded-lg hover:shadow-lg transition-shadow duration-200">
             <div class="bg-white rounded-lg overflow-hidden shadow-lg">
                 <!-- Dynamic Categories -->
                 @php
