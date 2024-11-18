@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('uploaded_clearances', function (Blueprint $table) {
-            $table->year('academic_year')->nullable();
-            $table->enum('semester', ['1st', '2nd', '3rd'])->nullable();
+            $table->string('academic_year')->nullable();
+            $table->enum('semester', ['1', '2', '3'])->nullable();
             $table->date('archive_date')->nullable();
         });
     }

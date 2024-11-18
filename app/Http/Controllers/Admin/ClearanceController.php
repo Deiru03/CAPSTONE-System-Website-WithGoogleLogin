@@ -723,24 +723,38 @@ class ClearanceController extends Controller
         }
     }
 
-    public function resetSpecificUserClearance($userId)
+    public function resetSpecificUserClearance(Request $request, $userId)
     {
+        $request->validate([
+            'academicYear' => 'required|string',
+            'semester' => 'required|in:1,2,3',
+        ]);
+    
         try {
-            DB::transaction(function () use ($userId) {
+            DB::transaction(function () use ($userId, $request) {
                 // Get user details first
                 $user = User::findOrFail($userId);
-
+    
                 // Archive all feedback and uploaded files for this user
                 ClearanceFeedback::where('user_id', $userId)->update([
                     'is_archived' => true,
                     'signature_status' => 'Checking' // Reset signature status
                 ]);
+    
+                 // Update only new uploaded clearances
+                UploadedClearance::where('user_id', $userId)
+                    ->whereNull('archive_date') // Ensure only new records are updated
+                    ->update([
+                        'is_archived' => true,
+                        'academic_year' => $request->academicYear,
+                        'semester' => $request->semester,
+                        'archive_date' => now(),
+                    ]);
 
-                UploadedClearance::where('user_id', $userId)->update(['is_archived' => true]);
-
+    
                 // Reset user clearance status to pending in the users table
                 User::where('id', $userId)->update(['clearances_status' => 'Pending']);
-
+    
                 SubmittedReport::create([
                     'admin_id' => Auth::id(),
                     'user_id' => $userId,
@@ -749,7 +763,7 @@ class ClearanceController extends Controller
                     'status' => 'Completed',
                 ]);
             });
-
+    
             return response()->json(['success' => true, 'message' => 'User clearance reset successfully.']);
         } catch (\Exception $e) {
             Log::error('Resetting User Clearance Error: ' . $e->getMessage());

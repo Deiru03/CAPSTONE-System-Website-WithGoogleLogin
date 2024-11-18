@@ -95,37 +95,59 @@
     <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50 mt-10">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h3 id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></h3>
+            
+            <!-- Academic Year and Semester Selection -->
+            <div class="mb-4">
+                <label for="academicYear" class="block text-sm font-medium text-gray-700">Academic Year</label>
+                <select id="academicYear" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="2023 - 2024">2023 - 2024</option>
+                    <option value="2024 - 2025">2024 - 2025</option>
+                    <option value="2025 - 2026">2025 - 2026</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
+                <select id="semester" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="1">1st Semester</option>
+                    <option value="2">2nd Semester</option>
+                    <option value="3">3rd Semester</option>
+                </select>
+            </div>
+
             <div class="flex justify-end space-x-3">
                 <button onclick="closeConfirmationModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">Cancel</button>
                 <button id="confirmResetButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Confirm</button>
             </div>
         </div>
     </div>
-    
+
     <script>
         document.getElementById('resetButton').addEventListener('click', function() {
             const clearanceStatus = '{{ $userClearance->user->clearances_status }}';
             const message = clearanceStatus === 'Complete'
                 ? 'The clearance is complete. Are you sure you want to reset?'
                 : 'The clearance is not complete. Are you sure you want to reset?';
-    
+
             document.getElementById('confirmationMessage').textContent = message;
             document.getElementById('confirmationModal').classList.remove('hidden');
         });
-    
+
         document.getElementById('confirmResetButton').addEventListener('click', function() {
-            // showLoading();
+            const academicYear = document.getElementById('academicYear').value;
+            const semester = document.getElementById('semester').value;
 
             fetch('{{ route('admin.clearance.resetSpecific', ['userId' => $userClearance->user->id]) }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ academicYear, semester })
             })
             .then(response => response.json())
             .then(data => {
-                // hideLoading();
                 if (data.success) {
                     showNotification('User clearance reset successfully.');
                     location.reload();
@@ -134,7 +156,6 @@
                 }
             })
             .catch(error => {
-                // hideLoading();
                 console.error('Error:', error);
                 showNotification('An error occurred.', false);
             });
@@ -142,14 +163,6 @@
             closeConfirmationModal();
         });
 
-        // function showLoading() {
-        //     document.getElementById('loadingOverlay').classList.remove('hidden');
-        // }
-
-        // function hideLoading() {
-        //     document.getElementById('loadingOverlay').classList.add('hidden');
-        // }
-    
         function closeConfirmationModal() {
             document.getElementById('confirmationModal').classList.add('hidden');
         }
