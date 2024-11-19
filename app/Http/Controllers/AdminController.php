@@ -84,8 +84,8 @@ class AdminController extends Controller
         $clearanceChecklist = Clearance::count();
 
         //////////////////////// Faculty Counts //////////////////////////
-        $facultyDean = (clone $userQuery)->where('position', 'Dean')->count();
-        $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->count();
+        $facultyDean = (clone $userQuery)->where('position', 'Dean')->orWhere('user_type', 'Dean')->count();
+        $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->orWhere('user_type', 'Program-Head')->count();
         $facultyPermanentPT = (clone $userQuery)->where('position', 'Permanent-PartTime')->count();
         $facultyPermanentFT = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
         $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
