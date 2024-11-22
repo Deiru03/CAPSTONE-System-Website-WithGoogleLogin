@@ -685,11 +685,11 @@ class ClearanceController extends Controller
     }
 
     /////////////////////////////// Get Academic Years ///////////////////////////////
-    public function getAcademicYears($yearsAhead = 5)
+    public function getAcademicYears($yearsAhead = 3)
     {
         $currentYear = date('Y');
         $academicYears = [];
-        for ($i = -1; $i < $yearsAhead; $i++) { // Start from -1 to include the previous year
+        for ($i = -2; $i < $yearsAhead; $i++) { // Start from -1 to include the previous year
             $startYear = $currentYear + $i;
             $endYear = $startYear + 1;
             $academicYears[] = "$startYear - $endYear";
