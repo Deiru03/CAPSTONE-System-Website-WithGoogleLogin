@@ -235,13 +235,30 @@
                                 </x-slot>
 
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('admin.profile.edit')">
+                                    <x-dropdown-link :href="route('admin.profile.edit')"
+                                        class="hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-150">
                                         {{ __('Profile') }}
                                     </x-dropdown-link>
+
+                                    @foreach(Auth::user()->availableRoles() as $role)
+                                        @if($role !== Auth::user()->user_type)
+                                            <form method="POST" action="{{ route('switchRole') }}">
+                                                @csrf
+                                                <input type="hidden" name="role" value="{{ $role }}">
+                                                <x-dropdown-link :href="route('switchRole')"
+                                                        class="hover:bg-green-50 hover:text-green-600 transition-colors duration-150"
+                                                        onclick="event.preventDefault();
+                                                                    this.closest('form').submit();">
+                                                    {{ __('Switch to ' . $role) }}
+                                                </x-dropdown-link>
+                                            </form>
+                                        @endif
+                                    @endforeach
 
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <x-dropdown-link :href="route('logout')"
+                                            class="hover:bg-red-50 hover:text-red-600 transition-colors duration-150"
                                             onclick="event.preventDefault();
                                                         this.closest('form').submit();">
                                             {{ __('Log Out') }}

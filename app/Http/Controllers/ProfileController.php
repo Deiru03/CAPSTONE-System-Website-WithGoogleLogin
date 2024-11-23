@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Foundation\Auth\User as Authentication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -198,6 +199,25 @@ class ProfileController extends Controller
         }
     }
 
+    /**
+     * Switch user type
+     */
+    public function switchRole(Request $request): RedirectResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $newRole = $request->input('role');
+
+        $roles = $user->availableRoles();
+
+        if (in_array($newRole, $roles)) {
+            $user->switchRole($newRole); // Use the switchRole method from the User model
+
+            return redirect()->back()->with('success', "Switched to {$newRole} successfully.");
+        }
+
+        return redirect()->back()->with('error', 'Role switch not allowed.');
+    }
     /**
      * Delete the user's account.
      */

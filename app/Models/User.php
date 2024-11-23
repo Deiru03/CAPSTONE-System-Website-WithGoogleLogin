@@ -62,6 +62,35 @@ class User extends Authenticatable //implements MustVerifyEmail
         ];
     }
 
+    // Available roles for switching user type
+    public function availableRoles()
+    {
+        $roles = [];
+    
+        if ($this->program_head_id) {
+            $roles[] = 'Program-Head';
+        }
+    
+        if ($this->dean_id) {
+            $roles[] = 'Dean';
+        }
+    
+        if ($this->admin_id_registered) {
+            $roles[] = 'Admin';
+        }
+    
+        else {
+            $roles[] = 'Faculty';
+        }
+    
+        return $roles;
+    }
+    
+    public function switchRole($newRole)
+    {
+        $this->update(['user_type' => $newRole]);
+    }
+
     public function sharedClearances()
     {
         return $this->hasMany(SharedClearance::class);

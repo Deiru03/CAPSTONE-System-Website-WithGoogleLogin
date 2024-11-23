@@ -109,6 +109,9 @@ Route::get('/optimize/clear-cache', [OptimizationController::class, 'clearCache'
 Route::get('/optimize/prune-reports', [OptimizationController::class, 'pruneReports'])->name('optimize.pruneReports');
 //--------------------------------------------------------------------------------------------------------------------//
 
+/////////////////////////////////////////////// Role Switch Route ////////////////////////////////////////////////
+Route::post('/switch-role', [ProfileController::class, 'switchRole'])->name('switchRole');
+
 /////////////////////////////////////////////// DomPDF Routes ////////////////////////////////////////////////
 Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
 Route::post('/admin/faculty-report/generate', [AdminController::class, 'generateFacultyReport'])->name('admin.facultyReport.generate');
@@ -121,6 +124,7 @@ Route::post('/admin/reports/generate', [GenerateReports::class, 'generateSubmitt
 Route::get('/departments/{campusId}', [RegisteredUserController::class, 'getDepartments']);
 Route::get('/programs/{departmentId}', [RegisteredUserController::class, 'getPrograms']);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// Admin Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix('admin')->group(function () {
     Route::get('/homepage', [AdminController::class, 'home'])->name('admin.home');
