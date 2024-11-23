@@ -120,16 +120,17 @@ class FacultyController extends Controller
     {
         $user = Auth::user();
         $sortOrder = $request->get('sort', 'desc'); // Default to newest
+        $search = $request->get('search', '');
 
         $archivedClearances = UploadedClearance::where('user_id', $user->id)
             ->where('is_archived', true)
-            ->with('requirement')
+            ->where('file_path', 'like', "%{$search}%") // Search by file path
             ->orderBy('academic_year', $sortOrder)
             ->orderBy('semester', $sortOrder)
             ->orderBy('updated_at', $sortOrder)
             ->get();
 
-        return view('faculty.views.archive', compact('archivedClearances', 'sortOrder'));
+        return view('faculty.views.archive', compact('archivedClearances', 'sortOrder', 'search'));
     }
 
     public function test(): View

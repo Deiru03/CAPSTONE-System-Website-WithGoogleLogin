@@ -215,9 +215,9 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::delete('/campuses/{campus}', [CampusController::class, 'destroy'])->name('admin.campuses.destroy');
 
 });
-
-
 /////////////////////////////////////////////// End of Admin Routes ////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// Faculty Routes ////////////////////////////////////////////////
 Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(function () {
     Route::get('/homepage', [FacultyController::class, 'home'])->name('faculty.home');
