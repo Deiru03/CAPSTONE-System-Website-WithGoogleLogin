@@ -14,7 +14,15 @@
             </svg>
             <h3 class="text-xl font-semibold text-gray-800">Archived Files</h3>
         </div>
-        <p class="mt-2 text-gray-600">Here you can view and manage archived files.</p>
+
+        {{-- Search Bar --}}
+        <div class="flex justify-between items-center">
+            <p class="mt-2 text-gray-600">Here you can view and manage your archived files organized by academic year and semester.</p>
+            <form method="GET" action="{{ route('admin.views.archive') }}" class="flex items-center">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search files..." class="border border-gray-300 rounded-md p-2 mr-2 w-64">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Search</button>
+            </form>
+        </div>
 
         @if($archivedClearances->isEmpty())
             <div class="text-center py-8">

@@ -469,15 +469,18 @@ class AdminController extends Controller
         return view ('admin.views.my-files');
     }
 
-    public function archive(): View
+    public function archive(Request $request): View
     {
         try {
-            // Fetch all archived clearances
+            $search = $request->get('search', '');
+    
+            // Fetch all archived clearances with search functionality
             $archivedClearances = UploadedClearance::where('is_archived', true)
+                ->where('file_path', 'like', "%{$search}%") // Search by file path
                 ->with(['requirement', 'user']) // Eager load relationships
                 ->get();
     
-            return view('admin.views.archive', compact('archivedClearances'));
+            return view('admin.views.archive', compact('archivedClearances', 'search'));
         } catch (\Exception $e) {
             Log::error('Error fetching archived clearances: ' . $e->getMessage());
             return view('admin.views.archive', [
