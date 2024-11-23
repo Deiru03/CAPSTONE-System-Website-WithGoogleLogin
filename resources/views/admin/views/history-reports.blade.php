@@ -73,7 +73,7 @@
                                         {{ $report->admin_name }}
                                     </td>
                                     <td class="px-6 py-4 text-xs font-medium text-gray-900 truncate">
-                                        {{ $report->faculty_name ?? 'System Generated' }}
+                                        {{ $report->faculty_name ?? 'Not Assigned' }}
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate">
                                         {{ $report->title }}
