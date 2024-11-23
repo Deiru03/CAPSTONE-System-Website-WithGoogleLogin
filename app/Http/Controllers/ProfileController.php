@@ -24,7 +24,7 @@ class ProfileController extends Controller
     {
         $departments = Department::with('programs')->get();
         $programs = Program::all();
-        $user = $request->user();
+        $user = $request->user()->load('subPrograms'); // Load subPrograms relationship
         $campuses = Campus::all();
 
         // Fetch the user's sub-programs
@@ -179,13 +179,17 @@ class ProfileController extends Controller
         $user->save();
 
         // Save the sub-program
-        if ($request->filled('sub_program_id')) {
+        $subProgramIds = $request->input('sub_program_ids', []);
+        SubProgram::where('user_id', $user->id)->delete(); // Clear existing sub-programs
+
+        foreach ($subProgramIds as $programId) {
             SubProgram::create([
                 'user_id' => $user->id,
-                'program_id' => $request->input('sub_program_id'),
-                'sub_program_name' => Program::find($request->input('sub_program_id'))->name,
+                'program_id' => $programId,
+                'sub_program_name' => Program::find($programId)->name,
             ]);
         }
+
     
         if ($user->user_type === 'Admin' || $user->user_type === 'Dean' || $user->user_type === 'Program-Head') {
             return Redirect::route('admin.profile.edit')->with('status', 'profile-updated', 'campuses');

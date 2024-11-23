@@ -172,7 +172,82 @@
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
                         </div>
 
-                        <!-- Sub Program Row -->
+                        <!-- Sub Programs Row CSS Alignment-->
+                        <style>
+                            #sub-programs-container {
+                                margin-top: -1px;
+                            }
+                            .remove-sub-program {
+                                background-color: transparent;
+                                border: none;
+                                cursor: pointer;
+                                font-weight: bold;
+                            }
+                            .remove-sub-program:hover {
+                                color: #e3342f; /* Darker red for hover */
+                            }
+                        </style>
+
+                        <div class="col-span-1">
+                            <x-input-label for="sub_programs" :value="__('Sub Programs')" class="text-lg font-semibold"/>
+                            <div id="sub-programs-container" class="space-y-1">
+                                @foreach($user->subPrograms as $subProgram)
+                                    <div class="flex items-center space-x-2">
+                                        <select name="sub_program_ids[]" class="flex-1 mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                            <option value="" disabled>Select a sub-program</option>
+                                            @foreach($programs as $program)
+                                                <option value="{{ $program->id }}" {{ $subProgram->program_id == $program->id ? 'selected' : '' }}>
+                                                    {{ $program->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="text-red-500 hover:text-red-700 remove-sub-program">
+                                            Remove
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button type="button" id="add-sub-program" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                                Add Sub Program
+                            </button>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const subProgramsContainer = document.getElementById('sub-programs-container');
+                                const addSubProgramButton = document.getElementById('add-sub-program');
+
+                                function addRemoveListener(button) {
+                                    button.addEventListener('click', function() {
+                                        button.parentElement.remove();
+                                    });
+                                }
+
+                                addSubProgramButton.addEventListener('click', function() {
+                                    const subProgramDiv = document.createElement('div');
+                                    subProgramDiv.classList.add('flex', 'items-center', 'mt-2');
+
+                                    subProgramDiv.innerHTML = `
+                                        <select name="sub_program_ids[]" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                            <option value="" disabled>Select a sub-program</option>
+                                            @foreach($programs as $program)
+                                                <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="ml-2 text-red-500 remove-sub-program">
+                                            Remove
+                                        </button>
+                                    `;
+
+                                    subProgramsContainer.appendChild(subProgramDiv);
+                                    addRemoveListener(subProgramDiv.querySelector('.remove-sub-program'));
+                                });
+
+                                document.querySelectorAll('.remove-sub-program').forEach(addRemoveListener);
+                            });
+                        </script>
+                        
+                        {{-- <!-- Sub Program Row -->
                         <div class="col-span-1">
                             <x-input-label for="sub_program_id" :value="__('Sub Program')" class="text-lg font-semibold"/>
                             <select id="sub_program_id" name="sub_program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
@@ -187,7 +262,7 @@
                                 @endforeach
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('sub_program_id')" />
-                        </div>
+                        </div> --}}
 
                         <!-- Role Information Section -->
                         {{-- <div class="col-span-2">

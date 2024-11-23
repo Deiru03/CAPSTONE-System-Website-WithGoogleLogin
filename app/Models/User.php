@@ -97,6 +97,11 @@ class User extends Authenticatable //implements MustVerifyEmail
         return $this->belongsTo(Program::class);
     }
 
+    public function subPrograms()
+    {
+        return $this->hasMany(SubProgram::class);
+    }
+
     public function college()
     {
         return $this->belongsTo(Department::class);
