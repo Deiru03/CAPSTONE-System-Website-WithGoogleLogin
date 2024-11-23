@@ -25,6 +25,7 @@ use App\Models\Campus;
 use App\Models\ProgramHeadDeanId;
 use App\Services\FileDeletionService;
 use App\Models\SharedClearance;
+use App\Models\SubProgram;
 use Carbon\Carbon;
 /////////////////////////////////////////////// Admin ViewsController ////////////////////////////////////////////////
 class AdminController extends Controller
@@ -84,8 +85,8 @@ class AdminController extends Controller
         $clearanceChecklist = Clearance::count();
 
         //////////////////////// Faculty Counts //////////////////////////
-        $facultyDean = (clone $userQuery)->where('position', 'Dean')->count();
-        $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->count();
+        $facultyDean = (clone $userQuery)->where('position', 'Dean')->orWhere('user_type', 'Dean')->count();
+        $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->orWhere('user_type', 'Program-Head')->count();
         $facultyPermanentPT = (clone $userQuery)->where('position', 'Permanent-PartTime')->count();
         $facultyPermanentFT = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
         $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
@@ -497,11 +498,15 @@ class AdminController extends Controller
     {
         $user = Auth::user();
         $departments = Department::with('programs')->get();
+        $programs = Program::all();
         $campuses = Campus::all();
+
+        // Fetch the user's sub-programs
+        $subProgram = SubProgram::where('user_id', $user->id)->first();
 
         $noActiveClearance = true;
 
-        return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance', 'campuses'));
+        return view ('admin.profile.edit', compact('user', 'departments', 'noActiveClearance', 'campuses', 'programs', 'subProgram'));
     }
     /////////////////////////////////////////////// End of Views Controller ////////////////////////////////////////////////
 

@@ -26,4 +26,9 @@ class Program extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function subPrograms()
+    {
+        return $this->hasMany(SubProgram::class);
+    }
 }

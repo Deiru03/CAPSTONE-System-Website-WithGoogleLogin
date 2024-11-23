@@ -13,6 +13,8 @@ use App\Models\AdminId;
 use App\Models\Campus;
 use App\Models\ProgramHeadDeanId;
 use App\Models\User;
+use App\Models\SubProgram;
+use App\Models\Program;
 class ProfileController extends Controller
 {
     /**
@@ -21,8 +23,12 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $departments = Department::with('programs')->get();
+        $programs = Program::all();
         $user = $request->user();
         $campuses = Campus::all();
+
+        // Fetch the user's sub-programs
+        $subProgram = SubProgram::where('user_id', $user->id)->first();
 
         // check if user has no active clearance
         $noActiveClearance = !$user->clearances()->where('is_active', true)->exists();
@@ -33,6 +39,8 @@ class ProfileController extends Controller
             'departments' => $departments,
             'campuses' => $campuses,
             'noActiveClearance' => $noActiveClearance,
+            'programs' => $programs,
+            'subProgram' => $subProgram,
         ]);
     }
 
@@ -169,6 +177,15 @@ class ProfileController extends Controller
         $user->program = $program ? $program->name : null;
     
         $user->save();
+
+        // Save the sub-program
+        if ($request->filled('sub_program_id')) {
+            SubProgram::create([
+                'user_id' => $user->id,
+                'program_id' => $request->input('sub_program_id'),
+                'sub_program_name' => Program::find($request->input('sub_program_id'))->name,
+            ]);
+        }
     
         if ($user->user_type === 'Admin' || $user->user_type === 'Dean' || $user->user_type === 'Program-Head') {
             return Redirect::route('admin.profile.edit')->with('status', 'profile-updated', 'campuses');

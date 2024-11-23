@@ -153,7 +153,6 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
                             </div>
                         </div>
-
                         <!-- Program Row -->
                         <div class="col-span-1">
                             <x-input-label for="program_id" :value="__('Program')" class="text-lg font-semibold" />
@@ -171,6 +170,23 @@
                                 @endforeach
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
+                        </div>
+
+                        <!-- Sub Program Row -->
+                        <div class="col-span-1">
+                            <x-input-label for="sub_program_id" :value="__('Sub Program')" class="text-lg font-semibold"/>
+                            <select id="sub_program_id" name="sub_program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                @if($user->user_type === 'Admin' && is_null($user->campus_id) || 
+                                    $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                                    $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif>
+                                <option value="" selected>Select a sub-program</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}" {{ old('sub_program_id', $subProgram->program_id ?? '') == $program->id ? 'selected' : '' }}>
+                                        {{ $program->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('sub_program_id')" />
                         </div>
 
                         <!-- Role Information Section -->
