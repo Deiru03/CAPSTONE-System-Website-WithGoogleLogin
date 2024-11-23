@@ -266,8 +266,12 @@
     
         <div class="overflow-x-auto">
             <div class="max-h-[600px] overflow-y-auto">
-                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                    <thead class="bg-gray-200 text-gray-700 sticky top-0">
+                {{-- <table class="min-w-full text-sm border-collapse border border-gray-300">
+                    <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 sticky top-0"> --}}
+                {{-- <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead class="bg-gray-200 text-gray-700 sticky top-0"> --}}
+                <table class="min-w-full bg-white shadow-md rounded-lg">
+                    <thead class="bg-gradient-to-r from-sky-200 to-indigo-200 text-gray-700 sticky top-0">
                         <tr>
                             <th class="py-2 px-3 text-left text-xs">ID</th>
                             <th class="py-2 px-3 text-left text-xs">Name</th>
@@ -377,6 +381,7 @@
                 <div id="currentClearanceInfo" class="mb-4 p-3 bg-blue-50 rounded-md hidden">
                     <p class="text-sm text-blue-600">Current Active Clearance:</p>
                     <p id="currentClearanceName" class="font-medium text-blue-800"></p>
+                    <p id="currentClearanceDetails" class="text-sm text-blue-600"></p> <!-- New line for additional details -->
                 </div>
         
                 <!-- No Clearance Message -->
@@ -446,6 +451,11 @@
                 document.getElementById('currentClearanceInfo').classList.remove('hidden');
                 document.getElementById('currentClearanceName').textContent = 
                     activeClearance.shared_clearance.clearance.document_name;
+                
+                // Add more details
+                document.getElementById('currentClearanceDetails').textContent = 
+                    `Assigned on: ${activeClearance.assigned_date}, Status: ${activeClearance.status}`;
+                
                 document.getElementById('editSharedClearance').value = activeClearance.shared_clearance_id;
             } else {
                 document.getElementById('noClearanceMessage').classList.remove('hidden');

@@ -103,7 +103,7 @@
                 $currentAcademicYear = $currentMonth >= 8 ? "$currentYear - " . ($currentYear + 1) : ($currentYear - 1) . " - $currentYear";
             
                 $academicYears = [];
-                for ($i = -1; $i < 5; $i++) { // Include the previous year and 5 years ahead
+                for ($i = -2; $i < 3; $i++) { // Include the previous year and 5 years ahead
                     $startYear = $currentYear + $i;
                     $endYear = $startYear + 1;
                     $academicYears[] = "$startYear - $endYear";
