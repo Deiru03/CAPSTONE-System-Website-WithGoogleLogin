@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="profile-container" style="max-width: 1200px; margin: 0 auto;">
+    <div class="profile-container" style="max-width: 1300px; margin: 0 auto;">
         <div class="profile-form">
             <form id="send-verification" method="post" action="{{ route('verification.send') }}">
                 @csrf
@@ -155,7 +155,7 @@
                         </div>
                         <!-- Program Row -->
                         <div class="col-span-1">
-                            <x-input-label for="program_id" :value="__('Program')" class="text-lg font-semibold" />
+                            <x-input-label for="program_id" :value="__('Your Main Program')" class="text-lg font-semibold" />
                             <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
                                 @if($user->user_type === 'Admin' && is_null($user->campus_id) || 
                                     $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
