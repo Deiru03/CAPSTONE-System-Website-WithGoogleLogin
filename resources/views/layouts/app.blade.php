@@ -202,7 +202,6 @@
                                         {{ __('Profile') }}
                                     </x-dropdown-link>
 
-                                    
                                     @foreach(Auth::user()->availableRoles() as $role)
                                         @if($role !== Auth::user()->user_type)
                                             <form method="POST" action="{{ route('switchRole') }}" style="display: inline;">

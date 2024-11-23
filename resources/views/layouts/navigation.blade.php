@@ -84,6 +84,20 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
+                {{-- @foreach (Auth::user()->availableRoles() as $role)
+                    @if($role !== Auth::user()->user_type)
+                        <form method="POST" action="{{ route('switchRole') }}">
+                            @csrf
+                            <input type="hidden" name="role" value="{{ $role }}">
+                            <x-responsive-nav-link :href="route('switchRole')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Switch to ' . $role) }}
+                            </x-responsive-nav-link>
+                        </form>
+                    @endif
+                @endforeach --}}
+
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
