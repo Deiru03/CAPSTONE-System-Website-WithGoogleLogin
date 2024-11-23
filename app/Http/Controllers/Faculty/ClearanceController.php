@@ -27,40 +27,78 @@ class ClearanceController extends Controller
         $user = Auth::user();
         $userUnits = $user->units;
         $userPosition = $user->position;
-
+    
         // Get all shared clearances with their associated clearance data
         $sharedClearances = SharedClearance::with('clearance')->get();
-
-        // Filter shared clearances based on user's units and position
+    
+        // Filter shared clearances based on position and units
         $filteredClearances = $sharedClearances->filter(function ($sharedClearance) use ($userUnits, $userPosition) {
             $clearanceUnits = $sharedClearance->clearance->units;
             $clearanceType = $sharedClearance->clearance->type;
-
-            // Main filter by units
-            if ($userUnits > 0) {
-                return $clearanceUnits == $userUnits;
+    
+            // For Dean and Program-Head
+            if ($userPosition === 'Dean' || $userPosition === 'Program-Head') {
+                // If user has no units, fetch all clearances of matching position
+                if (is_null($userUnits)) {
+                    return $clearanceType === $userPosition;
+                }
+                
+                // If clearance has units and user has units, check if they match
+                if (!is_null($clearanceUnits)) {
+                    return $clearanceType === $userPosition && $clearanceUnits == $userUnits;
+                }
+                
+                // If clearance has no units but user has units, still fetch it
+                return $clearanceType === $userPosition;
             }
-
-            // Secondary filter by position if no units
-            if ($userUnits == 0 && ($userPosition == 'Permanent' || $userPosition == 'Temporary')) {
-                return $clearanceType == $userPosition;
+    
+            // For Permanent positions (FullTime and PartTime)
+            if (in_array($userPosition, ['Permanent-FullTime', 'Permanent-PartTime'])) {
+                return $clearanceType === 'Permanent' && $clearanceUnits == $userUnits;
             }
-
+    
+            // For Temporary position
+            if ($userPosition === 'Temporary') {
+                return $clearanceType === 'Temporary' && $clearanceUnits == $userUnits;
+            }
+    
+            // For Part-Timer position
+            if ($userPosition === 'Part-Timer') {
+                if ($userUnits >= 12) {
+                    // 12 units and above
+                    return $clearanceType === 'Part-Timer' && $clearanceUnits >= 12;
+                } else {
+                    // Between 9 and 11 units
+                    return $clearanceType === 'Part-Timer' && $clearanceUnits >= 0 && $clearanceUnits <= 11;
+                }
+            }
+    
             return false;
         });
-
+    
         // Get user_clearances to map shared_clearance_id to user_clearance_id
+        // Only get active clearances
         $userClearances = UserClearance::where('user_id', $user->id)
+            ->where('is_active', true)
             ->whereIn('shared_clearance_id', $filteredClearances->pluck('id'))
             ->pluck('id', 'shared_clearance_id')
             ->toArray();
-
-        // Determine recommendations based on user's units and position
+    
+        // Determine recommendations based on user's position and units
         $recommendations = $filteredClearances->filter(function ($sharedClearance) use ($user) {
-            return $sharedClearance->clearance->units == $user->units && $sharedClearance->clearance->type == $user->position;
+            if ($user->position === 'Dean' || $user->position === 'Program-Head') {
+                return $sharedClearance->clearance->type === $user->position;
+            }
+            return $sharedClearance->clearance->type === $user->position && 
+                   $sharedClearance->clearance->units == $user->units;
         });
-
-        return view('faculty.views.clearances.clearance-index', compact('filteredClearances', 'userClearances', 'recommendations'));
+    
+        // Get active clearances
+        $activeClearances = UserClearance::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->get();
+    
+        return view('faculty.views.clearances.clearance-index', compact('filteredClearances', 'userClearances', 'recommendations', 'activeClearances'));
     }
 
     /**
