@@ -140,12 +140,12 @@
                             </div>
 
                             <div class="col-span-1">
-                                <x-input-label for="department_id" :value="__('Department')" />
+                                <x-input-label for="department_id" :value="__('College (Department)')" />
                                 <select id="department_id" name="department_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
                                     @if($user->user_type === 'Admin' && is_null($user->campus_id) ||
                                         $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
                                         $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
-                                    <option value="" disabled>Select a department</option>
+                                    <option value="" disabled>Select a College</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
                                     @endforeach
