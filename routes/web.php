@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\GenerateReports;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
+use App\Models\UploadedClearance;
 use Faker\Provider\ar_EG\Address;
 use Illuminate\Support\Facades\File;
 use App\Http\Controllers\AboutController;
@@ -108,6 +109,12 @@ Route::middleware(['Faculty'])->group(function () {
 Route::get('/optimize/clear-cache', [OptimizationController::class, 'clearCache'])->name('optimize.clearCache');
 Route::get('/optimize/prune-reports', [OptimizationController::class, 'pruneReports'])->name('optimize.pruneReports');
 //--------------------------------------------------------------------------------------------------------------------//
+/////////////////////////////////////////////// New Uploads Count Route ////////////////////////////////////////////////
+Route::get('/api/new-uploads-per-user', function () {
+    $lastCheck = session('last_clearance_check', now()->subDay());
+    $newUploads = UploadedClearance::newUploadsPerUser($lastCheck);
+    return response()->json($newUploads);
+});
 
 /////////////////////////////////////////////// Role Switch Route ////////////////////////////////////////////////
 Route::post('/switch-role', [ProfileController::class, 'switchRole'])->name('switchRole');

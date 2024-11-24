@@ -17,17 +17,35 @@
 
     <style>
         .profile-picture {
-           width: 40px; /* Adjust size as needed */
-           height: 40px;
-           border-radius: 50%; /* Make it circular */
-           object-fit: cover; /* Ensure the image covers the area */
-           margin-right: 10px; /* Space between image and text */
-       }
-       .profile-section {
-           display: flex;
-           align-items: center;
-           padding: 10px;
-       }
+            width: 40px; /* Adjust size as needed */
+            height: 40px;
+            border-radius: 50%; /* Make it circular */
+            object-fit: cover; /* Ensure the image covers the area */
+            margin-right: 10px; /* Space between image and text */
+        }
+        .profile-section {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        .bg-red-500 {
+            background-color: #f56565;
+        }
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .h-2 {
+            height: 0.5rem;
+        }
+
+        .w-2 {
+            width: 0.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 
     <body class="font-sans antialiased">
@@ -82,6 +100,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                             </svg>
                             <span class="{{ request()->routeIs('admin.views.clearances') || request()->routeIs('admin.clearance.manage') || request()->routeIs('admin.clearance.check') ? 'text-indigo-300 font-semibold' : '' }}">Clearances</span>
+                            <span id="clearancesRedDot" class="ml-2 bg-red-500 rounded-full h-2 w-2 hidden"></span>
                             <svg :class="{'rotate-90': clearancesOpen}" class="ml-auto h-5 w-5 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -97,6 +116,7 @@
                             @endif
                             <a href="{{ route('admin.clearance.check') }}" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700 {{ request()->routeIs('admin.clearance.check') || request()->routeIs('admin.clearances.show') ? 'bg-gray-700 text-indigo-300' : 'text-gray-300' }}">
                                 <span>Check Clearances</span>
+                                <span id="clearanceBadge" class="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                             </a>
                         </div>
                     </div>
@@ -420,6 +440,37 @@
                         }
                     });
                 }
+            });
+        </script>
+
+        <!-- New Uploads Notification Count -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let newUploadsPerUser = {};
+
+                function checkForNewUploads() {
+                    fetch('/api/new-uploads-per-user')
+                        .then(response => response.json())
+                        .then(data => {
+                            newUploadsPerUser = data;
+                            const totalNewUploads = Object.values(data).reduce((a, b) => a + b, 0);
+                            const clearanceBadge = document.getElementById('clearanceBadge');
+                            const clearancesRedDot = document.getElementById('clearancesRedDot');
+                            if (totalNewUploads > 0) {
+                                clearanceBadge.textContent = totalNewUploads;
+                                clearanceBadge.classList.remove('hidden');
+                                clearancesRedDot.classList.remove('hidden');
+                            } else {
+                                clearanceBadge.classList.add('hidden');
+                                clearancesRedDot.classList.add('hidden');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching new uploads:', error));
+                }
+
+                // Check for new uploads every 5 minutes
+                setInterval(checkForNewUploads, 300000);
+                checkForNewUploads(); // Initial check
             });
         </script>
            {{-- <!-- Loading Spinner -->

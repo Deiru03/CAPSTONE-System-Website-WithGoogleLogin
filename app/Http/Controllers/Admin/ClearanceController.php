@@ -329,6 +329,10 @@ class ClearanceController extends Controller
 
     public function showUserClearance($id)
     {
+
+        // Update the session with the current timestamp
+        session(['last_clearance_check' => now()]);
+
         $userClearance = UserClearance::with(['sharedClearance.clearance.requirements', 'uploadedClearances.requirement.feedback', 'user'])
         ->where('user_id', $id)
         ->first();
@@ -353,6 +357,9 @@ class ClearanceController extends Controller
     
     public function checkClearances(Request $request)
     {
+        // Update the session with the current timestamp
+        // session(['last_clearance_check' => now()]);
+
         $adminId = Auth::id(); // Get the current admin's ID
 
         // Fetch all users managed by the current admin

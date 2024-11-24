@@ -21,6 +21,16 @@ class UploadedClearance extends Model
         'archive_date', // Added Line On 18-11-2024
     ];
 
+    // Count new uploads since a specific timestamp
+    public static function newUploadsPerUser($lastCheck)
+    {
+        return self::where('created_at', '>', $lastCheck)
+                   ->where('is_archived', false)
+                   ->get()
+                   ->groupBy('user_id')
+                   ->map->count();
+    }
+
     // Check if the user has uploaded a file for a specific requirement
     public function uploadedClearanceFor($requirementId)
     {

@@ -119,7 +119,7 @@
                 </span>
             </div>
             @forelse($users as $user)
-                <a href="{{ route('admin.clearances.show', $user->id) }}" class="bg-white rounded-lg shadow p-3 flex flex-col items-center transform hover:scale-105 transition-transform duration-300 ease-in-out border border-gray-200">
+                <a href="{{ route('admin.clearances.show', $user->id) }}" class="user-clearance-link bg-white rounded-lg shadow p-3 flex flex-col items-center transform hover:scale-105 transition-transform duration-300 ease-in-out border border-gray-200" data-user-id="{{ $user->id }}">
                     <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full mb-2 flex items-center justify-center p-1">
                         @if ($user->profile_picture)
                             @if (str_contains($user->profile_picture, 'http'))
@@ -132,6 +132,7 @@
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                         @endif
+                        <span class="user-badge hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md border-2 border-white animate-bounce transform hover:scale-110 transition-transform duration-200"></span>
                     </div>
                     <div class="flex items-center w-full mb-1">
                         <div class="mx-1 flex-grow">
@@ -393,6 +394,45 @@
    
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let newUploadsPerUser = {};
+
+            function checkForNewUploads() {
+                fetch('/api/new-uploads-per-user')
+                    .then(response => response.json())
+                    .then(data => {
+                        newUploadsPerUser = data;
+                        document.querySelectorAll('.user-clearance-link').forEach(link => {
+                            const userId = link.dataset.userId;
+                            const badge = link.querySelector('.user-badge');
+                            if (newUploadsPerUser[userId] > 0) {
+                                badge.textContent = newUploadsPerUser[userId];
+                                badge.classList.remove('hidden');
+                            } else {
+                                badge.classList.add('hidden');
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching new uploads:', error));
+            }
+
+            // Check for new uploads every 5 minutes
+            setInterval(checkForNewUploads, 300000);
+            checkForNewUploads(); // Initial check
+
+            // Update new uploads count when a user is clicked
+            document.querySelectorAll('.user-clearance-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    const userId = this.dataset.userId;
+                    if (newUploadsPerUser[userId]) {
+                        newUploadsPerUser[userId] = 0;
+                        checkForNewUploads(); // Recalculate total
+                    }
+                });
+            });
+        });
+
+        // Notification Function
        function showNotification(message, isSuccess = true) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
