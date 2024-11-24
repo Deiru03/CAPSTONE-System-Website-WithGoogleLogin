@@ -388,7 +388,8 @@
                                     $latestUpload->created_at > $feedback->updated_at;
                             }
                         @endphp
-                        <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 rounded-lg shadow hover:bg-gray-100 transition duration-300
+                        
+                          <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 rounded-lg shadow hover:bg-gray-100 transition duration-300 relative
                             @if($hasComplied)
                                 bg-blue-50
                             @elseif($user->clearances_status == 'complete')
@@ -407,7 +408,7 @@
                             @else
                                 <img src="{{ url('/images/default-profile.png') }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
                             @endif
-                            <div class="min-w-0 flex-1">
+                            <div class="min-w-0 flex-1 relative">
                                 <h4 class="text-lg font-semibold truncate">{{ $user->name }}</h4>
                                 <p class="text-sm text-gray-500 truncate max-w-full">{{ $user->email }}</p>
                                 <p class="text-sm font-medium
@@ -442,11 +443,44 @@
                                         Recent: N/A
                                     @endif
                                 </p>
+                                <div class="user-clearance-link" data-user-id="{{ $user->id }}">
+                                    <span class="user-badge hidden absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce shadow-lg border-2 border-white transform hover:scale-110 transition-all duration-300 ease-in-out hover:shadow-xl"></span>
+                                </div>
                             </div>
+                            
                         </a>
                     @endforeach
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let newUploadsPerUser = {};
+
+            function checkForNewUploads() {
+                fetch('/api/new-uploads-per-user')
+                    .then(response => response.json())
+                    .then(data => {
+                        newUploadsPerUser = data;
+                        document.querySelectorAll('.user-clearance-link').forEach(link => {
+                            const userId = link.dataset.userId;
+                            const badge = link.querySelector('.user-badge');
+                            if (newUploadsPerUser[userId] > 0) {
+                                badge.textContent = newUploadsPerUser[userId];
+                                badge.classList.remove('hidden');
+                            } else {
+                                badge.classList.add('hidden');
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching new uploads:', error));
+            }
+
+            // Initial check
+            checkForNewUploads();
+        });
+    </script>
+
 </x-admin-layout>
