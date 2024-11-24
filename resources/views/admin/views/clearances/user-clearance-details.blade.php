@@ -180,6 +180,112 @@
         }
     </script>
 
+    <div class="mt-10">
+        @php
+            $newUploadsCount = 0;
+            $onCheckCount = 0;
+            $resubmitsCount = 0;
+            $compliedCount = 0;
+
+            foreach ($userClearance->sharedClearance->clearance->requirements as $requirement) {
+                $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
+                $uploadedFile = $userClearance->uploadedClearances
+                    ->where('user_id', $userClearance->user->id)
+                    ->where('requirement_id', $requirement->id)
+                    ->sortByDesc('created_at')
+                    ->first();
+
+                if ($uploadedFile && !$uploadedFile->is_archived) {
+                    if ($feedback && !$feedback->is_archived) {
+                        if ($feedback->signature_status == 'Resubmit') {
+                            $resubmitsCount++;
+                        } elseif ($feedback->signature_status == 'Checking') {
+                            $onCheckCount++;
+                        } elseif ($feedback->signature_status == 'Complied') {
+                            $compliedCount++;
+                        }
+                    } else {
+                        $newUploadsCount++;
+                    }
+                }
+            }
+        @endphp
+        <div class="flex flex-wrap mb-4">
+            <div class="flex-1 grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white">
+                    <div class="text-3xl font-bold text-blue-500">{{ $newUploadsCount }}</div>
+                    <div class="text-sm text-gray-600 mt-2">New Upload</div>
+                    <div class="w-full h-2 bg-blue-100 rounded-full mt-2">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ ($newUploadsCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-yellow-50 to-white">
+                    <div class="text-3xl font-bold text-yellow-500">{{ $onCheckCount }}</div>
+                    <div class="text-sm text-gray-600 mt-2">On-Check</div>
+                    <div class="w-full h-2 bg-yellow-100 rounded-full mt-2">
+                        <div class="h-full bg-yellow-500 rounded-full" style="width: {{ ($onCheckCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-red-50 to-white">
+                    <div class="text-3xl font-bold text-red-500">{{ $resubmitsCount }}</div>
+                    <div class="text-sm text-gray-600 mt-2">Resubmits</div>
+                    <div class="w-full h-2 bg-red-100 rounded-full mt-2">
+                        <div class="h-full bg-red-500 rounded-full" style="width: {{ ($resubmitsCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-green-50 to-white">
+                    <div class="text-3xl font-bold text-green-500">{{ $compliedCount }}</div>
+                    <div class="text-sm text-gray-600 mt-2">Complied</div>
+                    <div class="w-full h-2 bg-green-100 rounded-full mt-2">
+                        <div class="h-full bg-green-500 rounded-full" style="width: {{ ($compliedCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-0.5 bg-indigo-400 mx-2"></div>
+            {{-- Export Report --}}
+            <div class="flex-1 grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-indigo-50 to-white">
+                    <button class="text-3xl text-indigo-500 hover:text-indigo-600 transition duration-300">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                    </button>
+                    <div class="text-sm text-gray-600 mt-2">Export Report</div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-green-50 to-white">
+                    <button class="text-3xl text-green-500 hover:text-green-600 transition duration-300">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </button>
+                    <div class="text-sm text-gray-600 mt-2">Print Checklist</div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white">
+                    <button class="text-3xl text-blue-500 hover:text-blue-600 transition duration-300">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </button>
+                    <div class="text-sm text-gray-600 mt-2">Send Email</div>
+                </div>
+
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-purple-50 to-white">
+                    <button class="text-3xl text-purple-500 hover:text-purple-600 transition duration-300">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </button>
+                    <div class="text-sm text-gray-600 mt-2">More Actions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h3 class="text-3xl font-bold mb-6 text-gray-800 hidden">{{ $userClearance->sharedClearance->clearance->document_name }}</h3> 
     <div class="overflow-x-auto shadow-md rounded-lg">
         <table class="min-w-full bg-white border border-gray-200">
@@ -223,7 +329,7 @@
                                 </div>
                             @endforeach
                         </td>
-                        <td class="px-4 py-4 text-center">
+                        <td class="px-4 py-4 text-center status-span">
                             @if($isComplied)
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                     Returned Complied
@@ -335,6 +441,7 @@
     
 
     <script>
+
         function openFeedbackModal(requirementId) {
             const feedback = @json($userClearance->sharedClearance->clearance->requirements->pluck('feedback', 'id'));
             const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
