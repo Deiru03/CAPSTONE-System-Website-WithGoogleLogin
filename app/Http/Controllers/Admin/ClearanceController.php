@@ -324,6 +324,52 @@ class ClearanceController extends Controller
         return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }
 
+    public function printChecklist($clearanceId, $userId)
+    {
+        $clearance = Clearance::with('requirements')->find($clearanceId);
+        $user = User::find($userId); // Fetch the specific user
+
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
+        if (!$clearance || !$user) {
+            return redirect()->back()->with('error', 'Clearance or user not found.');
+        }
+
+        // Get the compliance status for each requirement
+        $requirements = $clearance->requirements->map(function ($requirement) use ($user, $clearance) {
+            $uploadedFiles = UploadedClearance::where('requirement_id', $requirement->id)
+                ->where('user_id', $user->id)
+                ->where('shared_clearance_id', $clearance->id)
+                ->where('is_archived', false)
+                ->get();
+
+            $feedback = $requirement->feedback->where('user_id', $user->id)->first();
+
+            $status = 'Not Complied';
+            if ($uploadedFiles->isNotEmpty() || $feedback->signature_status == 'Complied') {
+                $status = 'Complied';
+            } elseif ($feedback && $feedback->signature_status == 'Resubmit') {
+                $status = 'Resubmit';
+            }
+
+            return [
+                'requirement' => $requirement,
+                'status' => $status,
+            ];
+        });
+
+        $programs = Program::all();
+
+
+        $department = $user->department ? $user->department->name : 'N/A';
+        $program = $user->program;
+        $lastClearanceUpdate = $user->last_clearance_update ? $user->last_clearance_update->format('F j, Y') : 'N/A';
+
+        $pdf = PDF::loadView('admin.views.reports.generate-checklist', compact('clearance', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate', 'omscLogo', 'iqaLogo'));
+        return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
+    }
+
     ///////////////////////////////////////// Clearance Requirements ///////////////////////////////////////
   
 

@@ -186,6 +186,7 @@
             $onCheckCount = 0;
             $resubmitsCount = 0;
             $compliedCount = 0;
+            $returnedCompliedCount = 0;
 
             foreach ($userClearance->sharedClearance->clearance->requirements as $requirement) {
                 $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
@@ -208,15 +209,18 @@
                         $newUploadsCount++;
                     }
                 }
+                if ($isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Resubmit' && $uploadedFile->created_at > $feedback->updated_at) {
+                    $returnedCompliedCount++;
+                }
             }
         @endphp
         <div class="flex flex-wrap mb-4">
             <div class="flex-1 grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
                 <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white">
-                    <div class="text-3xl font-bold text-blue-500">{{ $newUploadsCount }}</div>
-                    <div class="text-sm text-gray-600 mt-2">New Upload</div>
+                    <div class="text-3xl font-bold text-blue-500">{{ $returnedCompliedCount }}</div> <!-- Update this line -->
+                    <div class="text-sm text-gray-600 mt-2">Re-Uploaded</div> <!-- Update this line -->
                     <div class="w-full h-2 bg-blue-100 rounded-full mt-2">
-                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ ($newUploadsCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ ($returnedCompliedCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount + $returnedCompliedCount)) * 100 }}%"></div> <!-- Update this line -->
                     </div>
                 </div>
 
@@ -257,11 +261,11 @@
                 </div>
 
                 <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-green-50 to-white">
-                    <button class="text-3xl text-green-500 hover:text-green-600 transition duration-300">
+                    <a href="{{ route('admin.clearance.print', ['clearanceId' => $userClearance->sharedClearance->clearance_id, 'userId' => $userClearance->user->id]) }}" target="_blank" class="text-3xl text-green-500 hover:text-green-600 transition duration-300">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                    </button>
+                    </a>
                     <div class="text-sm text-gray-600 mt-2">Print Checklist</div>
                 </div>
 
@@ -291,6 +295,7 @@
         <table class="min-w-full bg-white border border-gray-200">
             <thead class="bg-indigo-600 text-white">
                 <tr>
+                    <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider w-[50px]">No.</th>
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Document<br>Status</th>
@@ -316,7 +321,20 @@
                         // Determine if the requirement is complied based on feedback and upload dates
                         $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Resubmit' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
-                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    <tr class="hover:bg-gray-50 transition-colors duration-150
+                        @if($isComplied)
+                            bg-blue-50
+                        @elseif($uploadedFile && !$uploadedFile->is_archived)
+                            @if($feedback && !$feedback->is_archived)
+                                bg-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-50
+                            @else
+                                bg-yellow-50
+                            @endif
+                        @else
+                            bg-gray-50
+                        @endif
+                    ">
+                        <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line w-[50px]">{{ $loop->iteration }}</td>
                         <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ $requirement->requirement }}</td>
                         <td class="px-4 py-4">
                             @foreach($userClearance->uploadedClearances->where('user_id', $userClearance->user->id)->where('requirement_id', $requirement->id)->where('is_archived', false)->sortByDesc('created_at') as $uploaded)
@@ -329,7 +347,7 @@
                                 </div>
                             @endforeach
                         </td>
-                        <td class="px-4 py-4 text-center status-span">
+                        <td class="px-4 py-4 text-center">
                             @if($isComplied)
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                     Returned Complied
@@ -441,7 +459,6 @@
     
 
     <script>
-
         function openFeedbackModal(requirementId) {
             const feedback = @json($userClearance->sharedClearance->clearance->requirements->pluck('feedback', 'id'));
             const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));

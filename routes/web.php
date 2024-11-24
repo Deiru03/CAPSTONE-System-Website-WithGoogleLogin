@@ -126,6 +126,8 @@ Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateMa
 Route::get('/admin/clearance/{id}/report', [AdminClearanceController::class, 'generateChecklistInfo'])->name('admin.clearance.report');
 Route::get('/admin/reports', [GenerateReports::class, 'showReportForm'])->name('admin.reports.show');
 Route::post('/admin/reports/generate', [GenerateReports::class, 'generateSubmittedReport'])->name('admin.reports.generateSubmittedReport');
+Route::get('/admin/clearance/{id}/print', [AdminClearanceController::class, 'printChecklist'])->name('admin.clearance.print');
+Route::get('/admin/clearance/{clearanceId}/print/{userId}', [AdminClearanceController::class, 'printChecklist'])->name('admin.clearance.print');
 
 /////////////////////////////////////////////// Register Routes ////////////////////////////////////////////////
 Route::get('/departments/{campusId}', [RegisteredUserController::class, 'getDepartments']);
