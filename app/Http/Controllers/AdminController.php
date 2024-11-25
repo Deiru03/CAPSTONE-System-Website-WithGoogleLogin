@@ -73,7 +73,10 @@ class AdminController extends Controller
         } elseif ($user->user_type === 'Dean') {
             $userQuery->where('department_id', $user->department_id);
         } elseif ($user->user_type === 'Program-Head') {
-            $userQuery->where('program_id', $user->program_id);
+            $userQuery->where('program_id', $user->program_id)
+                      ->orWhereHas('subPrograms', function($sq) use ($user) {
+                          $sq->where('program_id', $user->program_id);
+                      });
         }
 
         //////////////////////// Clearance Counts //////////////////////////
@@ -105,7 +108,10 @@ class AdminController extends Controller
             $collegeCount = Department::where('id', $user->department_id)->count();
         } elseif ($user->user_type === 'Program-Head') {
             $collegeCount = Department::whereHas('programs', function($query) use ($user) {
-                $query->where('id', $user->program_id);
+                $query->where('id', $user->program_id)
+                      ->orWhereHas('subPrograms', function($sq) use ($user) {
+                          $sq->where('program_id', $user->program_id);
+                      });
             })->count();
         }
 
@@ -169,7 +175,10 @@ class AdminController extends Controller
         } elseif ($user->user_type === 'Dean') {
             $query->where('department_id', $user->department_id);
         } elseif ($user->user_type === 'Program-Head') {
-            $query->where('program_id', $user->program_id);
+            $query->where('program_id', $user->program_id)
+                  ->orWhereHas('subPrograms', function($sq) use ($user) {
+                      $sq->where('program_id', $user->program_id);
+                  });
         }
 
         // Handle search
@@ -250,9 +259,12 @@ class AdminController extends Controller
                 $query->where('department_id', $user->department_id);
             });
         } elseif ($user->user_type === 'Program-Head') {
-            // Program Head: only see reports from their program
+            // Program Head: only see reports from their program and sub-programs
             $submittedReportsQuery->whereHas('user', function($query) use ($user) {
-                $query->where('program_id', $user->program_id);
+                $query->where('program_id', $user->program_id)
+                      ->orWhereHas('subPrograms', function($sq) use ($user) {
+                          $sq->where('program_id', $user->program_id);
+                      });
             });
         }
     
@@ -332,7 +344,10 @@ class AdminController extends Controller
             });
         } elseif ($user->user_type === 'Program-Head') {
             $query->whereHas('user', function($q) use ($user) {
-                $q->where('program_id', $user->program_id);
+                $q->where('program_id', $user->program_id)
+                  ->orWhereHas('subPrograms', function($sq) use ($user) {
+                      $sq->where('program_id', $user->program_id);
+                  });
             });
         }
 
@@ -371,7 +386,10 @@ class AdminController extends Controller
         } elseif ($user->user_type === 'Dean') {
             $query->where('department_id', $user->department_id);
         } elseif ($user->user_type === 'Program-Head') {
-            $query->where('program_id', $user->program_id);
+            $query->where('program_id', $user->program_id)
+                  ->orWhereHas('subPrograms', function($q) use ($user) {
+                      $q->where('program_id', $user->program_id);
+                  });
         }
 
         if ($request->has('search')) {
@@ -752,7 +770,10 @@ class AdminController extends Controller
                 $query->where('department_id', $user->department_id);
             } elseif ($user->user_type === 'Program-Head') {
                 // Program Head can only see faculty in their program
-                $query->where('program_id', $user->program_id);
+                $query->where('program_id', $user->program_id)
+                      ->orWhereHas('subPrograms', function($sq) use ($user) {
+                          $sq->where('program_id', $user->program_id);
+                      });
             }
 
             $allFaculty = $query->get()
