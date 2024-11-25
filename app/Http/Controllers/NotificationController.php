@@ -23,12 +23,24 @@ class NotificationController extends Controller
                     'notification_message' => $notification->notification_message,
                     'is_read' => $notification->is_read,
                     'created_at' => $notification->created_at,
+                    'user_id' => $notification->user_id, // Add user_id here
                     'admin_user_id' => $notification->user ? $notification->user->name : 'Unknown User',
                     'user_name' => $notification->user ? $notification->user->name : 'Unknown User'
                 ];
             });
 
         return response()->json($notifications);
+    }
+
+    public function getNotificationCountsAdminDashboard()
+    {
+        $counts = UserNotification::where('is_read', false)
+            ->select('user_id')
+            ->groupBy('user_id')
+            ->selectRaw('count(*) as count, user_id')
+            ->pluck('count', 'user_id');
+
+        return response()->json($counts);
     }
     
     public function markAsRead($notificationId)

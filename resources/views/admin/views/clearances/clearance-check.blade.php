@@ -392,13 +392,13 @@
         }
     </script>
    
-
+    {{-- New Uploads Count Sidebar --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let newUploadsPerUser = {};
 
             function checkForNewUploads() {
-                fetch('/api/new-uploads-per-user')
+                fetch('/notifications/counts')
                     .then(response => response.json())
                     .then(data => {
                         newUploadsPerUser = data;
@@ -417,7 +417,7 @@
             }
 
             // Check for new uploads every 5 minutes
-            setInterval(checkForNewUploads, 300000);
+            setInterval(checkForNewUploads, 60000);
             checkForNewUploads(); // Initial check
 
             // Update new uploads count when a user is clicked
@@ -431,6 +431,46 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     let newUploadsPerUser = {};
+
+        //     function checkForNewUploads() {
+        //         fetch('/api/new-uploads-per-user')
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 newUploadsPerUser = data;
+        //                 document.querySelectorAll('.user-clearance-link').forEach(link => {
+        //                     const userId = link.dataset.userId;
+        //                     const badge = link.querySelector('.user-badge');
+        //                     if (newUploadsPerUser[userId] > 0) {
+        //                         badge.textContent = newUploadsPerUser[userId];
+        //                         badge.classList.remove('hidden');
+        //                     } else {
+        //                         badge.classList.add('hidden');
+        //                     }
+        //                 });
+        //             })
+        //             .catch(error => console.error('Error fetching new uploads:', error));
+        //     }
+
+        //     // Check for new uploads every 5 minutes
+        //     setInterval(checkForNewUploads, 300000);
+        //     checkForNewUploads(); // Initial check
+
+        //     // Update new uploads count when a user is clicked
+        //     document.querySelectorAll('.user-clearance-link').forEach(link => {
+        //         link.addEventListener('click', function() {
+        //             const userId = this.dataset.userId;
+        //             if (newUploadsPerUser[userId]) {
+        //                 newUploadsPerUser[userId] = 0;
+        //                 checkForNewUploads(); // Recalculate total
+        //             }
+        //         });
+        //     });
+        // });
 
         // Notification Function
        function showNotification(message, isSuccess = true) {

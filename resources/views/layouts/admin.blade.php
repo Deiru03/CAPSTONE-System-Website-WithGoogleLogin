@@ -407,7 +407,7 @@
                                     listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-500', 'text-[11px]');
                                     listItem.innerHTML = `
                                         <div class="notification-avatar">${notification.user_name.charAt(0)}</div>
-                                        <div class="notification-content">
+                                        <div class="notification-content hover:text-indigo-600" onclick="window.location.href = '/admin/admin/clearances/${notification.user_id}'">
                                             <p class="font-semibold">${notification.user_name}</p>
                                             <p>${notification.notification_message}</p>
                                             <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>
@@ -475,6 +475,45 @@
                 })
                 .catch(error => console.error('Error:', error));
             }
+        </script>
+
+        {{-- Clearance Counts Sidebar --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                function fetchNotificationCounts() {
+                    fetch('/notifications/counts')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.querySelectorAll('.user-clearance-link').forEach(link => {
+                                const userId = link.dataset.userId;
+                                const badge = link.querySelector('.user-badge');
+                                if (data[userId] > 0) {
+                                    badge.textContent = data[userId];
+                                    badge.classList.remove('hidden');
+                                } else {
+                                    badge.classList.add('hidden');
+                                }
+                            });
+        
+                            const totalNewUploads = Object.values(data).reduce((a, b) => a + b, 0);
+                            const clearanceBadge = document.getElementById('clearanceBadge');
+                            const clearancesRedDot = document.getElementById('clearancesRedDot');
+                            if (totalNewUploads > 0) {
+                                clearanceBadge.textContent = totalNewUploads;
+                                clearanceBadge.classList.remove('hidden');
+                                clearancesRedDot.classList.remove('hidden');
+                            } else {
+                                clearanceBadge.classList.add('hidden');
+                                clearancesRedDot.classList.add('hidden');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching notification counts:', error));
+                }
+        
+                // Check for new notifications every 1 minutes
+                setInterval(fetchNotificationCounts, 60000);
+                fetchNotificationCounts(); // Initial check
+            });
         </script>
 
         <!-- Loading Spinner -->
@@ -605,7 +644,7 @@
             });
         </script>
 
-        <!-- New Uploads Notification Count -->
+        {{-- <!-- New Uploads Notification Count -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 let newUploadsPerUser = {};
@@ -634,7 +673,7 @@
                 setInterval(checkForNewUploads, 300000);
                 checkForNewUploads(); // Initial check
             });
-        </script>
+        </script> --}}
            {{-- <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 hidden z-50">
             <div class="flex flex-col items-center">
