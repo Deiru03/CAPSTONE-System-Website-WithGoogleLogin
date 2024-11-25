@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use App\Models\UserNotification;
+use App\Models\ClearanceFeedback;
 class ClearanceController extends Controller
 {/**
      * Display a listing of shared clearances for the faculty.
@@ -251,7 +252,22 @@ class ClearanceController extends Controller
                     'transaction_type' => 'Uploaded',
                     'status' => 'Okay',
                 ]);
+                 // Create a notification for the user
+                UserNotification::create([
+                    'user_id' => $user->id, // or the admin's ID if you want to notify an admin
+                    'admin_user_id' => null,
+                    'notification_type' => 'file_upload',
+                    'notification_data' => json_encode([
+                        'message' => "You have successfully uploaded {$fileCount} file(s) for requirement: {$requirementName}.",
+                    ]),
+                    'is_read' => false,
+                ]);
 
+                ClearanceFeedback::create([
+                    'user_id' => $user->id,
+                    'requirement_id' => $requirementId,
+                    'signature_status' => 'Checking',
+                ]);
     
                 return response()->json([
                     'success' => true,
@@ -487,10 +503,12 @@ class ClearanceController extends Controller
             $feedback = $requirement->feedback->where('user_id', $user->id)->first();
     
             $status = 'Not Complied';
-            if ($uploadedFiles->isNotEmpty()) {
+            if ($feedback && $feedback->signature_status == 'Complied') {
                 $status = 'Complied';
             } elseif ($feedback && $feedback->signature_status == 'Resubmit') {
                 $status = 'Resubmit';
+            } elseif ($feedback && $feedback->signature_status == 'Not Applicable') {
+                $status = 'Not Applicable';
             }
     
             return [

@@ -239,7 +239,8 @@
                     $categorizedRequirements = [
                         'Missing' => [],
                         'Uploaded' => [],
-                        'Resubmit' => []
+                        'Resubmit' => [],
+                        'Not Applicable' => []
                     ];
 
                     foreach($requirements as $index => $requirement) {
@@ -264,6 +265,8 @@
                             $categorizedRequirements['Resubmit'][] = $requirementData;
                         } elseif ($hasNonArchivedUpload) {
                             $categorizedRequirements['Uploaded'][] = $requirementData;
+                        } elseif ($feedback && $feedback->signature_status == 'Not Applicable') {
+                            $categorizedRequirements['Not Applicable'][] = $requirementData;
                         } else {
                             $categorizedRequirements['Missing'][] = $requirementData;
                         }
@@ -277,20 +280,23 @@
                             <div class="folder-header p-3 cursor-pointer flex items-center justify-between transition-colors duration-200 
                                 {{ $category === 'Missing' ? 'bg-yellow-100 hover:bg-yellow-200 border-l-4 border-yellow-500' : '' }}
                                 {{ $category === 'Uploaded' ? 'bg-green-100 hover:bg-green-200 border-l-4 border-green-500' : '' }}
-                                {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200 border-l-4 border-red-500' : '' }}"
+                                {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200 border-l-4 border-red-500' : '' }}
+                                {{ $category === 'Not Applicable' ? 'bg-purple-100 hover:bg-purple-200 border-l-4 border-purple-500' : '' }}"
                                 onclick="toggleFolder(this)">
                                 <div class="flex items-center">
                                     <svg class="folder-icon h-5 w-5 mr-2 transform transition-transform duration-200
                                         {{ $category === 'Missing' ? 'text-yellow-600' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-600' : '' }}
-                                        {{ $category === 'Resubmit' ? 'text-red-600' : '' }}" 
+                                        {{ $category === 'Resubmit' ? 'text-red-600' : '' }}
+                                        {{ $category === 'Not Applicable' ? 'text-purple-600' : '' }}" 
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                     <h3 class="text-lg font-semibold 
                                         {{ $category === 'Missing' ? 'text-yellow-800' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-800' : '' }}
-                                        {{ $category === 'Resubmit' ? 'text-red-800' : '' }}">
+                                        {{ $category === 'Resubmit' ? 'text-red-800' : '' }}
+                                        {{ $category === 'Not Applicable' ? 'text-purple-800' : '' }}">
                                         {{ $category }} ({{ count($requirements) }})
                                     </h3>
                                 </div>
@@ -326,7 +332,11 @@
                                                     ->where('is_archived', false)
                                                     ->first();
 
-                                                $checkStatus = 'No Upload';
+                                                if ($feedback) {
+                                                    $checkStatus = $feedback->signature_status == 'Not Applicable' ? 'Not Applicable' : $feedback->signature_status;
+                                                } else {
+                                                    $checkStatus = 'No Upload';
+                                                }
                                                 if ($hasNonArchivedUpload) {
                                                     $checkStatus = 'Uploaded';
                                                     if ($feedback) {
@@ -334,6 +344,8 @@
                                                             $checkStatus = 'Complied';
                                                         } elseif ($feedback->signature_status == 'Resubmit') {
                                                             $checkStatus = 'Resubmit';
+                                                        } elseif ($feedback->signature_status == 'Not Applicable') {
+                                                            $checkStatus = 'Not Applicable';
                                                         } else {
                                                             $checkStatus = 'Checking';
                                                         }
@@ -351,7 +363,8 @@
                                                         {{ $checkStatus === 'Resubmit' ? 'bg-red-100 text-red-900' : '' }}
                                                         {{ $checkStatus === 'Checking' ? 'bg-yellow-100 text-yellow-900' : '' }}
                                                         {{ $checkStatus === 'Uploaded' ? 'bg-blue-100 text-blue-900' : '' }}
-                                                        {{ $checkStatus === 'No Upload' ? 'bg-gray-100 text-gray-800' : '' }}">
+                                                        {{ $checkStatus === 'No Upload' ? 'bg-gray-100 text-gray-800' : '' }}
+                                                        {{ $checkStatus === 'Not Applicable' ? 'bg-purple-100 text-purple-900' : '' }}">
                                                         {{ $checkStatus }}
                                                     </span>
                                                 </td>
@@ -440,6 +453,7 @@
                                                             </button>
                                                         </div>
                                                     @else
+                                                        @if($checkStatus != 'Not Applicable')
                                                         <div class="flex justify-center">
                                                             <button style="width: 90px;"
                                                                 onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
@@ -447,6 +461,7 @@
                                                                 Upload
                                                             </button>
                                                         </div>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -707,10 +722,14 @@
                 if (statusSpan && statusSpan.textContent.trim() === 'Resubmit') {
                     returnCount++;
                 }
+
+                if (statusSpan && statusSpan.textContent.trim() === 'Not Applicable') {
+                    notApplicableCount++;
+                }
             });
 
             console.log(requirements);
-            console.log(`Missing: ${missingCount}, Resubmit: ${returnCount}`);
+            console.log(`Missing: ${missingCount}, Resubmit: ${returnCount}, Not Applicable: ${notApplicableCount}`);
             
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
             returnCountElement.textContent = `Resubmit Documents: ${returnCount} out of ${requirements.length}`;

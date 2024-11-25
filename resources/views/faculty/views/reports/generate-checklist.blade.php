@@ -184,10 +184,18 @@
         <tbody>
             @foreach($requirements as $requirement)
             <tr>
+                @php
+                    $status = $requirement['status'];
+                    if ($status == 'Complied') {
+                        $status = 'YES';
+
+                        dd($status);
+                    }
+                @endphp
                 <td style="padding-left: 22px; text-indent: -20px;"> {{ $loop->iteration }}. {{ $requirement['requirement']->requirement }}</td>
-                <td style="text-align: center;">{{ $requirement['status'] == 'Complied' ? 'YES' : '' }}</td>
-                <td style="text-align: center;">{{ $requirement['status'] == 'Resubmit' || $requirement['status'] == 'Not Complied' ? 'YES' : '' }}</td>
-                <td style="text-align: center;">{{ $requirement['status'] == 'Not Applicable' ? 'YES' : '' }}</td>
+                <td style="text-align: center;">{{ $status == 'Complied' ? 'YES' : '' }}</td>
+                <td style="text-align: center;">{{ $status == 'Resubmit' || $status == 'Not Complied' ? 'YES' : '' }}</td>
+                <td style="text-align: center;">{{ $status == 'Not Applicable' ? 'YES' : '' }}</td>
             </tr>
             @endforeach
         </tbody>

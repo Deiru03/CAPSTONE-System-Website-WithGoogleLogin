@@ -7,6 +7,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\Admin\ClearanceController as AdminClearanceController;
 use App\Http\Controllers\Faculty\ClearanceController as FacultyClearanceController;
 use App\Http\Controllers\Admin\CampusController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\OptimizationController;
@@ -103,6 +104,10 @@ Route::middleware(['Faculty'])->group(function () {
     Route::get('/faculty', [FacultyController::class, 'dashboard'])->name('faculty.dashboard');
     Route::get('/faculty/homepage', [FacultyController::class, 'home'])->name('faculty.home');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+});
 /////////////////////////////////////////////// End of Redirects If Not Admin or Faculty Middleware ////////////////////////////////////////////////
 
 /////////////////////////////////////////////// Optimization Routes ////////////////////////////////////////////////
@@ -114,6 +119,12 @@ Route::get('/api/new-uploads-per-user', function () {
     $lastCheck = session('last_clearance_check', now()->subDay());
     $newUploads = UploadedClearance::newUploadsPerUser($lastCheck);
     return response()->json($newUploads);
+});
+
+
+Route::middleware('auth')->group(function () {
+   Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+   Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
 });
 
 /////////////////////////////////////////////// Role Switch Route ////////////////////////////////////////////////

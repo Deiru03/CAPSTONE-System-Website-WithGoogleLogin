@@ -84,12 +84,17 @@
     </div>
     
     <!-- Reset Button -->
-    <button id="resetButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2 border-2 border-red-600 hover:border-red-800">
+    <button id="resetButton" class="
+        {{ $userClearance->user->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-700 border-2 border-green-600 hover:border-green-800' : 'bg-red-500 hover:bg-red-700 border-2 border-red-600 hover:border-red-800' }}
+        text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
         </svg>
         <span>Update User Clearances</span>
     </button>
+    <span class="text-sm text-gray-600 mt-2">
+        This will reset the user's clearances to the selected academic year and semester.
+    </span>
 
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50 mt-10">
@@ -187,6 +192,8 @@
             $resubmitsCount = 0;
             $compliedCount = 0;
             $returnedCompliedCount = 0;
+            $notApplicableCount = 0;
+            $totalRequirements = count($userClearance->sharedClearance->clearance->requirements);
 
             foreach ($userClearance->sharedClearance->clearance->requirements as $requirement) {
                 $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
@@ -196,7 +203,12 @@
                     ->sortByDesc('created_at')
                     ->first();
 
-                if ($uploadedFile && !$uploadedFile->is_archived) {
+                // Check for Not Applicable status first
+                if ($feedback && !$feedback->is_archived && $feedback->signature_status == 'Not Applicable') {
+                    $notApplicableCount++;
+                }
+                // Then check uploaded files
+                else if ($uploadedFile && !$uploadedFile->is_archived) {
                     if ($feedback && !$feedback->is_archived) {
                         if ($feedback->signature_status == 'Resubmit') {
                             $resubmitsCount++;
@@ -214,21 +226,21 @@
                 }
             }
         @endphp
-        <div class="flex flex-wrap mb-4">
-            <div class="flex-1 grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+        <div class="flex flex-wrap mb-4 justify-end">
+            <div class="flex-1 grid grid-cols-5 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200 max-w-[850px]">
                 <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white">
                     <div class="text-3xl font-bold text-blue-500">{{ $returnedCompliedCount }}</div> <!-- Update this line -->
                     <div class="text-sm text-gray-600 mt-2">Re-Uploaded</div> <!-- Update this line -->
                     <div class="w-full h-2 bg-blue-100 rounded-full mt-2">
-                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ ($returnedCompliedCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount + $returnedCompliedCount)) * 100 }}%"></div> <!-- Update this line -->
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ ($returnedCompliedCount / max(1, $totalRequirements)) * 100 }}%"></div> <!-- Update this line -->
                     </div>
                 </div>
 
                 <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-yellow-50 to-white">
                     <div class="text-3xl font-bold text-yellow-500">{{ $onCheckCount }}</div>
-                    <div class="text-sm text-gray-600 mt-2">On-Check</div>
+                    <div class="text-sm text-gray-600 mt-2">Checking</div>
                     <div class="w-full h-2 bg-yellow-100 rounded-full mt-2">
-                        <div class="h-full bg-yellow-500 rounded-full" style="width: {{ ($onCheckCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                        <div class="h-full bg-yellow-500 rounded-full" style="width: {{ ($onCheckCount / max(1, $totalRequirements)) * 100 }}%"></div>
                     </div>
                 </div>
 
@@ -236,7 +248,7 @@
                     <div class="text-3xl font-bold text-red-500">{{ $resubmitsCount }}</div>
                     <div class="text-sm text-gray-600 mt-2">Resubmits</div>
                     <div class="w-full h-2 bg-red-100 rounded-full mt-2">
-                        <div class="h-full bg-red-500 rounded-full" style="width: {{ ($resubmitsCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                        <div class="h-full bg-red-500 rounded-full" style="width: {{ ($resubmitsCount / max(1, $totalRequirements)) * 100 }}%"></div>
                     </div>
                 </div>
 
@@ -244,13 +256,22 @@
                     <div class="text-3xl font-bold text-green-500">{{ $compliedCount }}</div>
                     <div class="text-sm text-gray-600 mt-2">Complied</div>
                     <div class="w-full h-2 bg-green-100 rounded-full mt-2">
-                        <div class="h-full bg-green-500 rounded-full" style="width: {{ ($compliedCount / max(1, $newUploadsCount + $onCheckCount + $resubmitsCount + $compliedCount)) * 100 }}%"></div>
+                        <div class="h-full bg-green-500 rounded-full" style="width: {{ ($compliedCount / max(1, $totalRequirements)) * 100 }}%"></div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-purple-50 to-white">
+                    <div class="text-3xl font-bold text-purple-500">{{ $notApplicableCount }}</div>
+                    <div class="text-sm text-gray-600 mt-2">Not Applicable</div>
+                    <div class="w-full h-2 bg-purple-100 rounded-full mt-2">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: {{ ($notApplicableCount / max(1, $totalRequirements)) * 100 }}%"></div>
                     </div>
                 </div>
             </div>
+
             <div class="w-0.5 bg-indigo-400 mx-2"></div>
+            
             {{-- Export Report --}}
-            <div class="flex-1 grid grid-cols-4 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+            <div class="flex-1 grid grid-cols-3 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200 max-w-[500px]">
                 <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-indigo-50 to-white">
                     <button class="text-3xl text-indigo-500 hover:text-indigo-600 transition duration-300">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,14 +299,14 @@
                     <div class="text-sm text-gray-600 mt-2">Send Email</div>
                 </div>
 
-                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-purple-50 to-white">
+                {{-- <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-purple-50 to-white">
                     <button class="text-3xl text-purple-500 hover:text-purple-600 transition duration-300">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
                     </button>
                     <div class="text-sm text-gray-600 mt-2">More Actions</div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -349,19 +370,23 @@
                         </td>
                         <td class="px-4 py-4 text-center">
                             @if($isComplied)
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-500">
                                     Returned Complied
                                 </span>
                             @elseif($uploadedFile && !$uploadedFile->is_archived)
                                 @if($feedback && !$feedback->is_archived)
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-800">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-100 text-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-800 border border-{{ $feedback->signature_status == 'Complied' ? 'green' : ($feedback->signature_status == 'Resubmit' ? 'red' : 'yellow') }}-500">
                                         {{ $feedback->signature_status }}
                                     </span>
                                 @else
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Checking</span>
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-500">Checking</span>
                                 @endif
                             @else
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No Attachment</span>
+                                @if($feedback && $feedback->signature_status == 'Not Applicable')
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-500">Not Applicable</span>
+                                @else
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-500">No Attachment</span>
+                                @endif
                             @endif
                         </td>
                         @if(Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Program-Head' || Auth::user()->user_type === 'Dean')
@@ -411,6 +436,7 @@
                         <option value="Checking">Checking</option>
                         <option value="Complied">Complied</option>
                         <option value="Resubmit">Resubmit</option>
+                        <option value="Not Applicable">Not Applicable</option>
                     </select>
                     @if(Auth::user()->user_type !== 'Admin')
                         <p class="mt-2 text-sm text-gray-500 italic">Only <strong class="text-indigo-500">Admin</strong> can validate documents. You may still leave feedback below.</p>

@@ -46,7 +46,7 @@ class AdminController extends Controller
          if ($userClearance) {
              $allSigned = $userClearance->sharedClearance->clearance->requirements->every(function ($requirement) use ($userClearance) {
                  $feedback = $requirement->feedback->where('user_id', $userClearance->user_id)->first();
-                 return $feedback && $feedback->signature_status === 'Complied';
+                 return $feedback && ($feedback->signature_status === 'Complied' || $feedback->signature_status === 'Not Applicable');
              });
  
              $user = User::find($userId);

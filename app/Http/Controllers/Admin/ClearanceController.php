@@ -347,10 +347,12 @@ class ClearanceController extends Controller
             $feedback = $requirement->feedback->where('user_id', $user->id)->first();
 
             $status = 'Not Complied';
-            if ($uploadedFiles->isNotEmpty() || $feedback->signature_status == 'Complied') {
+            if ($feedback && $feedback->signature_status == 'Complied') {
                 $status = 'Complied';
             } elseif ($feedback && $feedback->signature_status == 'Resubmit') {
                 $status = 'Resubmit';
+            } elseif ($feedback && $feedback->signature_status == 'Not Applicable') {
+                $status = 'Not Applicable';
             }
 
             return [
@@ -490,7 +492,7 @@ class ClearanceController extends Controller
                 'requirement_id' => 'required|exists:clearance_requirements,id',
                 'user_id' => 'required|exists:users,id',
                 'message' => 'nullable|string',
-                'signature_status' => 'required|in:Checking,Complied,Resubmit',
+                'signature_status' => 'required|in:Checking,Complied,Resubmit,Not Applicable',
             ]);
             
             // Determine the role identifier
