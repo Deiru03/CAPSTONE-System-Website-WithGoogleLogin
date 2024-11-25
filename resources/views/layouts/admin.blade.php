@@ -46,6 +46,58 @@
         .hidden {
             display: none;
         }
+
+        #notificationDropdown {
+            font-size: 11px;
+            right: 0;
+            top: 40;
+            width: 500px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            bring-to-front: 100;
+        }
+
+        #notificationList li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.2s;
+        }
+
+        #notificationList li:hover {
+            background-color: #f7fafc;
+        }
+
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #edf2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #4a5568;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
     </style>
 
     <body class="font-sans antialiased">
@@ -218,7 +270,7 @@
 
                 <!-- Page Heading -->
                 @isset($header)
-                <header class="bg-white shadow">
+                <header class="bg-white shadow sticky-header">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center">
@@ -232,77 +284,79 @@
                                 </h2>
                             </div>
 
-                            <!-- Notification Bell -->
-                            <div class="relative z-100">
-                                <button id="notificationBell" class="relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                    </svg>
-                                    <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
-                                </button>
-                                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-100">
-                                    <ul id="notificationList" class="p-2">
-                                        <!-- Notifications will be appended here -->
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <!-- User Dropdown -->
-                            <x-dropdown align="right" width="48">
-                                <x-slot name="trigger">
-                                    <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                        @if(Auth::user()->profile_picture)
-                                            @if (str_contains(Auth::user()->profile_picture, 'http'))
-                                                <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
-                                            @else
-                                                <img src="{{ url('/profile_pictures/' . basename(Auth::user()->profile_picture)) }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
-                                            @endif
-                                        @else
-                                            <div class="h-6 w-6 rounded-full mr-2 flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
-                                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                            </div>
-                                        @endif
-                                        <div>{{ Auth::user()->name }}</div>
-                                        <div class="ms-1">
-                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </div>
+                            <div class="flex items-center space-x-4">
+                                <!-- Notification Bell -->
+                                <div class="notification-div relative" style="position: relative; top: 0px; right: 0px;">
+                                    <button id="notificationBell" class="relative hover:bg-gray-100 p-2 rounded-full transition-colors duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:text-indigo-600 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                                        </svg>
+                                        <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden animate-bounce">0</span>
                                     </button>
-                                </x-slot>
+                                    <div id="notificationDropdown" class="absolute right-0 mt-2 w-[300px] bg-white border border-gray-200 rounded-lg shadow-lg hidden hover:shadow-xl transition-shadow duration-200">
+                                        <ul id="notificationList" class="p-2">
+                                            <!-- Notifications will be appended here -->
+                                        </ul>
+                                    </div>
+                                </div>
 
-                                <x-slot name="content">
-                                    <x-dropdown-link :href="route('admin.profile.edit')"
-                                        class="hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-150">
-                                        {{ __('Profile') }}
-                                    </x-dropdown-link>
+                                <!-- User Dropdown -->
+                                <x-dropdown align="right" width="48">
+                                    <x-slot name="trigger">
+                                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                            @if(Auth::user()->profile_picture)
+                                                @if (str_contains(Auth::user()->profile_picture, 'http'))
+                                                    <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
+                                                @else
+                                                    <img src="{{ url('/profile_pictures/' . basename(Auth::user()->profile_picture)) }}" alt="Profile Picture" class="h-6 w-6 rounded-full mr-2">
+                                                @endif
+                                            @else
+                                                <div class="h-6 w-6 rounded-full mr-2 flex items-center justify-center text-white font-bold" style="background-color: {{ '#' . substr(md5(Auth::user()->name), 0, 6) }};">
+                                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <div>{{ Auth::user()->name }}</div>
+                                            <div class="ms-1">
+                                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </button>
+                                    </x-slot>
 
-                                    @foreach(Auth::user()->availableRoles() as $role)
-                                        @if($role !== Auth::user()->user_type)
-                                            <form method="POST" action="{{ route('switchRole') }}">
-                                                @csrf
-                                                <input type="hidden" name="role" value="{{ $role }}">
-                                                <x-dropdown-link :href="route('switchRole')"
-                                                        class="hover:bg-green-50 hover:text-green-600 transition-colors duration-150"
-                                                        onclick="event.preventDefault();
-                                                                    this.closest('form').submit();">
-                                                    {{ __('Switch to ' . $role) }}
-                                                </x-dropdown-link>
-                                            </form>
-                                        @endif
-                                    @endforeach
-
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <x-dropdown-link :href="route('logout')"
-                                            class="hover:bg-red-50 hover:text-red-600 transition-colors duration-150"
-                                            onclick="event.preventDefault();
-                                                        this.closest('form').submit();">
-                                            {{ __('Log Out') }}
+                                    <x-slot name="content">
+                                        <x-dropdown-link :href="route('admin.profile.edit')"
+                                            class="hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-150">
+                                            {{ __('Profile') }}
                                         </x-dropdown-link>
-                                    </form>
-                                </x-slot>
-                            </x-dropdown>
+
+                                        @foreach(Auth::user()->availableRoles() as $role)
+                                            @if($role !== Auth::user()->user_type)
+                                                <form method="POST" action="{{ route('switchRole') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="role" value="{{ $role }}">
+                                                    <x-dropdown-link :href="route('switchRole')"
+                                                            class="hover:bg-green-50 hover:text-green-600 transition-colors duration-150"
+                                                            onclick="event.preventDefault();
+                                                                        this.closest('form').submit();">
+                                                        {{ __('Switch to ' . $role) }}
+                                                    </x-dropdown-link>
+                                                </form>
+                                            @endif
+                                        @endforeach
+
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <x-dropdown-link :href="route('logout')"
+                                                class="hover:bg-red-50 hover:text-red-600 transition-colors duration-150"
+                                                onclick="event.preventDefault();
+                                                            this.closest('form').submit();">
+                                                {{ __('Log Out') }}
+                                            </x-dropdown-link>
+                                        </form>
+                                    </x-slot>
+                                </x-dropdown>
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -340,29 +394,25 @@
                 const notificationList = document.getElementById('notificationList');
                 const notificationCount = document.getElementById('notificationCount');
 
-                function fetchUnreadNotifications() {
+                function fetchUnreadNotifications(markNotificationAsRead = false) {
                     fetch('/notifications/unread')
                         .then(response => response.json())
                         .then(data => {
-                            console.log('Notifications count', data);
                             notificationList.innerHTML = ''; // Clear existing notifications
                             if (data.length > 0) {
                                 notificationCount.textContent = data.length;
                                 notificationCount.classList.remove('hidden');
                                 data.forEach(notification => {
                                     const listItem = document.createElement('li');
-                                    listItem.classList.add('p-2', 'border-b', 'border-gray-200');
+                                    listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-500', 'text-[11px]');
                                     listItem.innerHTML = `
-                                        <div class="flex flex-col">
-                                            <p>${notification.id}</p>
-                                            <p>${notification.user_name}</p>
-                                            <p>${notification.admin_user_id}</p>
-                                            <p>${notification.notification_type}</p>
+                                        <div class="notification-avatar">${notification.user_name.charAt(0)}</div>
+                                        <div class="notification-content">
+                                            <p class="font-semibold">${notification.user_name}</p>
                                             <p>${notification.notification_message}</p>
-                                            <p>${notification.is_read}</p>
-                                            <p>${notification.created_at}</p>
-                                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs">Mark as Read</button>
+                                            <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>
                                         </div>
+                                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs">Mark as Read</button>
                                     `;
                                     notificationList.appendChild(listItem);
                                 });
@@ -381,7 +431,16 @@
                     notificationDropdown.classList.toggle('hidden');
                 });
 
-                fetchUnreadNotifications();
+                // Fetch notifications every 10 seconds
+                setInterval(fetchUnreadNotifications, 30000);
+
+                // Fetch notifications every 1 second if markNotificationAsRead is true
+                if (markNotificationAsRead) {
+                    setInterval(fetchUnreadNotifications, 500);
+                    setTimeout(() => {
+                        fetchUnreadNotifications(false);
+                    }, 1000);
+                }
             });
 
             function markNotificationAsRead(notificationId) {
@@ -395,7 +454,23 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        fetchUnreadNotifications(); // Refresh notifications
+                        // Remove the notification from the UI
+                        const notificationElement = document.querySelector(`[data-notification-id="${notificationId}"]`);
+                        if (notificationElement) {
+                            notificationElement.remove();
+                        }
+                        
+                        // Update notification count
+                        const notificationCount = document.getElementById('notificationCount');
+                        const currentCount = parseInt(notificationCount.textContent);
+                        if (currentCount > 1) {
+                            notificationCount.textContent = currentCount - 1;
+                            fetchUnreadNotifications(true);
+                        } else {
+                            notificationCount.classList.add('hidden');
+                            const notificationList = document.getElementById('notificationList');
+                            notificationList.innerHTML = '<li class="p-2 text-gray-500">No new notifications</li>';
+                        }
                     }
                 })
                 .catch(error => console.error('Error:', error));
