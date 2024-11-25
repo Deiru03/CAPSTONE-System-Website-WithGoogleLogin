@@ -55,8 +55,8 @@
             max-height: 400px;
             overflow-y: auto;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            bring-to-front: 100;
+            z-index: 1000;
+            /* bring-to-front: 100; */
         }
 
         #notificationList li {
@@ -98,6 +98,7 @@
             top: 0;
             z-index: 50;
         }
+        
     </style>
 
     <body class="font-sans antialiased">
@@ -530,7 +531,7 @@
                 if (!isUserClearanceDetails) {
                     // Create loading spinner HTML
                     const spinnerHTML = `
-                        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm hidden z-30">
+                        <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-gray-900/70 backdrop-blur-sm hidden" style="z-index: 1000;">
                             <div class="relative flex flex-col items-center">
                                 <div class="w-32 h-32 mb-8 relative animate-bounce">
                                     <img src="${window.location.origin}/images/OMSCLogo.png" alt="OMSC Logo" class="w-full h-full object-contain animate-pulse">

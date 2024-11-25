@@ -22,7 +22,7 @@
         }
 
         /* Sticky header styles */
-        .sticky-header {
+        .sticky-header-faculty {
             position: sticky;
             top: 0;
             background-color: rgb(228, 250, 255); /* Background color to cover content below */
@@ -188,7 +188,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full border border-gray-300">
                 <div class="table-container overflow-y-auto" style="max-height: 600px;">
                     <table class="w-full text-xs"> <!-- Changed from text-sm to text-xs -->
-                        <thead class="bg-gray-200 sticky-header">
+                        <thead class="bg-gray-200 sticky-header-faculty">
                             <tr>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px]">ID</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Name</th>

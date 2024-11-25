@@ -11,7 +11,24 @@ class NotificationController extends Controller
 {
     public function getUnreadNotifications()
     {
-        $users = User::all();
+        $user = Auth::user();
+        
+        // Start with base query
+        $users = User::query();
+
+        // Apply filters based on user type and scope
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Super admin sees all users
+        } elseif ($user->user_type === 'Admin') {
+            $users = $users->where('campus_id', $user->campus_id);
+        } elseif ($user->user_type === 'Dean') {
+            $users = $users->where('department_id', $user->department_id);
+        } elseif ($user->user_type === 'Program-Head') {
+            $users = $users->where('program_id', $user->program_id);
+        }
+
+        $users = $users->get();
+
         $notifications = UserNotification::with(['user'])
             ->where('is_read', false)
             ->whereIn('user_id', $users->pluck('id'))
@@ -23,7 +40,7 @@ class NotificationController extends Controller
                     'notification_message' => $notification->notification_message,
                     'is_read' => $notification->is_read,
                     'created_at' => $notification->created_at,
-                    'user_id' => $notification->user_id, // Add user_id here
+                    'user_id' => $notification->user_id,
                     'admin_user_id' => $notification->user ? $notification->user->name : 'Unknown User',
                     'user_name' => $notification->user ? $notification->user->name : 'Unknown User'
                 ];
@@ -34,7 +51,26 @@ class NotificationController extends Controller
 
     public function getNotificationCountsAdminDashboard()
     {
+        $user = Auth::user();
+        
+        // Start with base query
+        $users = User::query();
+
+        // Apply filters based on user type and scope
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Super admin sees all users
+        } elseif ($user->user_type === 'Admin') {
+            $users = $users->where('campus_id', $user->campus_id);
+        } elseif ($user->user_type === 'Dean') {
+            $users = $users->where('department_id', $user->department_id);
+        } elseif ($user->user_type === 'Program-Head') {
+            $users = $users->where('program_id', $user->program_id);
+        }
+
+        $users = $users->get();
+
         $counts = UserNotification::where('is_read', false)
+            ->whereIn('user_id', $users->pluck('id'))
             ->select('user_id')
             ->groupBy('user_id')
             ->selectRaw('count(*) as count, user_id')
