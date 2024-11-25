@@ -395,7 +395,7 @@
                 const notificationList = document.getElementById('notificationList');
                 const notificationCount = document.getElementById('notificationCount');
 
-                function fetchUnreadNotifications(markNotificationAsRead = false) {
+                function fetchUnreadNotifications() {
                     fetch('/notifications/unread')
                         .then(response => response.json())
                         .then(data => {
@@ -413,7 +413,7 @@
                                             <p>${notification.notification_message}</p>
                                             <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>
                                         </div>
-                                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs">Mark as Read</button>
+                                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs border-2 border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white transition-colors duration-200">Mark as Read</button>
                                     `;
                                     notificationList.appendChild(listItem);
                                 });
@@ -432,16 +432,40 @@
                     notificationDropdown.classList.toggle('hidden');
                 });
 
-                // Fetch notifications every 10 seconds
-                setInterval(fetchUnreadNotifications, 30000);
+                // Fetch immediately when page loads
+                fetchUnreadNotifications();
 
-                // Fetch notifications every 1 second if markNotificationAsRead is true
-                if (markNotificationAsRead) {
-                    setInterval(fetchUnreadNotifications, 500);
+                // Set up regular interval for fetching notifications
+                let notificationInterval = setInterval(fetchUnreadNotifications, 15000);
+
+                // Expose function to refresh notifications after marking as read
+                window.refreshNotificationsAfterMark = function() {
+                    // Clear existing interval
+                    clearInterval(notificationInterval);
+                    
+                    // Fetch immediately
+                    fetchUnreadNotifications();
+                    
+                    // Wait 2 seconds then fetch again
                     setTimeout(() => {
-                        fetchUnreadNotifications(false);
-                    }, 1000);
-                }
+                        fetchUnreadNotifications();
+                        // Restart regular interval
+                        notificationInterval = setInterval(fetchUnreadNotifications, 15000);
+                    }, 300);
+                };
+                                // // Fetch notifications every 10 seconds
+                // setInterval(fetchUnreadNotifications, 15000);
+
+                // // Fetch notifications every 1 second if markNotificationAsRead is true
+                // if (markNotificationAsRead === true) {
+                //     setInterval(fetchUnreadNotifications, 1000);
+                //     setTimeout(() => {
+                //         fetchUnreadNotifications(false);
+                //     }, 3000);
+                // } else {
+                //     fetchUnreadNotifications(false);
+                //     setInterval(fetchUnreadNotifications, 15000);
+                // }
             });
 
             function markNotificationAsRead(notificationId) {
@@ -465,8 +489,8 @@
                         const notificationCount = document.getElementById('notificationCount');
                         const currentCount = parseInt(notificationCount.textContent);
                         if (currentCount > 1) {
-                            notificationCount.textContent = currentCount - 1;
-                            fetchUnreadNotifications(true);
+                            notificationCount.textContent = currentCount - 0;
+                            refreshNotificationsAfterMark();
                         } else {
                             notificationCount.classList.add('hidden');
                             const notificationList = document.getElementById('notificationList');
@@ -511,7 +535,7 @@
                         .catch(error => console.error('Error fetching notification counts:', error));
                 }
         
-                // Check for new notifications every 1 minutes
+                // Check for new notifications every 30 seconds
                 setInterval(fetchNotificationCounts, 60000);
                 fetchNotificationCounts(); // Initial check
             });
