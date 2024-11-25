@@ -122,10 +122,13 @@ Route::get('/api/new-uploads-per-user', function () {
 });
 
 
-Route::middleware('auth')->group(function () {
-   Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
-   Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
-});
+// Route::middleware('auth')->group(function () {
+//    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+//    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
+// });
+
+Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
+Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
 
 /////////////////////////////////////////////// Role Switch Route ////////////////////////////////////////////////
 Route::post('/switch-role', [ProfileController::class, 'switchRole'])->name('switchRole');

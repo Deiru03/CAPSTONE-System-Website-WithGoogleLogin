@@ -253,13 +253,11 @@ class ClearanceController extends Controller
                     'status' => 'Okay',
                 ]);
                  // Create a notification for the user
-                UserNotification::create([
-                    'user_id' => $user->id, // or the admin's ID if you want to notify an admin
+                 UserNotification::create([
+                    'user_id' => Auth::id(),
                     'admin_user_id' => null,
-                    'notification_type' => 'file_upload',
-                    'notification_data' => json_encode([
-                        'message' => "You have successfully uploaded {$fileCount} file(s) for requirement: {$requirementName}.",
-                    ]),
+                    'notification_type' => 'File Uploaded',
+                    'notification_message' => "Uploaded a {$fileCount} file(s) for requirement: {$requirementName}.",
                     'is_read' => false,
                 ]);
 

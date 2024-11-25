@@ -3,22 +3,37 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\UserNotification; // Fixed typo in model name
+use App\Models\UserNotification;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     public function getUnreadNotifications()
     {
-        $notifications = UserNotification::where('is_read', false)
-            ->get();
+        $users = User::all();
+        $notifications = UserNotification::with(['user'])
+            ->where('is_read', false)
+            ->whereIn('user_id', $users->pluck('id'))
+            ->get()
+            ->map(function($notification) {
+                return [
+                    'id' => $notification->id,
+                    'notification_type' => $notification->notification_type,
+                    'notification_message' => $notification->notification_message,
+                    'is_read' => $notification->is_read,
+                    'created_at' => $notification->created_at,
+                    'admin_user_id' => $notification->user ? $notification->user->name : 'Unknown User',
+                    'user_name' => $notification->user ? $notification->user->name : 'Unknown User'
+                ];
+            });
 
         return response()->json($notifications);
     }
     
     public function markAsRead($notificationId)
     {
-        $notification = UserNotification::where('id', $notificationId) // Fixed typo
+        $notification = UserNotification::where('id', $notificationId)
             ->where('user_id', Auth::id())
             ->first();
         if ($notification) {

@@ -233,14 +233,14 @@
                             </div>
 
                             <!-- Notification Bell -->
-                            <div class="relative">
+                            <div class="relative z-100">
                                 <button id="notificationBell" class="relative">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                     <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
                                 </button>
-                                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden">
+                                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-100">
                                     <ul id="notificationList" class="p-2">
                                         <!-- Notifications will be appended here -->
                                     </ul>
@@ -339,7 +339,7 @@
                 const notificationDropdown = document.getElementById('notificationDropdown');
                 const notificationList = document.getElementById('notificationList');
                 const notificationCount = document.getElementById('notificationCount');
-        
+
                 function fetchUnreadNotifications() {
                     fetch('/notifications/unread')
                         .then(response => response.json())
@@ -353,8 +353,16 @@
                                     const listItem = document.createElement('li');
                                     listItem.classList.add('p-2', 'border-b', 'border-gray-200');
                                     listItem.innerHTML = `
-                                        <p>${notification.notification_data.message}</p>
+                                        <div class="flex flex-col">
+                                            <p>${notification.id}</p>
+                                            <p>${notification.user_name}</p>
+                                            <p>${notification.admin_user_id}</p>
+                                            <p>${notification.notification_type}</p>
+                                            <p>${notification.notification_message}</p>
+                                            <p>${notification.is_read}</p>
+                                            <p>${notification.created_at}</p>
                                         <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs">Mark as Read</button>
+                                        </div>
                                     `;
                                     notificationList.appendChild(listItem);
                                 });
@@ -368,14 +376,14 @@
                         })
                         .catch(error => console.error('Error fetching notifications:', error));
                 }
-        
+
                 notificationBell.addEventListener('click', function() {
                     notificationDropdown.classList.toggle('hidden');
                 });
-        
+
                 fetchUnreadNotifications();
             });
-        
+
             function markNotificationAsRead(notificationId) {
                 fetch(`/notifications/${notificationId}/mark-as-read`, {
                     method: 'POST',

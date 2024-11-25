@@ -13,7 +13,12 @@ class UserNotification extends Model
         'user_id',
         'admin_user_id', // Changed from admin_id to admin_user_id
         'notification_type',
-        'notification_data',
+        'notification_message',
         'is_read',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

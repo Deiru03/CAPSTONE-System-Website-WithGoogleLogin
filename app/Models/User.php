@@ -91,6 +91,11 @@ class User extends Authenticatable //implements MustVerifyEmail
         $this->update(['user_type' => $newRole]);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class, 'admin_user_id', 'user_id');
+    }
+
     public function sharedClearances()
     {
         return $this->hasMany(SharedClearance::class);
