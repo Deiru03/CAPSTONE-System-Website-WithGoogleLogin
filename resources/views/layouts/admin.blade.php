@@ -231,6 +231,23 @@
                                     {{ $header }} <!-- Use the header variable -->
                                 </h2>
                             </div>
+
+                            <!-- Notification Bell -->
+                            <div class="relative">
+                                <button id="notificationBell" class="relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
+                                </button>
+                                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden">
+                                    <ul id="notificationList" class="p-2">
+                                        <!-- Notifications will be appended here -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- User Dropdown -->
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -315,7 +332,69 @@
             </div>
         </div>
 
-                <!-- Loading Spinner -->
+        <!-- Notification Scripts -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notificationBell = document.getElementById('notificationBell');
+                const notificationDropdown = document.getElementById('notificationDropdown');
+                const notificationList = document.getElementById('notificationList');
+                const notificationCount = document.getElementById('notificationCount');
+        
+                function fetchUnreadNotifications() {
+                    fetch('/notifications/unread')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Notifications count', data);
+                            notificationList.innerHTML = ''; // Clear existing notifications
+                            if (data.length > 0) {
+                                notificationCount.textContent = data.length;
+                                notificationCount.classList.remove('hidden');
+                                data.forEach(notification => {
+                                    const listItem = document.createElement('li');
+                                    listItem.classList.add('p-2', 'border-b', 'border-gray-200');
+                                    listItem.innerHTML = `
+                                        <p>${notification.notification_data.message}</p>
+                                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs">Mark as Read</button>
+                                    `;
+                                    notificationList.appendChild(listItem);
+                                });
+                            } else {
+                                notificationCount.classList.add('hidden');
+                                const listItem = document.createElement('li');
+                                listItem.classList.add('p-2', 'text-gray-500');
+                                listItem.textContent = 'No new notifications';
+                                notificationList.appendChild(listItem);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching notifications:', error));
+                }
+        
+                notificationBell.addEventListener('click', function() {
+                    notificationDropdown.classList.toggle('hidden');
+                });
+        
+                fetchUnreadNotifications();
+            });
+        
+            function markNotificationAsRead(notificationId) {
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchUnreadNotifications(); // Refresh notifications
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        <!-- Loading Spinner -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Get the current route name from meta tag
