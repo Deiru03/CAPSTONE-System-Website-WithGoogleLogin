@@ -114,12 +114,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/optimize/clear-cache', [OptimizationController::class, 'clearCache'])->name('optimize.clearCache');
 Route::get('/optimize/prune-reports', [OptimizationController::class, 'pruneReports'])->name('optimize.pruneReports');
 //--------------------------------------------------------------------------------------------------------------------//
-/////////////////////////////////////////////// New Uploads Count Route ////////////////////////////////////////////////
-Route::get('/api/new-uploads-per-user', function () {
-    $lastCheck = session('last_clearance_check', now()->subDay());
-    $newUploads = UploadedClearance::newUploadsPerUser($lastCheck);
-    return response()->json($newUploads);
-});
+
+/////////////////////////////////////////////// NOTIFICATION CONTROLLER AND ROUTES ////////////////////////////////////////////////
 
 // Route::middleware('auth')->group(function () {
 //    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
@@ -129,6 +125,7 @@ Route::get('/api/new-uploads-per-user', function () {
 Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications']);
 Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
 Route::get('/notifications/counts', [NotificationController::class, 'getNotificationCountsAdminDashboard']);
+Route::get('/api/notifications/unread-faculty', [NotificationController::class, 'getUnreadNotificationsFaculty']);
 
 /////////////////////////////////////////////// Role Switch Route ////////////////////////////////////////////////
 Route::post('/switch-role', [ProfileController::class, 'switchRole'])->name('switchRole');

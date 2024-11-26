@@ -26,12 +26,12 @@ class NotificationController extends Controller
         } elseif ($user->user_type === 'Program-Head') {
             $users = $users->where('program_id', $user->program_id);
         }
-
         $users = $users->get();
 
         $notifications = UserNotification::with(['user'])
             ->where('is_read', false)
             ->whereIn('user_id', $users->pluck('id'))
+            ->whereNull('admin_user_id') // Changed to whereNull to exclude notifications with admin_user_id
             ->get()
             ->map(function($notification) {
                 return [
@@ -47,6 +47,33 @@ class NotificationController extends Controller
             });
 
         return response()->json($notifications);
+    }
+
+    public function getUnreadNotificationsFaculty()
+    {
+        $facultyUser = Auth::user();
+
+        // Get notifications for the authenticated faculty user
+        $notificationsFaculty = UserNotification::with(['user', 'adminUser'])
+            ->where('is_read', false)
+            ->whereNotNull('admin_user_id')
+            ->where('user_id', Auth::id()) // Only get notifications for this faculty user
+            ->get()
+            ->map(function($notificationF) {
+                return [
+                    'id' => $notificationF->id,
+                    'notification_type' => $notificationF->notification_type,
+                    'notification_message' => $notificationF->notification_message,
+                    'is_read' => $notificationF->is_read,
+                    'created_at' => $notificationF->created_at,
+                    'user_id' => $notificationF->user_id,
+                    'admin_user_id' => $notificationF->admin_user_id,
+                    'user_name' => $notificationF->user ? $notificationF->user->name : 'Unknown User',
+                    'admin_user_name' => $notificationF->adminUser ? $notificationF->adminUser->name : 'Unknown Admin'
+                ];
+            });
+
+        return response()->json($notificationsFaculty);
     }
 
     public function getNotificationCountsAdminDashboard()
@@ -71,6 +98,7 @@ class NotificationController extends Controller
 
         $counts = UserNotification::where('is_read', false)
             ->whereIn('user_id', $users->pluck('id'))
+            ->whereNull('admin_user_id')
             ->select('user_id')
             ->groupBy('user_id')
             ->selectRaw('count(*) as count, user_id')

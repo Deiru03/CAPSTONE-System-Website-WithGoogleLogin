@@ -17,6 +17,7 @@ use App\Models\SubmittedReport;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Program;
+use App\Models\UserNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\View\View;
 
@@ -540,6 +541,36 @@ class ClearanceController extends Controller
             Log::info('Feedback updated:', $feedback->toArray());
         
             app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
+
+            $notificationType = '';
+            $notificationMessage = '';
+            
+            switch($feedback->signature_status) {
+                case 'Resubmit':
+                    $notificationType = 'Resubmit Document';
+                    $notificationMessage = 'Your document needs to be resubmitted. Please check the feedback message.';
+                    break;
+                case 'Complied':
+                    $notificationType = 'Validated Document';
+                    $notificationMessage = 'Your document has been checked and marked as complied.';
+                    break;
+                case 'Not Applicable':
+                    $notificationType = null;
+                    $notificationMessage = 'This document requirement has been marked as not applicable for you.';
+                    break;
+                case 'Checking':
+                    $notificationType = 'Document Under Review';
+                    $notificationMessage = 'Your document is currently being reviewed.';
+                    break;
+            }
+
+            UserNotification::create([
+                'user_id' => $validatedData['user_id'],
+                'admin_user_id' => Auth::id(),
+                'notification_type' => $notificationType,
+                'notification_message' => $notificationMessage,
+                'is_read' => false,
+            ]);
         
             return response()->json([
                 'success' => true,
