@@ -373,7 +373,7 @@
                                 </div>
                             @endforeach
                         </td>
-                        <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ $uploadedFile ? $uploadedFile->updated_at->format('M d, Y h:i A') : 'N/A' }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ ($uploadedFile && !$uploadedFile->is_archived) ? $uploadedFile->updated_at->format('M d, Y h:i A') : 'N/A' }}</td>
                         <td class="px-4 py-4 text-center">
                             @if($isComplied)
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-500">
