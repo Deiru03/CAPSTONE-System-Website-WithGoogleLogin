@@ -1,4 +1,4 @@
-<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-white rounded-lg">    
+<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-white rounded-lg border-2 border-indigo-200">    
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
@@ -172,9 +172,8 @@
              <div class="text-center mt-6">
                 <a href="{{ route('faculty.clearanceChecklist', $userClearance->shared_clearance_id) }}" target="_blank" 
                 class="inline-flex items-center px-4 py-2 {{ Auth::user()->clearances_status == 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-                        <path d="M13 7H7v6h6V7z" />
-                        <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                     Download My Checklist PDF
                 </a>
@@ -710,6 +709,7 @@
 
             let missingCount = 0;
             let returnCount = 0;
+            let notApplicableCount = 0;
 
             requirements.forEach(row => {
                 const isUploaded = row.dataset.uploaded === 'true';

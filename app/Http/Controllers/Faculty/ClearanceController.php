@@ -261,6 +261,7 @@ class ClearanceController extends Controller
                     'is_read' => false,
                 ]);
 
+                // Create feedback for the requirement
                 ClearanceFeedback::create([
                     'user_id' => $user->id,
                     'requirement_id' => $requirementId,

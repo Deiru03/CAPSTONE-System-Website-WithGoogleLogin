@@ -65,7 +65,7 @@
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
-            background-color: #edf2f7;
+            background-color: #cce0f5;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -344,6 +344,30 @@
                    })
                    .catch(error => console.error('Error fetching notifications:', error));
            }
+
+            // Fetch immediately when page loads
+            fetchNotifications();
+
+            // Set up regular interval for fetching notifications
+            let notificationInterval = setInterval(fetchNotifications, 15000);
+
+            // Expose function to refresh notifications after marking as read
+            window.refreshNotificationsAfterMark = function() {
+                // Clear existing interval
+                clearInterval(notificationInterval);
+                
+                // Fetch immediately
+                fetchNotifications();
+                
+                // Wait 2 seconds then fetch again
+                setTimeout(() => {
+                    fetchNotifications();
+                    // Restart regular interval
+                    notificationInterval = setInterval(fetchNotifications, 15000);
+                }, 300);
+            };
+
+
             function updateNotificationUI(notifications) {
                const notificationCount = document.getElementById('notificationCount');
                const notificationList = document.getElementById('notificationList');
@@ -354,25 +378,61 @@
                } else {
                    notificationCount.classList.add('hidden');
                }
-              // Clear existing notifications
-    notificationList.innerHTML = '';
 
-// Populate notification list
-notifications.forEach(notification => {
-    const listItem = document.createElement('li');
-    listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-500', 'text-[11px]');
-    listItem.innerHTML = `
-        <div class="notification-avatar">${notification.admin_user_name.charAt(0)}</div>
-        <div class="notification-content hover:text-indigo-600" onclick="markNotificationAsRead(${notification.id});">
-            <p class="font-semibold">${notification.admin_user_name}</p>
-            <p>${notification.notification_message}</p>
-            <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>
-        </div>
-        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs border-2 border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white transition-colors duration-200">Mark as Read</button>
-    `;
-    notificationList.appendChild(listItem);
-});
-           }
+                 // Clear existing notifications
+                notificationList.innerHTML = '';
+
+                // Populate notification list
+                notifications.forEach(notification => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-700', 'text-[11px]');
+                    listItem.innerHTML = `
+                        <div class="notification-avatar">${notification.admin_user_name.charAt(0)}</div>
+                        <div class="notification-content hover:text-indigo-600" onclick="markNotificationAsRead(${notification.id}); window.location.href='{{ route('faculty.views.clearances') }}';">
+                            <p class="font-bold text-black">${notification.admin_user_name}</p>
+                            <p style="font-weight: bold;">${notification.notification_type}</p>
+                            <p>${notification.notification_message}</p>
+                            <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>
+                        </div>
+                        <button onclick="markNotificationAsRead(${notification.id})" class="text-blue-500 text-xs border-2 border-blue-500 rounded-md px-2 py-1 hover:bg-blue-500 hover:text-white transition-colors duration-200">Mark as Read</button>
+                    `;
+                    notificationList.appendChild(listItem);
+                });
+            }
+
+            // Mark Notification as Read
+            function markNotificationAsRead(notificationId) {
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the notification from the UI
+                        const notificationElement = document.querySelector(`[data-notification-id="${notificationId}"]`);
+                        if (notificationElement) {
+                            notificationElement.remove();
+                        }
+                        
+                        // Update notification count
+                        const notificationCount = document.getElementById('notificationCount');
+                        const currentCount = parseInt(notificationCount.textContent);
+                        if (currentCount > 1) {
+                            notificationCount.textContent = currentCount - 0;
+                            refreshNotificationsAfterMark();
+                        } else {
+                            notificationCount.classList.add('hidden');
+                            const notificationList = document.getElementById('notificationList');
+                            notificationList.innerHTML = '<li class="p-2 text-gray-500">No new notifications</li>';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
         </script>
 
         <!-- Loading Spinner -->

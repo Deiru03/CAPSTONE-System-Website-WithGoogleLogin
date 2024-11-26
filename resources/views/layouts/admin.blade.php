@@ -76,12 +76,12 @@
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
-            background-color: #edf2f7;
+            background-color: #ddecfa;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            color: #4a5568;
+            color: #46597a;
         }
 
         .notification-content {
@@ -405,7 +405,7 @@
                                 notificationCount.classList.remove('hidden');
                                 data.forEach(notification => {
                                     const listItem = document.createElement('li');
-                                    listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-500', 'text-[11px]');
+                                    listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-700', 'text-[11px]');
                                     listItem.innerHTML = `
                                         <div class="notification-avatar">${notification.user_name.charAt(0)}</div>
                                         <div class="notification-content hover:text-indigo-600" onclick="markNotificationAsRead(${notification.id}); window.location.href = '/admin/admin/clearances/${notification.user_id}'">

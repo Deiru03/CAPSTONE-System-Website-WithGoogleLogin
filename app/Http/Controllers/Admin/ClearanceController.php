@@ -545,22 +545,26 @@ class ClearanceController extends Controller
             $notificationType = '';
             $notificationMessage = '';
             
+            // Get the requirement name
+            $requirement = ClearanceRequirement::find($validatedData['requirement_id']);
+            $requirementName = $requirement ? $requirement->requirement : 'Unknown requirement';
+
             switch($feedback->signature_status) {
                 case 'Resubmit':
                     $notificationType = 'Resubmit Document';
-                    $notificationMessage = 'Your document needs to be resubmitted. Please check the feedback message.';
+                    $notificationMessage = "Your document for '{$requirementName}' needs to be resubmitted. Please check the feedback message.";
                     break;
                 case 'Complied':
-                    $notificationType = 'Validated Document';
-                    $notificationMessage = 'Your document has been checked and marked as complied.';
+                    $notificationType = 'Validated Document'; 
+                    $notificationMessage = "Your document for '{$requirementName}' has been checked and marked as complied.";
                     break;
                 case 'Not Applicable':
                     $notificationType = null;
-                    $notificationMessage = 'This document requirement has been marked as not applicable for you.';
+                    $notificationMessage = "The requirement '{$requirementName}' has been marked as not applicable for you.";
                     break;
                 case 'Checking':
                     $notificationType = 'Document Under Review';
-                    $notificationMessage = 'Your document is currently being reviewed.';
+                    $notificationMessage = "Your document for '{$requirementName}' is currently being reviewed.";
                     break;
             }
 
