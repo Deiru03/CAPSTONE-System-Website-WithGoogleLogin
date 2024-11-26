@@ -408,7 +408,7 @@
                                     listItem.classList.add('flex', 'items-center', 'p-2', 'border-b', 'border-gray-200', 'hover:bg-gray-100', 'text-gray-500', 'text-[11px]');
                                     listItem.innerHTML = `
                                         <div class="notification-avatar">${notification.user_name.charAt(0)}</div>
-                                        <div class="notification-content hover:text-indigo-600" onclick="window.location.href = '/admin/admin/clearances/${notification.user_id}'">
+                                        <div class="notification-content hover:text-indigo-600" onclick="markNotificationAsRead(${notification.id}); window.location.href = '/admin/admin/clearances/${notification.user_id}'">
                                             <p class="font-semibold">${notification.user_name}</p>
                                             <p>${notification.notification_message}</p>
                                             <p class="notification-time">${new Date(notification.created_at).toLocaleTimeString()}</p>

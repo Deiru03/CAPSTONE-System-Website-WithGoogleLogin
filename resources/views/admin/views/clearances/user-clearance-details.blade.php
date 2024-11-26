@@ -323,10 +323,11 @@
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider w-[50px]">No.</th>
                     <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Requirement</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Uploaded Files</th>
+                    <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Date Upload</th>
                     <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Document<br>Status</th>
                     @if(Auth::user()->user_type === 'Admin' || Auth::user()->user_type === 'Program-Head' || Auth::user()->user_type === 'Dean')
                         <th class="py-3 px-4 text-center text-xs font-medium uppercase tracking-wider">Feedback</th>
-                        <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+                        <th class="py-3 px-4 text-left text-xs font-medium uppercase tracking-wider text-center">Action</th>
                     @endif
                 </tr>
             </thead>
@@ -372,6 +373,7 @@
                                 </div>
                             @endforeach
                         </td>
+                        <td class="px-4 py-4 text-sm text-gray-900 whitespace-pre-line">{{ $uploadedFile ? $uploadedFile->updated_at->format('M d, Y h:i A') : 'N/A' }}</td>
                         <td class="px-4 py-4 text-center">
                             @if($isComplied)
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-500">
