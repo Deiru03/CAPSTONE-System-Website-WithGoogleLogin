@@ -144,22 +144,23 @@
                 new Chart(document.getElementById('positionsChart'), {
                     type: 'doughnut',
                     data: {
-                        labels: ['Dean', 'Program Head', 'Permanent', 'Part-Timer', 'Temporary'],
+                        labels: ['Dean', 'Program Head', 'Permanent-FullTime', 'Permanent-Temporary', 'Part-Time-FullTime', 'Part-Time'],
                         datasets: [{
                             data: [
                                 {{ $users->where('position', 'Dean')->count() }},
                                 {{ $users->where('position', 'Program Head')->count() }},
                                 {{ $users->where('position', 'Permanent-FullTime')->count() }},
-                                {{ $users->where('position', 'Permanent-PartTime')->count() }},
-                                {{ $users->where('position', 'Part-Timer')->count() }},
-                                {{ $users->where('position', 'Temporary')->count() }}
+                                {{ $users->where('position', 'Permanent-Temporary')->count() }},
+                                {{ $users->where('position', 'Part-Time-FullTime')->count() }},
+                                {{ $users->where('position', 'Part-Time')->count() }},
                             ],
                             backgroundColor: [
                                 '#DC2626', // Red for Dean
                                 '#2563EB', // Blue for Program Head
-                                '#059669', // Green for Faculty
-                                '#7C3AED', // Purple for Part Time
-                                '#F59E0B'  // Yellow for Temporary
+                                '#059669', // Green for Permanent Full Time
+                                '#7C3AED', // Purple for Permanent Temporary
+                                '#F59E0B',  // Yellow for Part Time Full Time
+                                '#059669', // Green for Part Time
                             ],
                             borderWidth: 1
                         }]

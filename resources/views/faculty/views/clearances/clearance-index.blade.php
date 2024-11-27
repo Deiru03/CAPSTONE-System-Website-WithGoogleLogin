@@ -135,21 +135,27 @@
                                     }
                                     
                                     // For Permanent positions
-                                    if (in_array($userPosition, ['Permanent-FullTime', 'Permanent-PartTime']) && 
-                                        $sharedClearance->clearance->type === 'Permanent' && 
+                                    if ($userPosition === 'Permanent-FullTime' && 
+                                        $sharedClearance->clearance->type === 'Permanent-FullTime' && 
+                                        $sharedClearance->clearance->units == $userUnits) {
+                                        $isRecommended = true;
+                                    }
+                                    // For Permanent positions
+                                    if ($userPosition === 'Permanent-Temporary' && 
+                                        $sharedClearance->clearance->type === 'Permanent-Temporary' && 
                                         $sharedClearance->clearance->units == $userUnits) {
                                         $isRecommended = true;
                                     }
                                     
                                     // For Temporary position
-                                    if ($userPosition === 'Temporary' && 
-                                        $sharedClearance->clearance->type === 'Temporary' && 
+                                    if ($userPosition === 'Part-Time-FullTime' && 
+                                        $sharedClearance->clearance->type === 'Part-Time-FullTime' && 
                                         $sharedClearance->clearance->units == $userUnits) {
                                         $isRecommended = true;
                                     }
                                     
                                     // For Part-Timer position
-                                    if ($userPosition === 'Part-Timer') {
+                                    if ($userPosition === 'Part-Time') {
                                         if ($userUnits >= 12 && $sharedClearance->clearance->units >= 12) {
                                             $isRecommended = true;
                                         } elseif ($userUnits >= 9 && $userUnits <= 11 && 

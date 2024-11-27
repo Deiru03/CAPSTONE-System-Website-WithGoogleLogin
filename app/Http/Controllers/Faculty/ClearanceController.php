@@ -54,23 +54,27 @@ class ClearanceController extends Controller
             }
     
             // For Permanent positions (FullTime and PartTime)
-            if (in_array($userPosition, ['Permanent-FullTime', 'Permanent-PartTime'])) {
-                return $clearanceType === 'Permanent' && $clearanceUnits == $userUnits;
+            if (in_array($userPosition, ['Permanent-FullTime'])) {
+                return $clearanceType === 'Permanent-FullTime' && $clearanceUnits == $userUnits;
             }
     
             // For Temporary position
-            if ($userPosition === 'Temporary') {
-                return $clearanceType === 'Temporary' && $clearanceUnits == $userUnits;
+            if ($userPosition === 'Permanent-Temporary') {
+                return $clearanceType === 'Permanent-Temporary' && $clearanceUnits == $userUnits;
+            }
+
+            if ($userPosition === 'Part-Time-FullTime') {
+                return $clearanceType === 'Part-Time-FullTime' && $clearanceUnits == $userUnits;
             }
     
             // For Part-Timer position
-            if ($userPosition === 'Part-Timer') {
+            if ($userPosition === 'Part-Time') {
                 if ($userUnits >= 12) {
                     // 12 units and above
-                    return $clearanceType === 'Part-Timer' && $clearanceUnits >= 12;
+                    return $clearanceType === 'Part-Time' && $clearanceUnits >= 12;
                 } else {
                     // Between 9 and 11 units
-                    return $clearanceType === 'Part-Timer' && $clearanceUnits >= 0 && $clearanceUnits <= 11;
+                    return $clearanceType === 'Part-Time' && $clearanceUnits >= 0 && $clearanceUnits <= 11;
                 }
             }
     

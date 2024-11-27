@@ -152,9 +152,10 @@
                             <option value="" disabled selected>Select Type</option>
                             <option value="Dean">Dean</option>
                             <option value="Program-Head">Program-Head</option>
-                            <option value="Permanent">Permanent (Full-Time/Part-Time)</option>
-                            <option value="Part-Timer">Part-Timer</option>
-                            <option value="Temporary">Temporary</option>
+                            <option value="Permanent-FullTime">Permanent (Full-Time)</option>
+                            <option value="Permanent-Temporary">Permanent (Temporary)</option>
+                            <option value="Part-Time-FullTime">Part-Time (Full-Time)</option>
+                            <option value="Part-Time">Part-Time</option>
                         </select>
                     </div>
                 </div>
@@ -213,9 +214,10 @@
                             <option value="" disabled>Select Type</option>
                             <option value="Dean">Dean</option>
                             <option value="Program-Head">Program-Head</option>
-                            <option value="Permanent">Permanent (Full-Time/Part-Time)</option>
-                            <option value="Part-Timer">Part-Timer</option>
-                            <option value="Temporary">Temporary</option>
+                            <option value="Permanent-FullTime">Permanent (Full-Time)</option>
+                            <option value="Permanent-Temporary">Permanent (Temporary)</option>
+                            <option value="Part-Time-FullTime">Part-Time (Full-Time)</option>
+                            <option value="Part-Time">Part-Time</option>
                         </select>
                     </div>
                 </div>

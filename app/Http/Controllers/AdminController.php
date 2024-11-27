@@ -90,10 +90,10 @@ class AdminController extends Controller
         //////////////////////// Faculty Counts //////////////////////////
         $facultyDean = (clone $userQuery)->where('position', 'Dean')->orWhere('user_type', 'Dean')->count();
         $facultyPH = (clone $userQuery)->where('position', 'Program-Head')->orWhere('user_type', 'Program-Head')->count();
-        $facultyPermanentPT = (clone $userQuery)->where('position', 'Permanent-PartTime')->count();
+        $facultyPermanentT = (clone $userQuery)->where('position', 'Permanent-Temporary')->count();
         $facultyPermanentFT = (clone $userQuery)->where('position', 'Permanent-FullTime')->count();
-        $facultyTemporary = (clone $userQuery)->where('position', 'Temporary')->count();
-        $facultyPartTime = (clone $userQuery)->where('position', 'Part-Timer')->count();
+        $facultyPartTimeFT = (clone $userQuery)->where('position', 'Part-Time-FullTime')->count();
+        $facultyPartTime = (clone $userQuery)->where('position', 'Part-Time')->count();
         $facultyAdmin = (clone $userQuery)->where('user_type', 'Admin')->count();
         $facultyFaculty = (clone $userQuery)->where('user_type', 'Faculty')->count();
         $usersDean = (clone $userQuery)->where('user_type', 'Dean')->count();
@@ -152,8 +152,7 @@ class AdminController extends Controller
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
          'managedUsers', 'managedFacultyCount', 
-         'facultyTemporary', 'facultyPartTime',
-         'facultyDean', 'facultyPH', 'facultyPermanentFT', 'facultyPermanentPT', 
+         'facultyPartTime', 'facultyPartTimeFT', 'facultyPermanentFT', 'facultyPermanentT', 'facultyDean', 'facultyPH',
          'usersDean', 'usersPH',
          'completedClearancesThisMonth', 'newUsersThisMonth', 'recentLogins'));
     }

@@ -16,7 +16,9 @@
     <div class="bg-white bg-opacity-80 p-4 shadow-md">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
-                @if (str_contains(Auth::user()->profile_picture, 'http'))
+                @if (!Auth::user()->profile_picture)
+                    <img src="{{ asset('images/default-profile.png') }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
+                @elseif (str_contains(Auth::user()->profile_picture, 'http'))
                     <img src="{{ Auth::user()->profile_picture }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
                 @else
                     <img src="{{ url('/profile_pictures/' . basename(Auth::user()->profile_picture)) }}" alt="Profile Picture" class="h-12 w-12 mr-2 rounded-full object-cover">
@@ -82,7 +84,7 @@
             </div>
             <div class="cursor-pointer">
                 <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
-                    Click Me to Proceed To Your Dashbaord
+                    Click me to proceed to your dashboard.
                 </h1>
             </div>
         </a>

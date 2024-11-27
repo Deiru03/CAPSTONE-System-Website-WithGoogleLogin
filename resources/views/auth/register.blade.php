@@ -45,12 +45,12 @@
             <div>
                 <x-input-label for="position" :value="__('Position')" class="text-xs font-medium text-gray-700" />
                 <select id="position" name="position" :value="old('position')" required autocomplete="position" class="mt-1 block w-full text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
-                    <option value="Part-Timer" {{ old('position') == 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
-                    <option value="Temporary" {{ old('position') == 'Temporary' ? 'selected' : '' }}>Temporary</option>
-                    <option value="Permanent-PartTime" {{ old('position') == 'Permanent-PartTime' ? 'selected' : '' }}>Permanent (Part-Time)</option>
+                    <option value="Part-Time" {{ old('position') == 'Part-Time' ? 'selected' : '' }}>Part-Time</option>
+                    <option value="Part-Time-FullTime" {{ old('position') == 'Part-Time-FullTime' ? 'selected' : '' }}>Part-Time (Full-Time)</option>
                     <option value="Permanent-FullTime" {{ old('position') == 'Permanent-FullTime' ? 'selected' : '' }}>Permanent (Full-Time)</option>
-                    <option value="Dean" {{ old('position') == 'Dean' ? 'selected' : '' }}>Dean</option>
+                    <option value="Permanent-Temporary" {{ old('position') == 'Permanent-Temporary' ? 'selected' : '' }}>Permanent (Temporary)</option>
                     <option value="Program-Head" {{ old('position') == 'Program-Head' ? 'selected' : '' }}>Program-Head</option>
+                    <option value="Dean" {{ old('position') == 'Dean' ? 'selected' : '' }}>Dean</option>
                 </select>
                 @error('position')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

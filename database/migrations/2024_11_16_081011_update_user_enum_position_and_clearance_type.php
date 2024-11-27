@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('position', ['Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer', 'Dean', 'Program-Head'])->nullable()->change();
+            $table->enum('position', ['Part-Time', 'Part-Time-FullTime', 'Permanent-Temporary', 'Permanent-FullTime', 'Dean', 'Program-Head'])->nullable()->change();
         });
         Schema::table('clearances', function (Blueprint $table) {
-            $table->enum('type', ['Permanent', 'Part-Timer', 'Temporary', 'Dean', 'Program-Head'])->nullable()->change();
+            $table->enum('type', ['Part-Time', 'Part-Time-FullTime', 'Permanent-Temporary', 'Permanent-FullTime', 'Dean', 'Program-Head'])->nullable()->change();
         });
     }
 

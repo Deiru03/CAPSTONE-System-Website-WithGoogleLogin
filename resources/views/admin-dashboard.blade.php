@@ -121,12 +121,12 @@
                                     <span>{{ $facultyPermanentFT }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="font-medium">Permanent (Part-Time):</span>
-                                    <span>{{ $facultyPermanentPT }}</span>
+                                    <span class="font-medium">Permanent (Temporary):</span>
+                                    <span>{{ $facultyPermanentT }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="font-medium">Temporary:</span>
-                                    <span>{{ $facultyTemporary }}</span>
+                                    <span class="font-medium">Part-Time (Full-Time):</span>
+                                    <span>{{ $facultyPartTimeFT }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="font-medium">Part-Time:</span>
@@ -267,10 +267,10 @@
                     new Chart(document.getElementById('facultyStatusChart'), {
                         type: 'bar',
                         data: {
-                            labels: ['Dean', 'Program Head', 'Permanent-FullTime', 'Permanent-PartTime', 'Temporary', 'Part-Timer'],
+                            labels: ['Dean', 'Program Head', 'Permanent-FullTime', 'Permanent-Temporary', 'Part-Time', 'Part-Time-FullTime'],
                             datasets: [{
-                                data: [{{ $usersDean }}, {{ $usersPH }}, {{ $facultyPermanentFT }}, {{ $facultyPermanentPT }}, {{ $facultyTemporary }}, {{ $facultyPartTime }}],
-                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#EC4899']
+                                data: [{{ $usersDean }}, {{ $usersPH }}, {{ $facultyPermanentFT }}, {{ $facultyPermanentT }}, {{ $facultyPartTime }}, {{ $facultyPartTimeFT }}],
+                                backgroundColor: ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#EC4899', '#0EA5E9']
                             }]
                         },
                         options: {
