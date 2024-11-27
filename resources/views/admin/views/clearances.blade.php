@@ -1,7 +1,7 @@
 <x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Clearances') }}
+            {{ __('Clearance') }}
         </h2>
     </x-slot>
     <head>
@@ -14,7 +14,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-bounce" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
-                <span class="text-xl">Check Faculty Clearances Checklist</span>
+                <span class="text-xl">Check Faculty Clearance Checklist</span>
             </span>
         </a>
         @if(Auth::user()->user_type === 'Admin')
@@ -23,14 +23,14 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 animate-spin" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
-                    <span class="text-xl">Manage Clearances Checklist</span>
+                    <span class="text-xl">Manage Clearance Checklist</span>
                 </span>
             </a>
         @endif
     </div>
     <div class="py-10">
         <h2 class="text-3xl font-bold mb-4 text-indigo-600 border-b pb-2">Clearance Management</h2>
-        <p class="text-gray-600 mb-6">Here you can view and manage faculty clearances efficiently.</p>
+        <p class="text-gray-600 mb-6">Here you can view and manage faculty clearance efficiently.</p>
         {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-green-100 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
                 <h3 class="text-lg font-semibold text-green-700 mb-2">Complete</h3>

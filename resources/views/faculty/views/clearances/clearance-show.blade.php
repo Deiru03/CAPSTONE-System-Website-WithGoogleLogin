@@ -127,7 +127,7 @@
                     <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->description }}</span>
                 </p>
                 <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
-                    <span class="font-semibold">Units:</span>
+                    <span class="font-semibold">Teaching Units:</span>
                     <span class="font-bold ml-2">{{ $userClearance->sharedClearance->clearance->units }}</span>
                 </p>
                 <p class="text-gray-700">
@@ -149,7 +149,7 @@
                     <span class="font-bold ml-2">{{ Auth::user()->position }}</span>
                 </p>
                 <p class="text-gray-700 mb-2 border-b border-gray-200 pb-2">
-                    <span class="font-semibold">Units:</span>
+                    <span class="font-semibold">Teaching Units:</span>
                     <span class="font-bold ml-2">{{ Auth::user()->units == 0 ? 'N/A' : Auth::user()->units }}</span>
                 </p>
                 <p class="text-gray-700">

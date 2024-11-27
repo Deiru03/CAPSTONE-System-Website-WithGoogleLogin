@@ -460,10 +460,24 @@ class AdminController extends Controller
 
     public function showCollege(): View
     {
-        $departments = Department::with('programs')->get();
-        $programs = Program::all();
-        $faculty = User::all();
-        $users = User::all(); // Fetch all users
+        $user = Auth::user();
+        
+        // Start with base query for departments only
+        $departmentsQuery = Department::with('programs');
+
+        // Apply filters based on user type for departments only
+        if ($user->user_type === 'Admin' && !$user->campus_id) {
+            // Super admin can see all departments - no filters needed
+        } elseif ($user->user_type === 'Admin') {
+            // Campus admin - filter departments by campus_id
+            $departmentsQuery->where('campus_id', $user->campus_id);
+        }
+
+        // Get the filtered departments and all programs/users
+        $departments = $departmentsQuery->get();
+        $programs = Program::all(); // Get all programs
+        $faculty = User::all(); // Get all users
+        $users = User::all(); // Get all users
 
         return view('admin.views.college', compact('departments', 'programs', 'faculty', 'users'));
     }

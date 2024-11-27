@@ -195,7 +195,7 @@
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Email</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Dept</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Program</th>
-                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px]">Units</th>
+                                <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[100px] text-center">Teaching Units</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[150px]">Position</th>
                                 <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r max-w-[200px]">Managed By</th>
                                 @if(Auth::user()->user_type === 'Admin')

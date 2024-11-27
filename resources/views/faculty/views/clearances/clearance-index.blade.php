@@ -19,7 +19,7 @@
                         </div>
                         <div>
                             <p class="text-gray-600"><span class="font-semibold">Position:</span> {{ Auth::user()->position }}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Units:</span> {{ Auth::user()->units }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Teaching Units:</span> {{ Auth::user()->units }}</p>
                             <p class="text-gray-600"><span class="font-semibold">Program:</span> {{ Auth::user()->program }}</p>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                 @if($recommendations->isNotEmpty())
                     <div class="mb-6 bg-gray-50 p-4 rounded-lg border-2 border-yellow-300">
                         <h3 class="text-xl font-semibold text-yellow-600 -mb-1">Recommended for You</h3>
-                        <h6 class="text-gray-600 mb-4">These are the clearances checklist that are recommended for you according to your position and units.</h6>
+                        <h6 class="text-gray-600 mb-4">These are the clearance checklists that are recommended for you according to your position and teaching units.</h6>
                         <ul class="list-disc pl-5 p-2 rounded-md border-2 border-gray-300 bg-yellow-50">
                             @foreach($recommendations as $recommendation)
                                 <li class="mb-2">
@@ -114,7 +114,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Document Name</th>
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Description</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider text-center">Units</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider text-center">Teaching Units</th>
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider text-center">Type</th>
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider text-center"># Req.</th>
                                     <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider text-center">Actions</th>

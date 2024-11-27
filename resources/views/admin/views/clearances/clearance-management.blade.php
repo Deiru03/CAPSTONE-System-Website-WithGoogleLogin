@@ -25,7 +25,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" clip-rule="evenodd" />
                     </svg>
-                    View Shared Clearances
+                    View Shared Clearance
                 </span>
             </button>
         </div>
@@ -39,7 +39,7 @@
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">ID</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Document Name</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Description</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Units</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300 text-center">Teaching Units</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Type</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300"># of Req.</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Actions</th>
@@ -143,7 +143,7 @@
                         <textarea name="description" id="addDescription" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" rows="3"></textarea>
                     </div>
                     <div class="relative">
-                        <label for="addUnits" class="block text-sm font-medium text-gray-700 mb-1">Units</label>
+                        <label for="addUnits" class="block text-sm font-medium text-gray-700 mb-1">Teaching Units</label>
                         <input type="number" name="units" id="addUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out">
                     </div>
                     <div class="relative">
@@ -204,7 +204,7 @@
                         <textarea name="description" id="editDescription" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out" rows="3"></textarea>
                     </div>
                     <div class="relative">
-                        <label for="editUnits" class="block text-sm font-medium text-gray-700 mb-1">Units</label>
+                        <label for="editUnits" class="block text-sm font-medium text-gray-700 mb-1">Teaching Units</label>
                         <input type="number" name="units" id="editUnits" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
                     </div>
                     <div class="relative">
@@ -426,7 +426,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                Shared Clearances
+                Shared Clearance
             </h3>
             <div class="overflow-x-auto shadow-md rounded-lg">
                 <table class="min-w-full text-sm border-collapse">
@@ -434,7 +434,7 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Document Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Units</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">TeachingUnits</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Type</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
                         </tr>
@@ -505,7 +505,7 @@
                                 <p id="clearanceType" class="text-gray-700 font-medium"></p>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-sm text-gray-500 uppercase tracking-wider">Units</span>
+                                <span class="text-sm text-gray-500 uppercase tracking-wider">Teaching Units</span>
                                 <p id="clearanceUnits" class="text-gray-700 font-medium"></p>
                             </div>
                         </div>
@@ -1409,8 +1409,8 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Error fetching shared clearances:', error);
-                    showNotification('An error occurred while fetching shared clearances.', 'error');
+                    console.error('Error fetching shared clearance:', error);
+                    showNotification('An error occurred while fetching shared clearance.', 'error');
                 });
         }
     

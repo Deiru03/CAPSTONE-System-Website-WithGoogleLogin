@@ -83,7 +83,7 @@
                 </div>
             </form>
             <button id="resetButton" class="bg-red-500 hover:bg-red-700  text-white font-bold py-2 px-4 rounded ml-2 transition duration-300 ease-in-out transform hover:scale-105">
-                Update User Clearances
+                Update User Clearance
             </button>
             <button type="button" id="searchRequirementsBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded ml-2 transition duration-300 ease-in-out transform hover:scale-105">
                 Search Requirements
@@ -113,7 +113,7 @@
         <!-- User Clearances -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
             <div class="col-span-full mb-3 border-b border-gray-300 pb-2 flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-700">User Clearances</h3>
+                <h3 class="text-lg font-semibold text-gray-700">User Clearance</h3>
                 <span class="text-xs font-medium text-gray-600 bg-gray-200 px-2 py-1 rounded-full">
                     Total Users: {{ $users->count() }}
                 </span>
@@ -186,7 +186,7 @@
                     <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs px-2 py-1 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1">View</span>
                 </a>
             @empty
-                <p class="text-center text-gray-600 col-span-full">No clearances to check available.</p>
+                <p class="text-center text-gray-600 col-span-full">No clearance to check available.</p>
             @endforelse
         </div>
     </div>
@@ -199,7 +199,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Update User Clearances
+                Update User Clearance
             </h3>
             <form id="resetUserForm">
                 <div class="mb-4">
@@ -278,7 +278,7 @@
     <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Update</h3>
-            <p class="text-sm text-gray-600 mb-6">Are you sure you want to update the selected user clearances?</p>
+            <p class="text-sm text-gray-600 mb-6">Are you sure you want to update the selected user clearance?</p>
             <div class="flex justify-end">
                 <button id="cancelButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2">
                     Cancel
@@ -365,10 +365,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showNotification('Selected user clearances reset successfully.', true);
+                    showNotification('Selected user clearance reset successfully.', true);
                     location.reload();
                 } else {
-                    showNotification('Failed to reset user clearances.', false);
+                    showNotification('Failed to reset user clearance.', false);
                 }
             })
             .catch(error => {

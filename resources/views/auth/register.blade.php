@@ -59,7 +59,7 @@
 
             <!-- Units -->
             <div>
-                <x-input-label for="units" :value="__('Units')" class="text-xs font-medium text-gray-700" />
+                <x-input-label for="units" :value="__('Teaching Units')" class="text-xs font-medium text-gray-700" />
                 <x-text-input id="units" class="mt-1 block w-full text-sm" type="number" name="units" :value="old('units')"  />
                 @error('units')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

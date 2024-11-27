@@ -103,17 +103,17 @@
                                     <option value="Permanent-PartTime" {{ old('position', $user->position) === 'Permanent-PartTime' ? 'selected' : '' }}>Permanent (Part-Time)</option>
                                     <option value="Permanent-FullTime" {{ old('position', $user->position) === 'Permanent-FullTime' ? 'selected' : '' }}>Permanent (Full-Time)</option>
                                     <option value="Dean" {{ old('position', $user->position) === 'Dean' ? 'selected' : '' }}>Dean</option>
-                                    <option value="Program-Head" {{ old('position', $user->position) === 'Program-Head' ? 'selected' : '' }}>Program-Head</option>
+                                    <option value="Program-Head" {{ old('position', $user->position) === 'Program-Head' ? 'selected' : '' }}>Program Head</option>
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('position')" />
                             </div>
 
                             <div class="col-span-1">
-                                <x-input-label for="units" :value="__('Units')" class="text-base" />
+                                <x-input-label for="units" :value="__('Teaching Units')" class="text-base" />
                                 <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" autocomplete="units" />
                                 <x-input-error class="mt-2" :messages="$errors->get('units')" />
                                 <div id="units-warning" class="mt-2 text-sm text-amber-600 hidden">
-                                    {{ __('Note: Part-Timer faculty members are required to specify their teaching units.') }}
+                                    {{ __('Note: Part-Time faculty members are required to specify their teaching units.') }}
                                 </div>
                             </div>
                         </div>
@@ -155,7 +155,7 @@
                         </div>
                         <!-- Program Row -->
                         <div class="col-span-1">
-                            <x-input-label for="program_id" :value="__('Your Main Program')" class="text-lg font-semibold" />
+                            <x-input-label for="program_id" :value="__('Mother Unit (Program)')" class="text-lg font-semibold" />
                             <select id="program_id" name="program_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
                                 @if($user->user_type === 'Admin' && is_null($user->campus_id) || 
                                     $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
@@ -189,12 +189,12 @@
                         </style>
 
                         <div class="col-span-1">
-                            <x-input-label for="sub_programs" :value="__('Sub Programs')" class="text-lg font-semibold"/>
+                            <x-input-label for="sub_programs" :value="__('All Programs Taught')" class="text-lg font-semibold"/>
                             <div id="sub-programs-container" class="space-y-1">
                                 @foreach($user->subPrograms as $subProgram)
                                     <div class="flex items-center space-x-2">
                                         <select name="sub_program_ids[]" class="flex-1 mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                            <option value="" disabled>Select a sub-program</option>
+                                            <option value="" disabled>Select a Program</option>
                                             @foreach($programs as $program)
                                                 <option value="{{ $program->id }}" {{ $subProgram->program_id == $program->id ? 'selected' : '' }}>
                                                     {{ $program->name }}
