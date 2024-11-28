@@ -42,20 +42,20 @@ class AdminController extends Controller
          $userClearance = UserClearance::with('sharedClearance.clearance.requirements.feedback')
              ->where('user_id', $userId)
              ->first();
- 
+
          if ($userClearance) {
              $allSigned = $userClearance->sharedClearance->clearance->requirements->every(function ($requirement) use ($userClearance) {
                  $feedback = $requirement->feedback->where('user_id', $userClearance->user_id)->first();
                  return $feedback && ($feedback->signature_status === 'Complied' || $feedback->signature_status === 'Not Applicable');
              });
- 
+
              $user = User::find($userId);
              $user->clearances_status = $allSigned ? 'complete' : 'pending';
              $user->last_clearance_update = now(); // Update the last_clearance_update column
              $user->save();
          }
      }
-     
+
      /////////////////////////////////////////////// End of Auto Update Clearance Status Controller /////////////////////////////////////////////////
 
     public function dashboard(): View
@@ -151,7 +151,7 @@ class AdminController extends Controller
         return view('admin-dashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
-         'managedUsers', 'managedFacultyCount', 
+         'managedUsers', 'managedFacultyCount',
          'facultyPartTime', 'facultyPartTimeFT', 'facultyPermanentFT', 'facultyPermanentT', 'facultyDean', 'facultyPH',
          'usersDean', 'usersPH',
          'completedClearancesThisMonth', 'newUsersThisMonth', 'recentLogins'));
@@ -160,7 +160,7 @@ class AdminController extends Controller
     public function clearances(Request $request): View
     {
         $user = Auth::user();
-        
+
         // Start building the query
         $query = User::with(['program', 'department', 'campus', 'uploadedClearances' => function($query) {
             $query->latest(); // Get the most recent uploads
@@ -206,7 +206,7 @@ class AdminController extends Controller
                 $query->latest()->take(1); // Get only the most recent upload
             }
         ])->get();
-        
+
         $sharedClearances = SharedClearance::with('clearance')->get();
 
         // Handle sorting
@@ -266,33 +266,33 @@ class AdminController extends Controller
                       });
             });
         }
-    
+
         // Get the filtered activity data
         $submittedReportsActivity = $submittedReportsQuery
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
-    
+
         // Create arrays for the last 7 days with counts and labels
         $activityData = [];
         $labels = [];
-        
+
         // Get total counts for the summary
         $totalActivities = 0;
-        
+
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $count = $submittedReportsActivity
                 ->where('date', $date)
                 ->first()
                 ->count ?? 0;
-            
+
             $activityData[] = $count;
             $labels[] = now()->subDays($i)->format('M d');
             $totalActivities += $count;
         }
-    
+
         // Get activity breakdown by transaction type
         $activityBreakdown = $submittedReportsQuery
             ->selectRaw('transaction_type, COUNT(*) as count')
@@ -302,7 +302,7 @@ class AdminController extends Controller
             ->toArray();
 
         $clearance = $query->paginate(100);
-    
+
         return view('admin.views.clearances', compact(
             'clearance',
             'clearances',
@@ -319,7 +319,7 @@ class AdminController extends Controller
     {
         // Get the current admin's ID and user type
         $user = Auth::user();
-        
+
         // Start building the query
         $query = SubmittedReport::with('user')
             ->leftJoin('users as admins', 'submitted_reports.admin_id', '=', 'admins.id')
@@ -352,7 +352,7 @@ class AdminController extends Controller
 
         // Get the final results
         $reports = $query->orderBy('submitted_reports.created_at', 'desc')->get();
-    
+
         return view('admin.views.history-reports', compact('reports'));
     }
 
@@ -460,7 +460,7 @@ class AdminController extends Controller
     public function showCollege(): View
     {
         $user = Auth::user();
-        
+
         // Start with base query for departments only
         $departmentsQuery = Department::with('programs');
 
@@ -488,7 +488,7 @@ class AdminController extends Controller
         $departments = Department::with('programs')->get();
 
         $users = User::all();
-        
+
         $programs = Program::where('department_id', $id)->get();
         $campuses = Campus::all(); // Fetch all campuses
 
@@ -504,13 +504,13 @@ class AdminController extends Controller
     {
         try {
             $search = $request->get('search', '');
-    
+
             // Fetch all archived clearances with search functionality
             $archivedClearances = UploadedClearance::where('is_archived', true)
                 ->where('file_path', 'like', "%{$search}%") // Search by file path
                 ->with(['requirement', 'user']) // Eager load relationships
                 ->get();
-    
+
             return view('admin.views.archive', compact('archivedClearances', 'search'));
         } catch (\Exception $e) {
             Log::error('Error fetching archived clearances: ' . $e->getMessage());
@@ -550,11 +550,11 @@ class AdminController extends Controller
         $request->validate([
             'admin_id' => 'required|unique:admin_ids,admin_id',
         ]);
-    
+
         AdminId::create([
             'admin_id' => $request->input('admin_id'),
         ]);
-    
+
         return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID created successfully.');
     }
 
@@ -589,32 +589,32 @@ class AdminController extends Controller
     public function deleteProgramHeadDeanId($id)
     {
         $programHeadDeanId = ProgramHeadDeanId::findOrFail($id);
-    
+
         // Forcefully remove the ID, regardless of assignment
         $programHeadDeanId->delete();
-    
+
         return redirect()->route('admin.adminIdManagement')->with('success', 'Program Head/Dean ID deleted successfully.');
     }
 
     ////////////////////////////////////////////// Archive Controller /////////////////////////////////////////////////
-    
+
     public function deleteArchivedFile(Request $request)
     {
         $path = $request->path;
         Log::info('Deleting file at path: ' . $path);
-    
+
         try {
             // Check if the file exists
             if (!Storage::disk('local')->exists($path)) {
                 return response()->json(['success' => false, 'message' => 'File does not exist'], 404);
             }
-    
+
             // Delete the file from storage
             Storage::disk('local')->delete($path);
-    
+
             // Delete the record from the database
             $deleted = UploadedClearance::where('file_path', $path)->delete();
-    
+
             if ($deleted) {
                 return response()->json(['success' => true, 'message' => 'File deleted successfully']);
             } else {
@@ -665,13 +665,13 @@ class AdminController extends Controller
         $faculty = User::whereHas('managingAdmins', function($query) use ($adminId) {
             $query->where('admin_id', $adminId);
         })->get();
-    
+
         foreach ($faculty as $member) {
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
         }
-    
+
         $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty', 'omscLogo', 'iqaLogo'));
-    
+
         SubmittedReport::create([
             'admin_id' => Auth::id(),
             'user_id' => null,
@@ -679,51 +679,51 @@ class AdminController extends Controller
             'transaction_type' => 'Generated Report',
             'status' => 'Completed',
         ]);
-    
+
         return $pdf->stream('managed-faculty-report.pdf');
     }
-    
+
     public function generateFacultyReport(Request $request)
     {
         $query = User::with(['department', 'program']);
 
         $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
         $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
-    
+
         if ($request->filled('department')) {
             $query->where('department_id', $request->department);
         }
-    
+
         if ($request->filled('program')) {
             $query->where('program_id', $request->program);
         }
-    
+
         if ($request->filled('position')) {
             $query->where('position', $request->position);
         }
-    
+
         $faculty = $query->get(); // Use $faculty here
 
         foreach ($faculty as $member) {
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
         }
-    
+
         $pdf = Pdf::loadView('admin.views.reports.faculty-generate', compact('faculty', 'omscLogo', 'iqaLogo'));
-    
+
         $departmentName = $request->filled('department') ? Department::find($request->department)->name : 'All';
         $programName = $request->filled('program') ? Program::find($request->program)->name : 'All';
-        
+
         SubmittedReport::create([
             'admin_id' => Auth::id(),
             'user_id' => null,
             'title' => Auth::user()->name . ' Report Generated for ' . $departmentName . ', ' . $programName . ', ' . ($request->position ?? 'All') . ' Faculty',
-            'transaction_type' => 'Generated Report', 
+            'transaction_type' => 'Generated Report',
             'status' => 'Completed',
         ]);
         return $pdf->stream(Auth::user()->name.'-report-custom-faculty.pdf');
     }
 
-   
+
     /////////////////////////////////////////////// Admin Faculty Assigned or Managed /////////////////////////////////////////////////
     public function assignFaculty(Request $request)
     {
@@ -732,13 +732,13 @@ class AdminController extends Controller
             'faculty_ids' => 'array', // Allow empty array
             'faculty_ids.*' => 'exists:users,id',
         ]);
-    
+
         // Get admin name
         $adminName = User::find($validatedData['admin_id'])->name;
-    
+
         // Clear existing faculty assignments
         DB::table('admin_faculty')->where('admin_id', $validatedData['admin_id'])->delete();
-    
+
         // Insert new faculty assignments if any
         if (!empty($validatedData['faculty_ids'])) {
             foreach ($validatedData['faculty_ids'] as $facultyId) {
@@ -748,22 +748,22 @@ class AdminController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                
+
                 // Update checked_by field for the assigned faculty with admin name
                 User::where('id', $facultyId)->update([
                     'checked_by' => $adminName
                 ]);
             }
         }
-        
+
         // Update checked_by to NULL for unassigned faculty
         User::whereNotIn('id', $validatedData['faculty_ids'] ?? [])
             ->where('checked_by', $adminName)
             ->update(['checked_by' => null]);
-    
+
         return response()->json(['success' => true, 'message' => 'Faculty members assigned successfully.']);
     }
-    
+
     public function manageFaculty()
     {
         try {
@@ -818,15 +818,15 @@ class AdminController extends Controller
             'description' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
+
         try {
             $data = $request->only('name', 'description');
-    
+
             if ($request->hasFile('profile_picture')) {
                 $filePath = $request->file('profile_picture')->store('profile_pictures', 'public');
                 $data['profile_picture'] = $filePath;
             }
-    
+
             Department::create($data);
 
             SubmittedReport::create([
@@ -838,7 +838,7 @@ class AdminController extends Controller
             ]);
 
             session()->flash('successAddCollegeDepartment', 'Department added successfully.'. "\n" . 'a college department named '. $data['name']);
-    
+
             return redirect()->route('admin.views.college')->with('success', 'Department added successfully.');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to add department.');
@@ -846,20 +846,20 @@ class AdminController extends Controller
         }
     }
 
-    
+
     public function storeCollegeProgram(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'department_id' => 'required|exists:departments,id',
         ]);
-        
+
         try {
             Program::create([
                 'name' => $request->name,
                 'department_id' => $request->department_id,
             ]);
-            
+
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => null,
@@ -876,7 +876,7 @@ class AdminController extends Controller
             return redirect()->route('admin.views.college')->with('error', 'Failed to add program.');
         }
     }
-    
+
     public function storeMultipleCollegePrograms(Request $request): RedirectResponse
     {
         $request->validate([
@@ -968,24 +968,24 @@ class AdminController extends Controller
             'new_programs' => 'array',
             'remove_programs' => 'array',
         ]);
-    
+
         try {
             $department = Department::findOrFail($id);
             $data = $request->only('name', 'description', 'campus_id');
-    
+
             if ($request->hasFile('profile_picture')) {
                 $filePath = $request->file('profile_picture')->store('profile_pictures', 'public');
                 $data['profile_picture'] = $filePath;
             }
-    
+
             $department->update($data);
-    
+
             if ($request->filled('new_programs')) {
                 foreach ($request->new_programs as $programName) {
                     $department->programs()->create(['name' => $programName]);
                 }
             }
-    
+
             if ($request->filled('remove_programs')) {
                 $department->programs()->whereIn('id', $request->remove_programs)->delete();
             }
@@ -1006,7 +1006,7 @@ class AdminController extends Controller
             return redirect()->route('admin.views.college')->with('error', 'Failed to update department.');
         }
     }
-    
+
     public function removeProgram($programId): JsonResponse
     {
         try {
@@ -1022,7 +1022,7 @@ class AdminController extends Controller
             ]);
 
             session()->flash('successRemoveCollegeProgram', 'Program removed successfully.'. '\n' . 'a college program named '. $program->name);
-    
+
             return response()->json(['success' => true, 'message' => 'Program removed successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to remove program.'], 500);
@@ -1057,11 +1057,11 @@ class AdminController extends Controller
 
         try {
             $facultyMember = User::findOrFail($validatedData['id']);
-            
+
             // Get program name
             $program = Program::findOrFail($validatedData['program_id']);
             $validatedData['program'] = $program->name;
-            
+
             $facultyMember->update($validatedData);
 
             SubmittedReport::create([
@@ -1115,11 +1115,11 @@ class AdminController extends Controller
                 'id' => 'required|exists:user_clearances,id',
                 'shared_clearance_id' => 'required|exists:shared_clearances,id',
             ]);
-    
+
             $userClearance = UserClearance::findOrFail($validated['id']);
             $userClearance->shared_clearance_id = $validated['shared_clearance_id'];
             $userClearance->save();
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Clearance updated successfully.',
@@ -1127,7 +1127,7 @@ class AdminController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Clearance Update Error: ' . $e->getMessage());
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update clearance.',
