@@ -559,7 +559,7 @@ class ClearanceController extends Controller
                     $notificationMessage = "Your document for '{$requirementName}' has been checked and marked as complied.";
                     break;
                 case 'Not Applicable':
-                    $notificationType = null;
+                    $notificationType = 'Not Applicable Document';
                     $notificationMessage = "The requirement '{$requirementName}' has been marked as not applicable for you.";
                     break;
                 case 'Checking':

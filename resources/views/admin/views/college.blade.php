@@ -401,7 +401,7 @@
         </div>
 
         <!-- Department Programs Modal -->
-        <div id="departmentProgramsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-5 transition-opacity duration-300">
+        <div id="departmentProgramsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-5 transition-opacity duration-300" style="z-index: 9999;">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-green-500 to-indigo-600"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center" id="departmentName">

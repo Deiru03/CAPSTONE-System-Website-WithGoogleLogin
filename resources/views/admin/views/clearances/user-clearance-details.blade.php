@@ -5,8 +5,15 @@
         </h2>
     </x-slot>
 
+    <style>
+        #notification {
+            z-index: 9999;
+            bring-to-front: 9999;
+        }
+    </style>
+
     <!-- Notification component -->
-    <div id="notification" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg transform transition-all duration-500 -translate-y-full opacity-0 z-50">
+    <div id="notification" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg transform transition-all duration-500 -translate-y-full opacity-0 z-50" style="z-index: 9999;">
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
     
