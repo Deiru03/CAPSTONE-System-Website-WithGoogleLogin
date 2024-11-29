@@ -178,7 +178,7 @@
                 <th>List of Documents</th>
                 <th>Complied</th>
                 <th>Not Complied</th>
-                <th>Not Applicable</th> 
+                <th>Not Applicable</th>
             </tr>
         </thead>
         <tbody>
@@ -187,14 +187,18 @@
                 @php
                     $status = $requirement['status'];
                     if ($status == 'Complied') {
-                        $status = 'YES';
-
-                        dd($status);
+                        $status = 'Complied';
+                    } elseif ($status == 'Resubmit' || $status == 'Not Complied') {
+                        $status = 'Not Complied';
+                    } elseif ($status == 'Not Applicable') {
+                        $status = 'Not Applicable';
+                    } elseif ($status == 'Checking') {
+                        $status = 'Checking';
                     }
                 @endphp
                 <td style="padding-left: 22px; text-indent: -20px;"> {{ $loop->iteration }}. {{ $requirement['requirement']->requirement }}</td>
                 <td style="text-align: center;">{{ $status == 'Complied' ? 'YES' : '' }}</td>
-                <td style="text-align: center;">{{ $status == 'Resubmit' || $status == 'Not Complied' ? 'YES' : '' }}</td>
+                <td style="text-align: center;">{{ $status == 'Not Complied' || $status == 'Resubmit' ? 'YES' : '' }}</td>
                 <td style="text-align: center;">{{ $status == 'Not Applicable' ? 'YES' : '' }}</td>
             </tr>
             @endforeach
