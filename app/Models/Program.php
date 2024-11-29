@@ -22,6 +22,11 @@ class Program extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function campus()
+    {
+        return $this->belongsTo(Campus::class);
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);

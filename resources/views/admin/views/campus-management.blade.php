@@ -4,14 +4,45 @@
     </x-slot>
 
     <div class="container mx-auto px-4 py-8">
-        <div class="mb-8 flex justify-between items-center">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-800">Manage Campuses</h2>
-                <hr class="w-full border-2 border-yellow-500">
-                <p class="text-sm text-gray-500">Total Affiliated Users: {{ $totalUsers }}</p>
+        <div class="mb-8 flex justify-between items-center bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-xl shadow-lg border border-yellow-200">
+            <div class="relative">
+                <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-orange-600">
+                    Manage Campuses
+                </h2>
+                <div class="h-1 w-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full mt-2 animate-pulse"></div>
+                <div class="space-y-2 mt-2">
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Total Affiliated Users: <span class="font-semibold text-yellow-600 ml-1">{{ $totalUsers }}</span>
+                    </p>
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        Total Campuses: <span class="font-semibold text-yellow-600 ml-1">{{ $campuses->count() }}</span>
+                    </p>
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                        </svg>
+                        Total Departments: <span class="font-semibold text-yellow-600 ml-1">{{ $campuses->sum(function($campus) { return $campus->departments->count(); }) }}</span>
+                    </p>
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Total Programs: <span class="font-semibold text-yellow-600 ml-1">{{ $campuses->sum(function($campus) { return $campus->departments->sum(function($dept) { return $dept->programs->count(); }); }) }}</span>
+                    </p>
+                </div>
             </div>
-            <div>
-                <button onclick="openModal('campusModal')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+            <div class="relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                <button onclick="openModal('campusModal')" class="relative bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
                     Add Campus
                 </button>
             </div>
@@ -69,6 +100,12 @@
                                         </svg>
                                         <span class="ml-1">Edit</span>
                                     </button>
+                                    <a href="{{ route('admin.campuses.show', $campus->id) }}" class="flex-1 bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-green-400 hover:to-green-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        <span class="ml-1">View</span>
+                                    </a>
                                 </div>
                             @endif
                         </div>
@@ -303,11 +340,11 @@
                         preview.classList.remove('hidden');
                     }
 
-                    
+
                     // Set the form action to the update route
                     const form = document.getElementById('editCampusForm');
                     form.action = `/admin/campuses/${id}`;
-                    
+
                     openModal('editCampusModal');
                 })
                 .catch(error => console.error('Error:', error));

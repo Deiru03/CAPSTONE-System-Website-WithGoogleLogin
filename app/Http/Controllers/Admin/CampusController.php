@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-
+use App\Models\Program;
 class CampusController extends Controller
 {
     public function viewCampuses()
@@ -25,6 +25,13 @@ class CampusController extends Controller
         return view('admin.views.campus-management', compact('campuses', 'totalUsers'));
     }
 
+    public function show($id)
+    {
+        $campus = Campus::with(['departments.programs'])->findOrFail($id);
+
+        return view('admin.views.campuses.edit-campus', compact('campus'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -33,16 +40,32 @@ class CampusController extends Controller
             'location' => 'nullable|string|max:255',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         $data = $request->all();
-    
+
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
-    
+
         Campus::create($data);
-    
+
         return redirect()->route('admin.views.campuses')->with('success', 'Campus added successfully.');
+    }
+
+    public function addProgram(Request $request, $campusId)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $program = new Program();
+        $program->name = $request->name;
+        $program->description = $request->description;
+        $program->campus_id = $campusId; // Associate with campus
+        $program->save();
+
+        return redirect()->route('admin.campuses.show', $campusId)->with('success', 'Program added successfully.');
     }
 
     public function update(Request $request, Campus $campus)
@@ -60,15 +83,15 @@ class CampusController extends Controller
             'location' => 'nullable|string|max:255',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         $data = $request->all();
-    
+
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
-    
+
         $campus->update($data);
-    
+
         return redirect()->route('admin.views.campuses')->with('success', 'Campus updated successfully.');
     }
 

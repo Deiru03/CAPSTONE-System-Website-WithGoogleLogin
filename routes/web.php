@@ -239,6 +239,9 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::post('/campuses', [CampusController::class, 'store'])->name('admin.campuses.store');
     Route::match(['get', 'put'], '/campuses/{campus}', [CampusController::class, 'update'])->name('admin.campuses.update');
     Route::delete('/campuses/{campus}', [CampusController::class, 'destroy'])->name('admin.campuses.destroy');
+    Route::get('/admin/campuses/{id}', [CampusController::class, 'show'])->name('admin.campuses.show');
+    /// Add Program Route in EDIT Campus
+    Route::post('/admin/campuses/{campus}/programs', [CampusController::class, 'addProgram'])->name('admin.campuses.addProgram');
 
 });
 /////////////////////////////////////////////// End of Admin Routes ////////////////////////////////////////////////
