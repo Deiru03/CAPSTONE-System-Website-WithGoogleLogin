@@ -28,36 +28,36 @@ class ClearanceController extends Controller
         $user = Auth::user();
         $userUnits = $user->units;
         $userPosition = $user->position;
-    
+
         // Get all shared clearances with their associated clearance data
         $sharedClearances = SharedClearance::with('clearance')->get();
-    
+
         // Filter shared clearances based on position and units
         $filteredClearances = $sharedClearances->filter(function ($sharedClearance) use ($userUnits, $userPosition) {
             $clearanceUnits = $sharedClearance->clearance->units;
             $clearanceType = $sharedClearance->clearance->type;
-    
+
             // For Dean and Program-Head
             if ($userPosition === 'Dean' || $userPosition === 'Program-Head') {
                 // If user has no units, fetch all clearances of matching position
                 if (is_null($userUnits)) {
                     return $clearanceType === $userPosition;
                 }
-                
+
                 // If clearance has units and user has units, check if they match
                 if (!is_null($clearanceUnits)) {
                     return $clearanceType === $userPosition && $clearanceUnits == $userUnits;
                 }
-                
+
                 // If clearance has no units but user has units, still fetch it
                 return $clearanceType === $userPosition;
             }
-    
+
             // For Permanent positions (FullTime and PartTime)
             if (in_array($userPosition, ['Permanent-FullTime'])) {
                 return $clearanceType === 'Permanent-FullTime' && $clearanceUnits == $userUnits;
             }
-    
+
             // For Temporary position
             if ($userPosition === 'Permanent-Temporary') {
                 return $clearanceType === 'Permanent-Temporary' && $clearanceUnits == $userUnits;
@@ -66,7 +66,7 @@ class ClearanceController extends Controller
             if ($userPosition === 'Part-Time-FullTime') {
                 return $clearanceType === 'Part-Time-FullTime' && $clearanceUnits == $userUnits;
             }
-    
+
             // For Part-Timer position
             if ($userPosition === 'Part-Time') {
                 if ($userUnits >= 12) {
@@ -77,10 +77,10 @@ class ClearanceController extends Controller
                     return $clearanceType === 'Part-Time' && $clearanceUnits >= 0 && $clearanceUnits <= 11;
                 }
             }
-    
+
             return false;
         });
-    
+
         // Get user_clearances to map shared_clearance_id to user_clearance_id
         // Only get active clearances
         $userClearances = UserClearance::where('user_id', $user->id)
@@ -88,21 +88,21 @@ class ClearanceController extends Controller
             ->whereIn('shared_clearance_id', $filteredClearances->pluck('id'))
             ->pluck('id', 'shared_clearance_id')
             ->toArray();
-    
+
         // Determine recommendations based on user's position and units
         $recommendations = $filteredClearances->filter(function ($sharedClearance) use ($user) {
             if ($user->position === 'Dean' || $user->position === 'Program-Head') {
                 return $sharedClearance->clearance->type === $user->position;
             }
-            return $sharedClearance->clearance->type === $user->position && 
+            return $sharedClearance->clearance->type === $user->position &&
                    $sharedClearance->clearance->units == $user->units;
         });
-    
+
         // Get active clearances
         $activeClearances = UserClearance::where('user_id', $user->id)
             ->where('is_active', true)
             ->get();
-    
+
         return view('faculty.views.clearances.clearance-index', compact('filteredClearances', 'userClearances', 'recommendations', 'activeClearances'));
     }
 
@@ -132,7 +132,7 @@ class ClearanceController extends Controller
             'shared_clearance_id' => $id,
             'user_id' => $user->id,
             'is_active' => true,
-            
+
         ]);
 
         SubmittedReport::create([
@@ -143,7 +143,7 @@ class ClearanceController extends Controller
         ]);
         return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copied and set as active successfully.');
     }
-    
+
     public function removeCopy($id)
     {
         $user = Auth::user();
@@ -153,7 +153,7 @@ class ClearanceController extends Controller
             $userClearance = UserClearance::where('shared_clearance_id', $id)
                 ->where('user_id', $user->id)
                 ->firstOrFail();
-    
+
             // Delete the user's clearance copy
             $userClearance->delete();
 
@@ -163,11 +163,11 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Removed Checklist',
                 'status' => 'Completed',
             ]);
-    
+
             return redirect()->route('faculty.clearances.index')->with('success', 'Clearance copy removed successfully.');
         } catch (\Exception $e) {
             Log::error('Removing Clearance Copy Error: '.$e->getMessage());
-    
+
             return redirect()->route('faculty.clearances.index')->with('error', 'Failed to remove clearance copy.');
         }
     }
@@ -196,7 +196,7 @@ class ClearanceController extends Controller
         return view('faculty.views.clearances.clearance-show', compact('userClearance', 'uploadedClearances'));
     }
 
-   
+
     /**
      * Handle the file upload for a specific requirement.
      *
@@ -214,7 +214,7 @@ class ClearanceController extends Controller
             'files.*' => 'required|file|mimes:pdf|max:200000', //,doc,docx,jpg,png',
             'title' => 'nullable|string|max:255',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -222,14 +222,14 @@ class ClearanceController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
-    
+
         if ($request->hasFile('files')) {
             try {
                 $uploadedFiles = [];
                 foreach ($request->file('files') as $file) {
                     $originalName = $file->getClientOriginalName();
                     $path = $file->storeAs('uploads/faculty_clearances', $originalName, 'public');
-    
+
                     $uploadedClearance = UploadedClearance::create([
                         'shared_clearance_id' => $sharedClearanceId,
                         'requirement_id' => $requirementId,
@@ -239,7 +239,7 @@ class ClearanceController extends Controller
 
                     $uploadedFiles[] = $originalName;
                 }
-    
+
                 $requirement = ClearanceRequirement::findOrFail($requirementId);
                 $requirementName = $requirement->requirement;
                 $fileCount = count($uploadedFiles);
@@ -248,7 +248,7 @@ class ClearanceController extends Controller
                 if (strlen($requirementName) > 100) {
                     $requirementName = substr($requirementName, 0, 100) . '...';
                 }
-    
+
                 // Create single report for all uploaded files
                 SubmittedReport::create([
                     'user_id' => Auth::id(),
@@ -270,8 +270,9 @@ class ClearanceController extends Controller
                     'user_id' => $user->id,
                     'requirement_id' => $requirementId,
                     'signature_status' => 'Checking',
+                    'is_archived' => false,
                 ]);
-    
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Files uploaded successfully for requirement id:' . $requirementId .' with ' . $fileCount . ' file(s).',
@@ -294,21 +295,21 @@ class ClearanceController extends Controller
                 ], 500);
             }
         }
-    
+
         session()->flash('error', 'No files uploaded.');
         return response()->json([
             'success' => false,
             'message' => 'No files uploaded.',
         ], 400);
     }
-    
+
 
     public function deleteFile($sharedClearanceId, $requirementId)
     {
         $user = Auth::user();
 
         DB::beginTransaction();
-    
+
         try {
             // Retrieve all uploaded clearances for the specific requirement
             $uploadedClearances = UploadedClearance::where('shared_clearance_id', $sharedClearanceId)
@@ -316,24 +317,24 @@ class ClearanceController extends Controller
                 ->where('user_id', $user->id)
                 ->where('is_archived', false)
                 ->get();
-    
+
             $deletedFiles = [];
-    
+
             foreach ($uploadedClearances as $uploadedClearance) {
                 // Check if the file exists before attempting to delete
                 if (Storage::disk('public')->exists($uploadedClearance->file_path)) {
                     Storage::disk('public')->delete($uploadedClearance->file_path);
                 }
-    
+
                 $deletedFiles[] = [
                     'file_name' => basename($uploadedClearance->file_path),
                     'deleted_at' => now(),
                 ];
-    
+
                 // Delete the record from the database
                 $uploadedClearance->delete();
             }
-    
+
             $requirement = ClearanceRequirement::findOrFail($requirementId);
             $requirementName = $requirement->requirement;
             $fileCount = count($deletedFiles);
@@ -342,7 +343,7 @@ class ClearanceController extends Controller
             if (strlen($requirementName) > 100) {
                 $requirementName = substr($requirementName, 0, 100) . '...';
             }
-    
+
             // Log the deletion in SubmittedReport
             SubmittedReport::create([
                 'user_id' => Auth::id(),
@@ -351,11 +352,11 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Removed File',
                 'status' => 'Okay',
             ]);
-    
+
             DB::commit();
 
             session()->flash('successDelete', 'All files related to this requirement have been deleted successfully and recorded.');
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'All files related to this requirement have been deleted successfully and recorded.',
@@ -372,7 +373,7 @@ class ClearanceController extends Controller
             ]);
 
             session()->flash('error', 'Failed to delete the files.');
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete the files.',
@@ -429,7 +430,7 @@ class ClearanceController extends Controller
                 'user_id' => Auth::id(),
                 'admin_id' => null,
                 'title' => 'Failed to delete file',
-                'transaction_type' => 'Removed', 
+                'transaction_type' => 'Removed',
                 'status' => 'Failed',
             ]);
 
@@ -454,14 +455,14 @@ class ClearanceController extends Controller
     public function getUploadedFiles($sharedClearanceId, $requirementId)
     {
         $user = Auth::user();
-    
+
         try {
             $uploadedFiles = UploadedClearance::where('shared_clearance_id', $sharedClearanceId)
                 ->where('requirement_id', $requirementId)
                 ->where('user_id', $user->id)
                 ->where('is_archived', false)
                 ->get();
-    
+
             $files = $uploadedFiles->map(function($file) {
                 return [
                     'id' => $file->id,
@@ -469,14 +470,14 @@ class ClearanceController extends Controller
                     'file_path' => $file->file_path,  // Changed from url to file_path
                 ];
             });
-    
+
             return response()->json([
                 'success' => true,
                 'files' => $files,
             ]);
         } catch (\Exception $e) {
             Log::error('Fetching Uploaded Files Error: '.$e->getMessage());
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch uploaded files.',
@@ -490,11 +491,11 @@ class ClearanceController extends Controller
     {
         $clearance = Clearance::with('requirements')->find($id);
         $user = Auth::user(); // Get the authenticated user
-    
+
         if (!$clearance) {
             return redirect()->back()->with('error', 'Clearance not found.');
         }
-    
+
         // Get the compliance status for each requirement
         $requirements = $clearance->requirements->map(function ($requirement) use ($user, $clearance) {
             $uploadedFiles = UploadedClearance::where('requirement_id', $requirement->id)
@@ -502,9 +503,9 @@ class ClearanceController extends Controller
                 ->where('shared_clearance_id', $clearance->id)
                 ->where('is_archived', false)
                 ->get();
-    
+
             $feedback = $requirement->feedback->where('user_id', $user->id)->first();
-    
+
             $status = 'Not Complied';
             if ($feedback && $feedback->signature_status == 'Complied') {
                 $status = 'Complied';
@@ -513,17 +514,17 @@ class ClearanceController extends Controller
             } elseif ($feedback && $feedback->signature_status == 'Not Applicable') {
                 $status = 'Not Applicable';
             }
-    
+
             return [
                 'requirement' => $requirement,
                 'status' => $status,
             ];
         });
-    
+
         $department = $user->department ? $user->department->name : 'N/A';
         $program = $user->program ? $user->program->name : 'N/A';
         $lastClearanceUpdate = $user->last_clearance_update ? $user->last_clearance_update->format('F j, Y') : 'N/A';
-    
+
         $pdf = PDF::loadView('faculty.views.reports.generate-checklist', compact('clearance', 'requirements', 'user', 'department', 'program', 'lastClearanceUpdate'));
         return $pdf->stream('clearance_' . $clearance->id . '_' . $clearance->document_name . '.pdf');
     }

@@ -51,7 +51,7 @@ class ClearanceController extends Controller
         try {
             $clearance = Clearance::create($validator->validated());
 
-            
+
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => null,
@@ -59,9 +59,9 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Created Clearance Checklist',
                 'status' => 'Completed',
             ]);
-            
+
             session()->flash('successAdd', 'Clearance added successfully.', $clearance->document_name);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Clearance added successfully',
@@ -70,7 +70,7 @@ class ClearanceController extends Controller
                     'document_name' => $clearance->document_name,
                 ],
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Error creating clearance: ' . $e->getMessage());
 
@@ -87,7 +87,7 @@ class ClearanceController extends Controller
     {
         $query = $request->input('search');
         $adminId = Auth::id();
-    
+
         $users = User::with(['userClearances.sharedClearance.clearance'])
             ->whereHas('managingAdmins', function ($q) use ($adminId) {
                 $q->where('admin_id', $adminId);
@@ -97,7 +97,7 @@ class ClearanceController extends Controller
                   ->orWhere('id', 'like', '%' . $query . '%');
             })
             ->get();
-    
+
         return view('admin.views.clearances.clearance-check', compact('users', 'query'));
     }
 
@@ -213,7 +213,7 @@ class ClearanceController extends Controller
             ]);
 
             DB::commit();
-            
+
 
             return response()->json([
                 'success' => true,
@@ -261,7 +261,7 @@ class ClearanceController extends Controller
                 'success' => true,
                 'message' => 'Clearance deleted successfully.'
             ]);
-        } 
+        }
         catch (\Exception $e) {
 
             session()->flash('error', 'An error occurred while deleting the clearance.');
@@ -278,7 +278,7 @@ class ClearanceController extends Controller
     public function getClearanceDetails($id)
     {
         $clearance = Clearance::with('requirements')->find($id);
- 
+
         if ($clearance) {
             Log::info('Clearance details fetched:', ['clearance' => $clearance]);
             return response()->json([
@@ -374,7 +374,7 @@ class ClearanceController extends Controller
     }
 
     ///////////////////////////////////////// Clearance Requirements ///////////////////////////////////////
-  
+
 
     public function showUserClearance($id)
     {
@@ -403,7 +403,7 @@ class ClearanceController extends Controller
 
         return view('admin.views.clearances.user-clearance-details', compact('userClearance', 'user', 'college', 'program', 'academicYears'));
     }
-    
+
     public function checkClearances(Request $request)
     {
         // Update the session with the current timestamp
@@ -417,9 +417,9 @@ class ClearanceController extends Controller
                 $q->where('admin_id', $adminId);
             })
             ->get();
-            
+
         $academicYears = $this->getAcademicYears();
-            
+
         return view('admin.views.clearances.clearance-check', compact('users', 'academicYears'));
     }
 
@@ -428,7 +428,7 @@ class ClearanceController extends Controller
         $userClearance = UserClearance::find($id);
         $userClearance->status = 'Approved';
         $userClearance->save();
-        
+
     }
     /**
      * Display the requirements for a specific clearance.
@@ -495,7 +495,7 @@ class ClearanceController extends Controller
                 'message' => 'nullable|string',
                 'signature_status' => 'required|in:Checking,Complied,Resubmit,Not Applicable',
             ]);
-            
+
             // Determine the role identifier
             $roleIdentifier = '';
             if (Auth::user()->user_type === 'Admin') {
@@ -514,7 +514,7 @@ class ClearanceController extends Controller
                 'requirement_id' => $validatedData['requirement_id'],
                 'user_id' => $validatedData['user_id'],
             ]);
-        
+
             // Update the fields
             $feedback->message = $message;
             $feedback->signature_status = $validatedData['signature_status'];
@@ -532,19 +532,19 @@ class ClearanceController extends Controller
                 'transaction_type' => $feedback->signature_status == 'Resubmit' ? 'Resubmit Document' : 'Validated Document',
                 'status' => 'Completed',
             ]);
-            
+
             // Update user's last_clearance_update timestamp
             User::where('id', $validatedData['user_id'])->update([
                 'last_clearance_update' => now()
             ]);
-        
+
             Log::info('Feedback updated:', $feedback->toArray());
-        
+
             app('App\Http\Controllers\AdminController')->updateClearanceStatus($validatedData['user_id']);
 
             $notificationType = '';
             $notificationMessage = '';
-            
+
             // Get the requirement name
             $requirement = ClearanceRequirement::find($validatedData['requirement_id']);
             $requirementName = $requirement ? $requirement->requirement : 'Unknown requirement';
@@ -555,7 +555,7 @@ class ClearanceController extends Controller
                     $notificationMessage = "Your document for '{$requirementName}' needs to be resubmitted. Please check the feedback message.";
                     break;
                 case 'Complied':
-                    $notificationType = 'Validated Document'; 
+                    $notificationType = 'Validated Document';
                     $notificationMessage = "Your document for '{$requirementName}' has been checked and marked as complied.";
                     break;
                 case 'Not Applicable':
@@ -575,7 +575,7 @@ class ClearanceController extends Controller
                 'notification_message' => $notificationMessage,
                 'is_read' => false,
             ]);
-        
+
             return response()->json([
                 'success' => true,
                 'message' => 'Feedback saved successfully.',
@@ -820,6 +820,14 @@ class ClearanceController extends Controller
                     'transaction_type' => 'Reset Checklist',
                     'status' => 'Completed',
                 ]);
+
+                UserNotification::create([
+                    'user_id' => $userIds,
+                    'admin_user_id' => Auth::id(),
+                    'notification_type' => 'Clearance Reset',
+                    'notification_message' => 'Your clearances checklist has been archived and reset for next semester.',
+                    'is_read' => false,
+                ]);
             });
 
             return response()->json(['success' => true, 'message' => 'User clearances reset successfully.']);
@@ -836,18 +844,18 @@ class ClearanceController extends Controller
             'academicYear' => 'required|string',
             'semester' => 'required|in:1,2,3',
         ]);
-    
+
         try {
             DB::transaction(function () use ($userId, $request) {
                 // Get user details first
                 $user = User::findOrFail($userId);
-    
+
                 // Archive all feedback and uploaded files for this user
                 ClearanceFeedback::where('user_id', $userId)->update([
                     'is_archived' => true,
                     'signature_status' => 'Checking' // Reset signature status
                 ]);
-    
+
                  // Update only new uploaded clearances
                 UploadedClearance::where('user_id', $userId)
                     ->whereNull('archive_date') // Ensure only new records are updated
@@ -858,10 +866,10 @@ class ClearanceController extends Controller
                         'archive_date' => now(),
                     ]);
 
-    
+
                 // Reset user clearance status to pending in the users table
                 User::where('id', $userId)->update(['clearances_status' => 'Pending']);
-    
+
                 SubmittedReport::create([
                     'admin_id' => Auth::id(),
                     'user_id' => $userId,
@@ -869,15 +877,23 @@ class ClearanceController extends Controller
                     'transaction_type' => 'Reset Checklist',
                     'status' => 'Completed',
                 ]);
+
+                UserNotification::create([
+                    'user_id' => $userId,
+                    'admin_user_id' => Auth::id(),
+                    'notification_type' => 'Clearance Reset',
+                    'notification_message' => 'Your clearances checklist has been archived and reset for next semester.',
+                    'is_read' => false,
+                ]);
             });
-    
+
             return response()->json(['success' => true, 'message' => 'User clearance reset successfully.']);
         } catch (\Exception $e) {
             Log::error('Resetting User Clearance Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to reset user clearance.'], 500);
         }
     }
-    
+
     /////////////////////////////// Reset Selected Users Clearance |||| View: Clearance-Check.blade.php ///////////////////////////////
     public function resetSelected(Request $request)
     {
@@ -886,13 +902,13 @@ class ClearanceController extends Controller
             'academicYear' => 'required|string',
             'semester' => 'required|in:1,2,3',
         ]);
-    
+
         $userIds = $request->input('user_ids', []);
-    
+
         if (empty($userIds)) {
             return response()->json(['success' => false, 'message' => 'No users selected.']);
         }
-    
+
         try {
             DB::transaction(function () use ($userIds, $request) {
                 foreach ($userIds as $userId) {
@@ -901,7 +917,7 @@ class ClearanceController extends Controller
                         'is_archived' => true,
                         'signature_status' => 'Checking' // Reset signature status
                     ]);
-    
+
                     UploadedClearance::where('user_id', $userId)
                         ->whereNull('archive_date') // Ensure only new records are updated
                         ->update([
@@ -910,13 +926,13 @@ class ClearanceController extends Controller
                             'semester' => $request->semester,
                             'archive_date' => now(),
                         ]);
-    
+
                     // Reset user clearance status to pending in the users table
                     User::where('id', $userId)->update(['clearances_status' => 'Pending']);
-    
+
                     // Get the user record for this ID
                     $currentUser = User::find($userId);
-    
+
                     SubmittedReport::create([
                         'admin_id' => Auth::id(),
                         'user_id' => $userId,
@@ -924,9 +940,17 @@ class ClearanceController extends Controller
                         'transaction_type' => 'Reset Checklist',
                         'status' => 'Completed',
                     ]);
+
+                    UserNotification::create([
+                        'user_id' => $userId,
+                        'admin_user_id' => Auth::id(),
+                        'notification_type' => 'Clearance Reset',
+                        'notification_message' => 'Your clearances checklist has been archived and reset for next semester.',
+                        'is_read' => false,
+                    ]);
                 }
             });
-    
+
             return response()->json(['success' => true, 'message' => 'Selected user clearances reset successfully.']);
         } catch (\Exception $e) {
             Log::error('Resetting User Clearance Error: ' . $e->getMessage());
@@ -940,32 +964,32 @@ class ClearanceController extends Controller
         try {
             $userId = $request->input('id');
             $sharedClearanceId = $request->input('shared_clearance_id');
-            
+
             $user = User::findOrFail($userId);
             $sharedClearance = SharedClearance::findOrFail($sharedClearanceId);
-    
+
             // Check if the user already has this clearance
             $existingCopy = UserClearance::where('shared_clearance_id', $sharedClearanceId)
                 ->where('user_id', $userId)
                 ->first();
-    
+
             if ($existingCopy) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User already has a copy of this clearance.'
                 ], 400);
             }
-    
+
             // Delete any existing clearance copies
             UserClearance::where('user_id', $userId)->delete();
-    
+
             // Create a new user clearance and set it as active
             $userClearance = UserClearance::create([
                 'shared_clearance_id' => $sharedClearanceId,
                 'user_id' => $userId,
                 'is_active' => true,
             ]);
-    
+
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => $userId,
@@ -973,10 +997,18 @@ class ClearanceController extends Controller
                 'transaction_type' => 'Assigned Checklist',
                 'status' => 'Completed',
             ]);
-    
+
+            UserNotification::create([
+                'user_id' => $userId,
+                'admin_user_id' => Auth::id(),
+                'notification_type' => 'Clearance Update',
+                'notification_message' => 'A new clearance checklist has been assigned to you. By ' . Auth::user()->name,
+                'is_read' => false,
+            ]);
+
             // Load the relationships we need
             $userClearance->load('sharedClearance.clearance');
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Clearance assigned successfully.',
