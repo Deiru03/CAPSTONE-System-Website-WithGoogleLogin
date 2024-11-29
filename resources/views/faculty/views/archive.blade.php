@@ -49,8 +49,8 @@
     </div>
 
     <!-- Files List Modal -->
-    <div id="filesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
-        <div class="bg-white rounded-xl w-11/12 max-w-3xl max-h-[90vh] flex flex-col shadow-lg">
+    <div id="filesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="z-index: 9999;">
+        <div class="bg-white rounded-xl w-11/12 max-w-3xl max-h-[90vh] flex flex-col border border-gray-300">
             <div class="flex justify-between items-center p-4 border-b">
                 <h3 id="modalTitle" class="text-xl font-semibold text-gray-800"></h3>
                 <button onclick="closeFilesModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -66,8 +66,8 @@
     </div>
 
     <!-- File Preview Modal -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-0 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl w-11/12 h-5/6 max-w-5xl flex flex-col shadow-lg border border-gray-500">
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-0 hidden items-center justify-center z-50" style="z-index: 9999;">
+        <div class="bg-white rounded-xl w-11/12 h-5/6 max-w-5xl flex flex-col border border-gray-300">
             <div class="flex justify-between items-center p-4 border-b">
                 <h3 id="previewFileName" class="text-lg font-semibold text-gray-800 truncate"></h3>
                 <button onclick="closePreviewModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -87,18 +87,18 @@
             const modal = document.getElementById('filesModal');
             const modalTitle = document.getElementById('modalTitle');
             const filesContainer = document.getElementById('filesContainer');
-            
+
             modalTitle.textContent = `${year} - Semester ${semester}`;
-            
+
             // Clear previous content
             filesContainer.innerHTML = '';
-            
+
             // Add files to container
             files.forEach(file => {
                 const fileElement = document.createElement('div');
                 fileElement.className = 'p-4 bg-white rounded-lg shadow-md border-2 border-gray-300 hover:shadow-lg transition-shadow duration-200 cursor-pointer hover:border-blue-400';
                 fileElement.onclick = () => viewFile(file.file_path, file.file_path.split('/').pop());
-                
+
                 fileElement.innerHTML = `
                     <div class="flex items-center border-b border-gray-200 pb-3">
                         <svg class="w-6 h-6 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,10 +111,10 @@
                         </div>
                     </div>
                 `;
-                
+
                 filesContainer.appendChild(fileElement);
             });
-            
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
@@ -152,7 +152,7 @@
         document.addEventListener('click', function(event) {
             const filesModal = document.getElementById('filesModal');
             const previewModal = document.getElementById('previewModal');
-            
+
             if (event.target === filesModal) {
                 closeFilesModal();
             }

@@ -98,7 +98,7 @@
             top: 0;
             z-index: 50;
         }
-        
+
     </style>
 
     <body class="font-sans antialiased">
@@ -178,7 +178,7 @@
                     <a href="{{ route('admin.views.submittedReports') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.submittedReports') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
-                        </svg>                                                    
+                        </svg>
                         <span class="{{ request()->routeIs('admin.views.submittedReports') ? 'text-indigo-300 font-semibold' : '' }}">History of Reports</span>
                     </a>
 
@@ -197,7 +197,7 @@
                         </svg>
                         <span class="{{ request()->routeIs('admin.views.faculty') ? 'text-indigo-300 font-semibold' : '' }}">Faculty</span>
                     </a>
-                    
+
                     <!-- My Files // Archives -->
                     <a href="{{ route('admin.views.archive') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.archive') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
@@ -215,7 +215,7 @@
                         <span class="{{ request()->routeIs('admin.adminIdManagement') ? 'text-indigo-300 font-semibold' : '' }}">Admin ID Management</span>
                     </a>
                     @endif
-                    
+
                     <!-- College -->
                     @if(Auth::user()->user_type == 'Admin')
                         <a href="{{ route('admin.views.college') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.college') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
@@ -225,7 +225,7 @@
                             <span class="{{ request()->routeIs('admin.views.college') ? 'text-indigo-300 font-semibold' : '' }}">College</span>
                         </a>
                     @endif
-                    
+
                     <!-- Campuses -->
                     @if(Auth::user()->user_type == 'Admin')
                         <a href="{{ route('admin.views.campuses') }}" class="flex items-center px-10 py-4 hover:bg-gray-700 {{ request()->routeIs('admin.views.campuses') ? 'bg-gray-700 border-l-4 border-indigo-500' : '' }}">
@@ -363,7 +363,7 @@
                 </header>
                 @endisset
                     <!-- Main Content -->
-                <main>
+                <main class="min-h-screen overflow-x-hidden">
                     <div class="py-12">
                         <div class="{{--max-w-7xl--}}max-w-screen-2xl mx-auto sm:px-6 lg:px-8">
                             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -374,7 +374,7 @@
                         </div>
                     </div>
                 </main>
-                <footer class="bg-white py-6 mt-12">
+                <footer class="bg-white py-6 mt-auto">
                     <div class="container mx-auto text-center text-gray-800">
                         <p class="text-sm">&copy; 2024 OMSCS IQA ClearVault.</p>
                         <div class="flex justify-center space-x-4 mt-4">
@@ -442,10 +442,10 @@
                 window.refreshNotificationsAfterMark = function() {
                     // Clear existing interval
                     clearInterval(notificationInterval);
-                    
+
                     // Fetch immediately
                     fetchUnreadNotifications();
-                    
+
                     // Wait 2 seconds then fetch again
                     setTimeout(() => {
                         fetchUnreadNotifications();
@@ -484,7 +484,7 @@
                         if (notificationElement) {
                             notificationElement.remove();
                         }
-                        
+
                         // Update notification count
                         const notificationCount = document.getElementById('notificationCount');
                         const currentCount = parseInt(notificationCount.textContent);
@@ -519,7 +519,7 @@
                                     badge.classList.add('hidden');
                                 }
                             });
-        
+
                             const totalNewUploads = Object.values(data).reduce((a, b) => a + b, 0);
                             const clearanceBadge = document.getElementById('clearanceBadge');
                             const clearancesRedDot = document.getElementById('clearancesRedDot');
@@ -534,7 +534,7 @@
                         })
                         .catch(error => console.error('Error fetching notification counts:', error));
                 }
-        
+
                 // Check for new notifications every 30 seconds
                 setInterval(fetchNotificationCounts, 60000);
                 fetchNotificationCounts(); // Initial check

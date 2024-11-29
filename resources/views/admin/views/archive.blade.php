@@ -54,8 +54,8 @@
         @endif
 
         <!-- User Files Modal -->
-        <div id="userModal" class="fixed inset-0 bg-black bg-opacity-20 hidden items-center justify-center z-10">
-            <div class="bg-white rounded-xl w-11/12 max-w-3xl max-h-[90vh] flex flex-col">
+        <div id="userModal" class="fixed inset-0 bg-black bg-opacity-20 hidden items-center justify-center z-10" style="z-index: 9999;">
+            <div class="bg-white rounded-xl w-11/12 max-w-3xl max-h-[90vh] flex flex-col border border-gray-300">
                 <div class="flex justify-between items-center p-4 border-b">
                     <h3 id="userModalTitle" class="text-xl font-semibold text-gray-800"></h3>
                     <button onclick="closeUserModal()" class="text-gray-500 hover:text-gray-700">
@@ -71,8 +71,8 @@
         </div>
 
         <!-- Files List Modal -->
-        <div id="filesModal" class="fixed inset-0 bg-black bg-opacity-0 hidden items-center justify-center z-20">
-            <div class="bg-white rounded-lg w-11/12 max-w-3xl max-h-[90vh] flex flex-col">
+        <div id="filesModal" class="fixed inset-0 bg-black bg-opacity-0 hidden items-center justify-center z-50" style="z-index: 9999;">
+            <div class="bg-white rounded-lg w-11/12 max-w-3xl max-h-[90vh] flex flex-col border border-gray-300">
                 <div class="flex justify-between items-center p-3 border-b">
                     <h3 id="filesModalTitle" class="text-lg font-semibold text-gray-800"></h3>
                     <button onclick="closeFilesModal()" class="text-gray-500 hover:text-gray-700">
@@ -88,8 +88,8 @@
         </div>
 
         <!-- Preview Modal -->
-        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-30">
-            <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
+        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50" style="z-index: 9999;">
+            <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col border border-gray-300">
                 <div class="flex justify-between items-center p-4 border-b">
                     <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
                     <button onclick="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
@@ -131,7 +131,7 @@
             const modal = document.getElementById('userModal');
             const modalTitle = document.getElementById('userModalTitle');
             const yearSemesterGrid = document.getElementById('yearSemesterGrid');
-            
+
             modalTitle.textContent = userName;
             yearSemesterGrid.innerHTML = '';
 
@@ -171,7 +171,7 @@
             const modal = document.getElementById('filesModal');
             const modalTitle = document.getElementById('filesModalTitle');
             const filesList = document.getElementById('filesList');
-            
+
             modalTitle.textContent = `${year} - Semester ${semester}`;
             filesList.innerHTML = '';
 
@@ -189,7 +189,10 @@
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-700">${file.filename}</p>
-                                <p class="text-xs text-gray-500">Last modified: ${new Date(file.updated_at).toLocaleString()}</p>
+                                <p class="text-xs text-gray-500">
+                                    Last modified:
+                                    {{ \Carbon\Carbon::parse($file->updated_at)->format('F j, Y, g:i a') }}
+                                </p>
                             </div>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -220,10 +223,10 @@
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
-            
+
             previewFrame.src = `/file-view/${path}`;
             previewFileName.textContent = filename;
-            
+
             previewModal.classList.remove('hidden');
             previewModal.classList.add('flex');
         }
@@ -231,7 +234,7 @@
         function closePreviewModal() {
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
-            
+
             previewModal.classList.add('hidden');
             previewModal.classList.remove('flex');
             previewFrame.src = '';
@@ -258,7 +261,7 @@
                         const fileElement = document.querySelector(`[onclick="deleteFile('${path}')"]`).closest('.bg-white');
                         fileElement.remove();
                         alert('File deleted successfully');
-                        
+
                         if (document.getElementById('filesList').children.length === 0) {
                             window.location.reload();
                         }
@@ -278,7 +281,7 @@
             const userModal = document.getElementById('userModal');
             const filesModal = document.getElementById('filesModal');
             const previewModal = document.getElementById('previewModal');
-            
+
             if (event.target === userModal) {
                 closeUserModal();
             }
