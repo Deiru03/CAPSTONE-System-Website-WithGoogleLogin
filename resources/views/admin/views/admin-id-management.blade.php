@@ -6,6 +6,10 @@
         </h2>
     </x-slot>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
     <div class="container mx-auto p-4">
         <!-- Tab Navigation -->
         <div class="border-b border-gray-200 mb-4">
@@ -59,6 +63,10 @@
                             <td class="px-4 py-2 border-b border-gray-300">
                                 <button type="button" onclick="confirmDelete({{ $adminId->id }})" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded">Remove</button>
 
+                                @if(!$adminId->is_assigned)
+                                    <button type="button" onclick="openAssignModal({{ $adminId->id }})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded">Assign User</button>
+                                @endif
+
                                 <form id="delete-form-{{ $adminId->id }}" action="{{ route('admin.deleteAdminId', $adminId->id) }}" method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
@@ -79,6 +87,113 @@
             </div>
         </div>
 
+        <!-- Modal for Assigning User -->
+        <div id="assignModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-30 hidden z-10 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300">
+                <!-- Decorative gradient bar -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+
+                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Assign Admin ID
+                </h3>
+
+                <div class="space-y-6" style="z-index: 9999">
+                    <div class="relative">
+                        <label for="userSelect" class="block text-sm font-medium text-gray-700 mb-1 w-full">Select User</label>
+                        <div class="relative">
+                            <select id="userSelect" class="w-full px-4 py-3 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                <option value="" disabled selected>Choose a user to assign...</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" class="py-2">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                            {{-- <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div> --}}
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <button type="button" onclick="closeAssignModal()"
+                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button onclick="assignUser()"
+                            class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Assign User
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentAdminId = null;
+
+            function openAssignModal(adminId) {
+                currentAdminId = adminId;
+                document.getElementById('assignModal').classList.remove('hidden');
+            }
+
+            function closeAssignModal() {
+                document.getElementById('assignModal').classList.add('hidden');
+            }
+
+            function assignUser() {
+                const userId = document.getElementById('userSelect').value;
+                if (userId) {
+                    fetch(`/admin/admin/assign-admin-id`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ adminId: currentAdminId, userId: userId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('User assigned successfully!');
+                            closeAssignModal();
+                            location.reload(); // Reload the page to reflect changes
+                        } else {
+                            alert('Failed to assign user.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
+                } else {
+                    alert('Please select a user.');
+                }
+            }
+        </script>
+
+        <script>
+            $(document).ready(function() {
+                $('#userSelect').select2({
+                    placeholder: "Choose a user to assign...",
+                    allowClear: true,
+                    width: '100%',
+                    zIndex: 9999
+                });
+            });
+        </script>
+
+
+        {{-- --------------------------------------------- Program Head & Dean ID Management Section ------------------------------------------------ --}}
         <!-- Program Head & Dean ID Management Section -->
         <div id="phd-content" class="tab-content hidden">
             <!-- Form to create a new Program Head/Dean ID -->
@@ -124,7 +239,7 @@
                             <td class="px-4 py-2 border-b border-gray-300">
                                 @if($id->type == 'Program-Head')
                                     <span class="text-blue-600 font-medium">{{ $id->type }}</span>
-                                @elseif($id->type == 'Dean') 
+                                @elseif($id->type == 'Dean')
                                     <span class="text-emerald-600 font-medium">{{ $id->type }}</span>
                                 @else
                                     <span class="text-gray-500">Unassigned</span>
@@ -135,11 +250,15 @@
                             <td class="px-4 py-2 border-b border-gray-300">
                                 <button type="button" onclick="confirmDelete({{ $id->id }})" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded">Remove</button>
 
+                                @if(!$id->is_assigned)
+                                    <button type="button" onclick="openAssignModalProgramHeadDean({{ $id->id }})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded">Assign User</button>
+                                @endif
+
                                 <form id="delete-form-{{ $id->id }}" action="{{ route('admin.deleteProgramHeadDeanId', $id->id) }}" method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
                                 </form>
-                                
+
                                 <script>
                                     function confirmDelete(id) {
                                         if (confirm('Are you sure you want to delete this ID?')) {
@@ -156,12 +275,74 @@
         </div>
     </div>
 
+    <div id="assignModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-30 hidden z-10">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
+            <h3 class="text-3xl font-bold mb-6 text-gray-800">Assign Admin ID</h3>
+            <div class="space-y-6">
+                <div>
+                    <label for="userSelect" class="block text-sm font-medium text-gray-700 mb-1">Select User</label>
+                    <select id="userSelect" class="w-full px-4 py-3 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                        <option value="" disabled selected>Choose a user to assign...</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button onclick="closeAssignModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md">Cancel</button>
+                    <button onclick="assignUser()" class="px-6 py-3 bg-blue-600 text-white rounded-md">Assign User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAssignModalProgramHeadDean(id) {
+            currentProgramHeadDeanId = id;
+            document.getElementById('assignModal').classList.remove('hidden');
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').classList.add('hidden');
+        }
+
+        function assignUser() {
+            const userId = document.getElementById('userSelect').value;
+            if (userId) {
+                fetch(`/admin/admin/assign-program-head-dean-id`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ id: currentProgramHeadDeanId, userId: userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User assigned successfully!');
+                        closeAssignModal();
+                        location.reload();
+                    } else {
+                        alert('Failed to assign user.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                });
+            } else {
+                alert('Please select a user.');
+            }
+        }
+    </script>
+
     <style>
         .tab-button {
             color: #6B7280;
             border-color: transparent;
         }
-        
+
         .tab-button.active {
             color: #2563EB;
             border-color: #2563EB;
@@ -174,12 +355,12 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
-            
+
             // Remove active class from all tabs
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
-            
+
             // Show selected content and activate tab
             if (tabName === 'admin') {
                 document.getElementById('admin-content').classList.remove('hidden');
@@ -208,10 +389,10 @@
             for (let i = 0; i < 8; i++) {
                 randomId += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            
+
             // Add prefix 'ADM-' to make it more identifiable
             randomId = 'ADM-' + randomId;
-            
+
             // Set the value to the input field
             document.getElementById('admin_id').value = randomId;
         }
@@ -227,7 +408,7 @@
             }
 
             randomId = 'PHDN-' + randomId;
-            
+
             // Set the value to the input field
             document.getElementById('identifier').value = randomId;
         }

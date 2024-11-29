@@ -523,9 +523,10 @@ class AdminController extends Controller
 
     public function adminIdManagement(): View
     {
+        $users = User::all();
         $adminIds = AdminId::orderBy('is_assigned', 'asc')->get(); // Sort by is_assigned
         $programHeadDeanIds = ProgramHeadDeanId::orderBy('is_assigned', 'asc')->get(); // Sort by is_assigned
-        return view('admin.views.admin-id-management', compact('adminIds', 'programHeadDeanIds'));
+        return view('admin.views.admin-id-management', compact('adminIds', 'programHeadDeanIds', 'users'));
     }
 
     public function profileEdit(): View
@@ -558,12 +559,31 @@ class AdminController extends Controller
         return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID created successfully.');
     }
 
+    public function assignAdminId(Request $request)
+    {
+        $request->validate([
+            'adminId' => 'required|exists:admin_ids,id',
+            'userId' => 'required|exists:users,id',
+        ]);
+
+        $adminId = AdminId::find($request->adminId);
+        $adminId->is_assigned = true;
+        $adminId->user_id = $request->userId;
+        $adminId->save();
+
+        $user = User::find($request->userId);
+        $user->admin_id_registered = $adminId->admin_id;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
+
     public function deleteAdminId($id)
     {
         $adminId = AdminId::findOrFail($id);
-        if ($adminId->is_assigned) {
-            return redirect()->route('admin.adminIdManagement')->withErrors(['error' => 'Cannot delete an assigned Admin ID.']);
-        }
+        // if ($adminId->is_assigned) {
+        //     return redirect()->route('admin.adminIdManagement')->withErrors(['error' => 'Cannot delete an assigned Admin ID.']);
+        // }
         $adminId->delete();
 
         return redirect()->route('admin.adminIdManagement')->with('success', 'Admin ID deleted successfully.');
@@ -584,6 +604,31 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.adminIdManagement')->with('success', 'Program Head/Dean ID created successfully.');
+    }
+
+    public function assignProgramHeadDeanId(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:program_head_dean_ids,id',
+            'userId' => 'required|exists:users,id',
+        ]);
+
+        $id = ProgramHeadDeanId::find($request->id);
+        $id->is_assigned = true;
+        $id->user_id = $request->userId;
+        $id->save();
+
+        if ($id->type === 'Program-Head') {
+            $user = User::find($request->userId);
+            $user->program_head_id = $id->identifier;
+        } else {
+            $user = User::find($request->userId);
+            $user->dean_id = $id->identifier;
+        }
+
+        $user->save();
+
+        return response()->json(['success' => true]);
     }
 
     public function deleteProgramHeadDeanId($id)

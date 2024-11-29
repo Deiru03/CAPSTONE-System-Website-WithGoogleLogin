@@ -28,21 +28,21 @@ Route::get('/', function () {
 // General file view route
 Route::get('/file-view/{path}', function($path) {
     $fullPath = storage_path('app/public/' . $path);
-    
+
     if (!File::exists($fullPath)) {
         abort(404);
     }
-    
+
     return response()->file($fullPath, [
         'Content-Type' => File::mimeType($fullPath),
         'Content-Disposition' => 'inline; filename="' . basename($path) . '"'
     ]);
 })->where('path', '.*')->middleware('auth');
 
-// Profile pictures route 
+// Profile pictures route
 Route::get('/profile_pictures/{path}', function($path) {
     $fullPath = storage_path('app/public/profile_pictures/' . $path);
-    
+
     if (!File::exists($fullPath)) {
         // Return default profile picture if requested one doesn't exist
         $fullPath = public_path('images/default-profile.png');
@@ -50,7 +50,7 @@ Route::get('/profile_pictures/{path}', function($path) {
             abort(404);
         }
     }
-    
+
     return response()->file($fullPath, [
         'Content-Type' => File::mimeType($fullPath),
         'Content-Disposition' => 'inline; filename="' . basename($path) . '"'
@@ -72,7 +72,7 @@ Route::get('/homepage', function () {
         }
     }
     return view('homepage');
-})->middleware(['auth', 'verified'])->name('homepage'); 
+})->middleware(['auth', 'verified'])->name('homepage');
 
 
 Route::get('/dashboard', function () {
@@ -86,7 +86,7 @@ Route::get('/dashboard', function () {
         }
     }
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard'); 
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -164,13 +164,15 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::post('/create-program-head-dean-id', [AdminController::class, 'createProgramHeadDeanId'])->name('admin.createProgramHeadDeanId');
     // Route::delete('/delete-program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
     Route::delete('/admin/program-head-dean-id/{id}', [AdminController::class, 'deleteProgramHeadDeanId'])->name('admin.deleteProgramHeadDeanId');
+    Route::post('/admin/assign-admin-id', [AdminController::class, 'assignAdminId'])->name('admin.assignAdminId');
+    Route::post('/admin/assign-program-head-dean-id', [AdminController::class, 'assignProgramHeadDeanId'])->name('admin.assignProgramHeadDeanId');
 
     //////////////////////// Edit Faculty.view//////////////////////
     Route::get('/faculty/edit/{id}', [AdminController::class, 'getFacultyData'])->name('admin.faculty.getData'); // Get Faculty Data
     Route::post('/faculty/edit', [AdminController::class, 'editFaculty'])->name('admin.faculty.edit'); // Edit Faculty
     Route::delete('/faculty/delete/{id}', [AdminController::class, 'deleteFaculty'])->name('admin.faculty.delete'); // Delete Faculty
     // Route::post('/clearance/update', [AdminController::class, 'updateFacultyClearanceUser'])->name('admin.views.update-clearance'); // Update Clearance
- 
+
     //////////////////////// Clearance.view Update Users Clearances //////////////////////
     Route::post('/admin/clearance/update', [AdminController::class, 'updateUserClearance'])->name('admin.clearanceUserUpdate');
     Route::get('/admin/clearances', [AdminClearanceController::class, 'showClearances'])->name('admin.clearances');
@@ -197,7 +199,7 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     });
     Route::post('/admin/clearance/share/{id}', [AdminClearanceController::class, 'share'])->name('admin.clearance.share');
     Route::get('/admin/clearance/check', [AdminClearanceController::class, 'checkClearances'])->name('admin.clearance.check');
-    
+
     ////////////////////////////////////////////// Archive Controller /////////////////////////////////////////////////
     Route::post('/admin/archive/delete', [AdminController::class, 'deleteArchivedFile'])->name('admin.archive.delete');
 
@@ -258,20 +260,20 @@ Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(fun
 
     // Clearance Controls & Routes
     Route::get('/clearances/view-checklists', [FacultyClearanceController::class, 'index'])->name('faculty.clearances.index');
-    
+
     Route::get('/clearances/show/{id}', [FacultyClearanceController::class, 'show'])->name('faculty.clearances.show');
-    
+
     Route::post('/clearances/share/{id}', [FacultyClearanceController::class, 'share'])->name('faculty.clearances.share'); // If needed
     Route::post('/clearances/{id}/get-copy', [FacultyClearanceController::class, 'getCopy'])->name('faculty.clearances.getCopy');
     Route::post('/clearances/remove-copy/{id}', [FacultyClearanceController::class, 'removeCopy'])->name('faculty.clearances.removeCopy1');
     Route::post('/clearances/{userClearanceId}/upload/{requirementId}', [FacultyClearanceController::class, 'upload'])->name('faculty.clearances.upload');
-    
+
     Route::delete('/clearances/{sharedClearanceId}/upload/{requirementId}/delete', [FacultyClearanceController::class, 'deleteFile'])->name('faculty.clearances.delete');
     //clearance view files singles
     Route::get('/clearances/{sharedClearanceId}/requirement/{requirementId}/files', [FacultyClearanceController::class, 'getUploadedFiles'])->name('faculty.clearances.getFiles');
     Route::delete('/clearances/{sharedClearanceId}/upload/{requirementId}/delete/{fileId}', [FacultyClearanceController::class, 'deleteSingleFile'])->name('faculty.clearances.deleteSingleFile');
     Route::delete('/faculty/clearances/delete/{sharedClearanceId}/{requirementId}/{fileId}', [FacultyClearanceController::class, 'deleteSingleFile'])->name('faculty.clearances.deleteSingleFile');
-}); 
+});
 /////////////////////////////////////////////// End of Faculty Routes ////////////////////////////////////////////////
 
 Route::get('/about-us', [AboutController::class, 'index'])->name('about-us');
