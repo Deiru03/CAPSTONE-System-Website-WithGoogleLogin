@@ -142,6 +142,29 @@ class AdminController extends Controller
 
         $recentLogins = User::whereMonth('last_clearance_update', Carbon::now()->month)->count();
 
+        // Start building the query for submitted reports count
+        $submittedReportsQuery = SubmittedReport::with('user')
+            ->leftJoin('users as faculty', 'submitted_reports.user_id', '=', 'faculty.id');
+
+        // Apply filters based on user type
+        if (Auth::check() && Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id) {
+            $submittedReportsCount = $submittedReportsQuery->count(); // Count all reports for super admin
+        } elseif (Auth::check() && Auth::user()->user_type === 'Admin') {
+            $submittedReportsCount = $submittedReportsQuery->whereHas('user', function($q) {
+                $q->where('campus_id', Auth::user()->campus_id);
+            })->count(); // Count reports for campus admin
+        } elseif (Auth::check() && Auth::user()->user_type === 'Dean') {
+            $submittedReportsCount = $submittedReportsQuery->whereHas('user', function($q) {
+                $q->where('department_id', Auth::user()->department_id);
+            })->count(); // Count reports for dean
+        } elseif (Auth::check() && Auth::user()->user_type === 'Program-Head') {
+            $submittedReportsCount = $submittedReportsQuery->whereHas('user', function($q) {
+                $q->where('program_id', Auth::user()->program_id)
+                  ->orWhereHas('subPrograms', function($sq) {
+                      $sq->where('program_id', Auth::user()->program_id);
+                  });
+            })->count(); // Count reports for program head
+        }
 
         if (Auth::check() && Auth::user()->user_type === 'Faculty') {
             return view('dashboard');
@@ -151,7 +174,7 @@ class AdminController extends Controller
         return view('admin-dashboard', compact('TotalUser', 'clearancePending',
          'clearanceComplete', 'clearanceReturn', 'clearanceTotal',
          'facultyAdmin', 'facultyFaculty', 'clearanceChecklist', 'collegeCount',
-         'managedUsers', 'managedFacultyCount',
+         'managedUsers', 'managedFacultyCount', 'submittedReportsCount',
          'facultyPartTime', 'facultyPartTimeFT', 'facultyPermanentFT', 'facultyPermanentT', 'facultyDean', 'facultyPH',
          'usersDean', 'usersPH',
          'completedClearancesThisMonth', 'newUsersThisMonth', 'recentLogins'));
@@ -332,15 +355,17 @@ class AdminController extends Controller
 
         // Apply filters based on user type
         if ($user->user_type === 'Admin' && !$user->campus_id) {
-            // Admin with no campus can view all users
-        }elseif ($user->user_type === 'Admin') {
+            $submittedReportsCount = $query->count(); // Count all reports for super admin
+        } elseif ($user->user_type === 'Admin') {
             $query->whereHas('user', function($q) use ($user) {
                 $q->where('campus_id', $user->campus_id);
             });
+            $submittedReportsCount = $query->count(); // Count reports for campus admin
         } elseif ($user->user_type === 'Dean') {
             $query->whereHas('user', function($q) use ($user) {
                 $q->where('department_id', $user->department_id);
             });
+            $submittedReportsCount = $query->count(); // Count reports for dean
         } elseif ($user->user_type === 'Program-Head') {
             $query->whereHas('user', function($q) use ($user) {
                 $q->where('program_id', $user->program_id)
@@ -348,12 +373,13 @@ class AdminController extends Controller
                       $sq->where('program_id', $user->program_id);
                   });
             });
+            $submittedReportsCount = $query->count(); // Count reports for program head
         }
 
         // Get the final results
         $reports = $query->orderBy('submitted_reports.created_at', 'desc')->get();
 
-        return view('admin.views.history-reports', compact('reports'));
+        return view('admin.views.history-reports', compact('reports', 'submittedReportsCount', 'user'));
     }
 
     public function adminActionReports(): View

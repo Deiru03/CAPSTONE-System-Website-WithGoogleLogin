@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="py-12">
-        
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Faculty Card -->
@@ -46,7 +46,7 @@
                 <!-- Shared Files Card -->
                 <a href="{{ route('admin.views.submittedReports') }}" class="bg-orange-500 text-white p-4 rounded-lg shadow relative hover:bg-orange-600 transition duration-300 ease-in-out cursor-pointer transform hover:scale-105 hover:shadow-lg">
                     <div>
-                        <h3 class="text-lg font-bold">Submitted Reports</h3>
+                        <h3 class="text-lg font-bold">History of Report</h3>
                         <p class="text-2xl">{{ $submittedReportsCount ?? 0 }}</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 absolute top-2 right-2 opacity-50 transition-transform duration-300 ease-in-out transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,7 +61,7 @@
                     <div>
                         <h3 class="text-lg font-bold">Profile</h3>
                         <p class="text-2xl"></p>
-                        
+
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 absolute top-2 right-2 opacity-50 transition-transform duration-300 ease-in-out transform hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <!-- SVG Path -->
@@ -102,7 +102,7 @@
                         <canvas id="facultyStatusChart"></canvas>
                     </div>
                     <div class="mt-2 text-sm text-gray-600 relative">
-                        <button 
+                        <button
                             id="facultyButton"
                             class="w-full py-2 text-blue-500 hover:underline"
                             onmouseenter="showFacultyPopup()"
@@ -110,8 +110,8 @@
                         >
                             View Faculty Breakdown
                         </button>
-                        
-                        <div 
+
+                        <div
                             id="facultyPopup"
                             class="hidden absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 w-72"
                         >
@@ -178,7 +178,7 @@
                         <canvas id="overallAnalyticsChart"></canvas>
                     </div>
                     <div class="mt-2 text-sm text-gray-600 relative">
-                        <button 
+                        <button
                             id="analyticsButton"
                             class="w-full py-2 text-blue-500 hover:underline"
                             onmouseenter="showAnalyticsPopup()"
@@ -186,9 +186,9 @@
                         >
                             View Analytics Breakdown
                         </button>
-                        
+
                         <!-- Tooltip/Popup Content -->
-                        <div 
+                        <div
                             id="analyticsPopup"
                             class="hidden absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 w-72"
                         >
@@ -376,25 +376,25 @@
                                 ->where('is_archived', false)
                                 ->sortByDesc('created_at')
                                 ->first() : null;
-                            
+
                             $hasComplied = false;
                             if ($latestUpload) {
                                 $feedback = $latestUpload->requirement->feedback
                                     ->where('user_id', $user->id)
                                     ->where('is_archived', false)
                                     ->first();
-                                $hasComplied = $feedback && 
-                                    $feedback->signature_status == 'Resubmit' && 
+                                $hasComplied = $feedback &&
+                                    $feedback->signature_status == 'Resubmit' &&
                                     $latestUpload->created_at > $feedback->updated_at;
                             }
                         @endphp
-                        
+
                           <a href="{{ route('admin.clearances.show', $user->id) }}" class="flex items-center space-x-4 p-4 rounded-lg shadow hover:bg-gray-100 transition duration-300 relative
                             @if($hasComplied)
                                 bg-blue-50
                             @elseif($user->clearances_status == 'complete')
                                 bg-green-50
-                            @elseif($user->clearances_status == 'pending') 
+                            @elseif($user->clearances_status == 'pending')
                                 bg-yellow-50
                             @elseif($user->clearances_status == 'return')
                                 bg-red-50
@@ -447,7 +447,7 @@
                                     <span class="user-badge hidden absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce shadow-lg border-2 border-white transform hover:scale-110 transition-all duration-300 ease-in-out hover:shadow-xl"></span>
                                 </div>
                             </div>
-                            
+
                         </a>
                     @endforeach
                 </div>

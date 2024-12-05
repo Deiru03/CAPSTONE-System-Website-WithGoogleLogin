@@ -15,7 +15,7 @@
                         <div class="mb-4">
                             <label for="start_date" class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
                             <div class="relative">
-                                <input type="date" id="start_date" name="start_date" 
+                                <input type="date" id="start_date" name="start_date"
                                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -27,7 +27,7 @@
                         <div class="mb-4">
                             <label for="end_date" class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
                             <div class="relative">
-                                <input type="date" id="end_date" name="end_date" 
+                                <input type="date" id="end_date" name="end_date"
                                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -37,7 +37,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-6 flex justify-end">
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-6 mt-6 flex justify-end">
+                        <div class="flex items-center gap-2">
+                            <p class="text-gray-600">Total Submitted Reports:</p>
+                            <span class="text-lg font-bold text-gray-800">{{ $submittedReportsCount ?? '0' }}</span>
+                        </div>
+
                         <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                             <i class="fas fa-file-download mr-2"></i>Generate Report
                         </button>
@@ -45,8 +50,8 @@
                 </form>
                 <!-- Filter Options -->
                 {{-- <div class="mb-6 flex gap-4 bg-gray-50 p-4 rounded-lg">
-                    <input type="text" 
-                            placeholder="Search by title..." 
+                    <input type="text"
+                            placeholder="Search by title..."
                             class="flex-1 border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         <i class="fas fa-search mr-2"></i> Filter
@@ -79,9 +84,9 @@
                                         {{ $report->title }}
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-600 truncate items-center text-center">
-                                        <span class="px-2 py-1 rounded-full text-[10px] font-medium 
-                                            {{ str_contains(strtolower($report->transaction_type), 'reset') || 
-                                            str_contains(strtolower($report->transaction_type), 'resubmit') ? 
+                                        <span class="px-2 py-1 rounded-full text-[10px] font-medium
+                                            {{ str_contains(strtolower($report->transaction_type), 'reset') ||
+                                            str_contains(strtolower($report->transaction_type), 'resubmit') ?
                                             'bg-orange-100 text-orange-800 border-2 border-orange-300' :
                                             (str_contains(strtolower($report->transaction_type), 'removed checklist') ?
                                             'bg-purple-100 text-purple-800 border-2 border-purple-300' :
@@ -95,7 +100,7 @@
                                                 str_contains(strtolower($report->transaction_type), 'aquire') ||
                                                 str_contains(strtolower($report->transaction_type), 'validated') ?
                                             'bg-green-100 text-green-800 border-2 border-green-300' :
-                                            (str_contains(strtolower($report->transaction_type), 'edit') || 
+                                            (str_contains(strtolower($report->transaction_type), 'edit') ||
                                                 str_contains(strtolower($report->transaction_type), 'edited') ?
                                             'bg-yellow-100 text-yellow-800 border-2 border-yellow-300' : 'bg-blue-100 text-blue-800 border-2 border-blue-300'))))) }}">
                                             {{ $report->transaction_type }}
