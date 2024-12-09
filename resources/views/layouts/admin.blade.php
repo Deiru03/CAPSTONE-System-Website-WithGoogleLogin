@@ -338,16 +338,18 @@
 
                                         @foreach(Auth::user()->availableRoles() as $role)
                                             @if($role !== Auth::user()->user_type)
-                                                <form method="POST" action="{{ route('switchRole') }}">
-                                                    @csrf
-                                                    <input type="hidden" name="role" value="{{ $role }}">
-                                                    <x-dropdown-link :href="route('switchRole')"
-                                                            class="hover:bg-green-50 hover:text-green-600 transition-colors duration-150"
-                                                            onclick="event.preventDefault();
-                                                                        this.closest('form').submit();">
-                                                        {{ __('Switch to ' . $role) }}
-                                                    </x-dropdown-link>
-                                                </form>
+                                                @if(!(Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id && $role === 'Faculty'))
+                                                    <form method="POST" action="{{ route('switchRole') }}">
+                                                        @csrf
+                                                        <input type="hidden" name="role" value="{{ $role }}">
+                                                        <x-dropdown-link :href="route('switchRole')"
+                                                                class="hover:bg-green-50 hover:text-green-600 transition-colors duration-150"
+                                                                onclick="event.preventDefault();
+                                                                            this.closest('form').submit();">
+                                                            {{ __('Switch to ' . $role) }}
+                                                        </x-dropdown-link>
+                                                    </form>
+                                                @endif
                                             @endif
                                         @endforeach
 
