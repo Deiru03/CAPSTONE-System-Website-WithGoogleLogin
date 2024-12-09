@@ -16,12 +16,12 @@
     <div id="notification" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg transform transition-all duration-500 -translate-y-full opacity-0 z-50" style="z-index: 9999;">
         <p id="notificationMessage" class="font-semibold"></p>
     </div>
-    
+
     {{-- <!-- Loading overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"></div>
     </div> --}}
-  
+
     {{-- Display User ID and Name --}}
     <div class="mb-8 p-6 flex items-center space-x-8 border border-gray-300">
         <div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8 p-6 w-full">
@@ -69,9 +69,9 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="border-l-2 border-gray-400 h-52 mx-6"></div>
-        
+
         <div class="w-3/4">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="text-2xl font-semibold text-gray-800">Clearance Details</h4>
@@ -89,7 +89,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Reset Button -->
     <div class="flex items-center space-x-2">
         <button id="resetButton" class="
@@ -111,13 +111,13 @@
     <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50 mt-10">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h3 id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></h3>
-            
+
             <!-- Academic Year and Semester Selection -->
             @php
                 $currentYear = date('Y');
                 $currentMonth = date('m');
                 $currentAcademicYear = $currentMonth >= 8 ? "$currentYear - " . ($currentYear + 1) : ($currentYear - 1) . " - $currentYear";
-            
+
                 $academicYears = [];
                 for ($i = -2; $i < 3; $i++) { // Include the previous year and 5 years ahead
                     $startYear = $currentYear + $i;
@@ -125,7 +125,7 @@
                     $academicYears[] = "$startYear - $endYear";
                 }
             @endphp
-            
+
             <div class="mb-4">
                 <label for="academicYear" class="block text-sm font-medium text-gray-700">Academic Year</label>
                 <select id="academicYear" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -134,7 +134,7 @@
                     @endforeach
                 </select>
             </div>
-            
+
             <div class="mb-4">
                 <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
                 <select id="semester" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -280,34 +280,37 @@
             </div>
 
             <div class="w-0.5 bg-indigo-400 mx-2"></div>
-            
+
             {{-- Export Report --}}
             <div class="flex-1 grid grid-cols-3 gap-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200 max-w-[500px]">
-                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-indigo-50 to-white">
-                    <button class="text-3xl text-indigo-500 hover:text-indigo-600 transition duration-300">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('admin.reports.export', ['userId' => $userClearance->user->id]) }}" target="_blank" class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-indigo-50 to-white hover:from-indigo-100 hover:shadow-lg hover:scale-105 hover:border-indigo-300 transform transition-all duration-300 ease-in-out">
+                    <span class="text-3xl text-indigo-500 group-hover:text-indigo-600">
+                        <svg class="w-10 h-10 hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                         </svg>
-                    </button>
-                    <div class="text-sm text-gray-600 mt-2">Export Report</div>
-                </div>
+                    </span>
+                    <div class="text-sm text-gray-600 mt-2 group-hover:text-indigo-600 font-medium">Export Report</div>
+                </a>
 
-                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-green-50 to-white">
-                    <a href="{{ route('admin.clearance.print', ['clearanceId' => $userClearance->sharedClearance->clearance_id, 'userId' => $userClearance->user->id]) }}" target="_blank" class="text-3xl text-green-500 hover:text-green-600 transition duration-300">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('admin.clearance.print', ['clearanceId' => $userClearance->sharedClearance->clearance_id, 'userId' => $userClearance->user->id]) }}" target="_blank" class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-green-50 to-white hover:from-green-100 hover:shadow-lg hover:scale-105 hover:border-green-300 transform transition-all duration-300 ease-in-out">
+                    <span class="text-3xl text-green-500 group-hover:text-green-600">
+                        <svg class="w-10 h-10 hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                    </a>
-                    <div class="text-sm text-gray-600 mt-2">Print Checklist</div>
-                </div>
+                    </span>
+                    <div class="text-sm text-gray-600 mt-2 group-hover:text-green-600 font-medium">Print Checklist</div>
+                </a>
 
-                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white">
-                    <button class="text-3xl text-blue-500 hover:text-blue-600 transition duration-300">
+                <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-blue-50 to-white hover:from-blue-100 hover:shadow-lg hover:scale-105 hover:border-blue-300 transform transition-all duration-300 ease-in-out relative group">
+                    <button class="text-3xl text-blue-500 hover:text-blue-600 transition duration-300 cursor-not-allowed">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
                     </button>
                     <div class="text-sm text-gray-600 mt-2">Send Email</div>
+                    <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-3 py-1 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                        Not Available!
+                    </div>
                 </div>
 
                 {{-- <div class="flex flex-col items-center p-4 border rounded-lg bg-gradient-to-b from-purple-50 to-white">
@@ -322,7 +325,7 @@
         </div>
     </div>
 
-    <h3 class="text-3xl font-bold mb-6 text-gray-800 hidden">{{ $userClearance->sharedClearance->clearance->document_name }}</h3> 
+    <h3 class="text-3xl font-bold mb-6 text-gray-800 hidden">{{ $userClearance->sharedClearance->clearance->document_name }}</h3>
     <div class="overflow-x-auto shadow-md rounded-lg">
         <table class="min-w-full bg-white border border-gray-200">
             <thead class="bg-indigo-600 text-white">
@@ -343,14 +346,14 @@
                     @php
                         // Get the feedback for the current requirement and user
                         $feedback = $requirement->feedback->where('user_id', $userClearance->user->id)->first();
-                        
+
                         // Get the most recent uploaded file for the current requirement and user
                         $uploadedFile = $userClearance->uploadedClearances
                             ->where('user_id', $userClearance->user->id)
                             ->where('requirement_id', $requirement->id)
                             ->sortByDesc('created_at')
                             ->first();
-                        
+
                         // Determine if the requirement is complied based on feedback and upload dates
                         $isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Resubmit' && $uploadedFile->created_at > $feedback->updated_at;
                     @endphp
@@ -421,8 +424,8 @@
             </tbody>
         </table>
     </div>
-            
-       
+
+
 
     <!-- Feedback Modal -->
     <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
@@ -495,7 +498,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <script>
         function openFeedbackModal(requirementId) {
@@ -507,7 +510,7 @@
             document.getElementById('requirementName').textContent = `Requirement ID: ${requirementId}\n${requirements[requirementId]}`;
             document.getElementById('signatureStatus').value = currentFeedback?.signature_status || 'Checking';
             // document.getElementById('feedbackMessage').value = currentFeedback?.message || '';
-            
+
             // Clear the feedback when the modal is opened
             document.getElementById('feedbackMessage').value = '';
 
@@ -538,7 +541,7 @@
 
         document.getElementById('feedbackForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
+
             // Enable the dropdown before submission
             const signatureStatus = document.getElementById('signatureStatus');
                 if (signatureStatus.hasAttribute('disabled')) {
@@ -580,12 +583,12 @@
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
             const previewFileName = document.getElementById('previewFileName');
-            
+
           // Convert the storage URL to our direct file viewing route
             const fileUrl = `/file-view/${path}`;
             previewFrame.src = fileUrl;
             previewFileName.textContent = filename;
-            
+
             previewModal.classList.remove('hidden');
             previewModal.classList.add('flex');
         }
@@ -593,7 +596,7 @@
         function closePreviewModal() {
             const previewModal = document.getElementById('previewModal');
             const previewFrame = document.getElementById('previewFrame');
-            
+
             previewModal.classList.add('hidden');
             previewModal.classList.remove('flex');
             previewFrame.src = '';

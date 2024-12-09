@@ -139,6 +139,7 @@ Route::get('/admin/reports', [GenerateReports::class, 'showReportForm'])->name('
 Route::post('/admin/reports/generate', [GenerateReports::class, 'generateSubmittedReport'])->name('admin.reports.generateSubmittedReport');
 Route::get('/admin/clearance/{id}/print', [AdminClearanceController::class, 'printChecklist'])->name('admin.clearance.print');
 Route::get('/admin/clearance/{clearanceId}/print/{userId}', [AdminClearanceController::class, 'printChecklist'])->name('admin.clearance.print');
+Route::get('/admin/reports/export/{userId}', [GenerateReports::class, 'exportUserReports'])->name('admin.reports.export');
 
 /////////////////////////////////////////////// Register Routes ////////////////////////////////////////////////
 Route::get('/departments/{campusId}', [RegisteredUserController::class, 'getDepartments']);

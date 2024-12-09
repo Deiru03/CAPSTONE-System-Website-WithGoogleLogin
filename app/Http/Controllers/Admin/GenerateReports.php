@@ -23,6 +23,7 @@ class GenerateReports extends Controller
         return view('admin.views.submitted-reports');
     }
 
+    // Generate submitted reports
     public function generateSubmittedReport(Request $request)
     {
         $user = Auth::user();
@@ -68,5 +69,22 @@ class GenerateReports extends Controller
 
         $pdf = PDF::loadView('admin.views.reports.admin-submitted-reports', compact('reports', 'user', 'omscLogo', 'iqaLogo'));
         return $pdf->stream(now()->format('Y-m-d') . $user->name . '_submitted_reports.pdf');
+    }
+
+    // Export user reports
+    public function exportUserReports($userId)
+    {
+        $user = User::findOrFail($userId);
+        $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png')));
+        $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg')));
+
+        // Filter reports for the specific user
+        $reports = SubmittedReport::with(['user', 'admin'])
+            ->where('user_id', $userId)
+            ->get();
+
+        // Reuse the existing view
+        $pdf = PDF::loadView('admin.views.reports.admin-submitted-reports', compact('reports', 'user', 'omscLogo', 'iqaLogo'));
+        return $pdf->stream($user->name . '_submitted_reports.pdf');
     }
 }
