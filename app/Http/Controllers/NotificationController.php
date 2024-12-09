@@ -12,13 +12,16 @@ class NotificationController extends Controller
     public function getUnreadNotifications()
     {
         $user = Auth::user();
-        
+
         // Start with base query
         $users = User::query();
 
         // Apply filters based on user type and scope
         if ($user->user_type === 'Admin' && !$user->campus_id) {
-            // Super admin sees all users
+            // Super admin only sees faculty they manage
+            $users = $users->whereHas('managingAdmins', function($query) use ($user) {
+                $query->where('admin_id', $user->id);
+            });
         } elseif ($user->user_type === 'Admin') {
             $users = $users->where('campus_id', $user->campus_id);
         } elseif ($user->user_type === 'Dean') {
@@ -79,13 +82,16 @@ class NotificationController extends Controller
     public function getNotificationCountsAdminDashboard()
     {
         $user = Auth::user();
-        
+
         // Start with base query
         $users = User::query();
 
         // Apply filters based on user type and scope
         if ($user->user_type === 'Admin' && !$user->campus_id) {
-            // Super admin sees all users
+            // Super admin only sees faculty they manage
+            $users = $users->whereHas('managingAdmins', function($query) use ($user) {
+                $query->where('admin_id', $user->id);
+            });
         } elseif ($user->user_type === 'Admin') {
             $users = $users->where('campus_id', $user->campus_id);
         } elseif ($user->user_type === 'Dean') {
@@ -106,12 +112,12 @@ class NotificationController extends Controller
 
         return response()->json($counts);
     }
-    
+
     public function markAsRead($notificationId)
     {
         UserNotification::where('id', $notificationId)
             ->update(['is_read' => true]);
-            
+
         return response()->json(['success' => true]);
     }
 }
