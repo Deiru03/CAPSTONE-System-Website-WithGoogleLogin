@@ -1,4 +1,4 @@
-<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-white rounded-lg border-2 border-indigo-200">    
+<div id="clearanceShowContainer" class="container mx-auto px-4 py-8 bg-white rounded-lg border-2 border-indigo-200">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
@@ -88,7 +88,7 @@
         button svg {
             margin-right: 4px;
         }
-      
+
         .folder-content {
             transition: max-height 0.5s ease;
             overflow: hidden;
@@ -170,7 +170,7 @@
         <div class="text-center mt-6">
              <!-- Generate My Checklist Button -->
              <div class="text-center mt-6">
-                <a href="{{ route('faculty.clearanceChecklist', $userClearance->shared_clearance_id) }}" target="_blank" 
+                <a href="{{ route('faculty.clearanceChecklist', $userClearance->shared_clearance_id) }}" target="_blank"
                 class="inline-flex items-center px-4 py-2 {{ Auth::user()->clearances_status == 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -227,13 +227,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="overflow-x-auto border-2 border-gray-400 rounded-lg hover:shadow-lg transition-shadow duration-200">
             <div class="bg-white rounded-lg overflow-hidden shadow-lg">
                 <!-- Dynamic Categories -->
                 @php
                     $requirements = $userClearance->sharedClearance->clearance->requirements->where('is_archived', false);
-                    
+
                     // Group requirements by status
                     $categorizedRequirements = [
                         'Missing' => [],
@@ -247,14 +247,14 @@
                             ->where('requirement_id', $requirement->id)
                             ->where('user_id', $userClearance->user_id)
                             ->get();
-                    
+
                         $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
-                        
+
                         $feedback = $requirement->feedback
                             ->where('user_id', $userClearance->user_id)
                             ->where('is_archived', false)
                             ->first();
-                            
+
                         $requirementData = [
                             'requirement' => $requirement,
                             'originalIndex' => $index + 1 // Store the original index
@@ -276,7 +276,7 @@
                     @if(count($requirements) > 0)
                         <div class="folder-container mb-4 rounded-lg overflow-hidden bg-white">
                             <!-- Folder Header -->
-                            <div class="folder-header p-3 cursor-pointer flex items-center justify-between transition-colors duration-200 
+                            <div class="folder-header p-3 cursor-pointer flex items-center justify-between transition-colors duration-200
                                 {{ $category === 'Missing' ? 'bg-yellow-100 hover:bg-yellow-200 border-l-4 border-yellow-500' : '' }}
                                 {{ $category === 'Uploaded' ? 'bg-green-100 hover:bg-green-200 border-l-4 border-green-500' : '' }}
                                 {{ $category === 'Resubmit' ? 'bg-red-100 hover:bg-red-200 border-l-4 border-red-500' : '' }}
@@ -287,11 +287,11 @@
                                         {{ $category === 'Missing' ? 'text-yellow-600' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-600' : '' }}
                                         {{ $category === 'Resubmit' ? 'text-red-600' : '' }}
-                                        {{ $category === 'Not Applicable' ? 'text-purple-600' : '' }}" 
+                                        {{ $category === 'Not Applicable' ? 'text-purple-600' : '' }}"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
-                                    <h3 class="text-lg font-semibold 
+                                    <h3 class="text-lg font-semibold
                                         {{ $category === 'Missing' ? 'text-yellow-800' : '' }}
                                         {{ $category === 'Uploaded' ? 'text-green-800' : '' }}
                                         {{ $category === 'Resubmit' ? 'text-red-800' : '' }}
@@ -323,9 +323,9 @@
                                                     ->where('requirement_id', $requirement->id)
                                                     ->where('user_id', $userClearance->user_id)
                                                     ->get();
-                            
+
                                                 $hasNonArchivedUpload = $uploadedFiles->where('is_archived', false)->count() > 0;
-                                                
+
                                                 $feedback = $requirement->feedback
                                                     ->where('user_id', $userClearance->user_id)
                                                     ->where('is_archived', false)
@@ -378,8 +378,8 @@
                                                     {{-- @if($hasNonArchivedUpload)
                                                         <div class="flex justify-center">
                                                             <div class="flex justify-center">
-                                                                <button 
-                                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                <button
+                                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                     class="group relative bg-blue-500 hover:bg-blue-700 text-white p-2 rounded-full transition-colors duration-200">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -387,8 +387,8 @@
                                                                     <span class="tooltip invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs whitespace-nowrap">Upload File</span>
                                                                 </button>
                                                             </div>
-                                                            <button 
-                                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                            <button
+                                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="group relative bg-red-500 hover:bg-red-800 text-white p-2 rounded-full transition-colors duration-200 ml-1">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -396,7 +396,7 @@
                                                                 <span class="tooltip invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs whitespace-nowrap">Delete File</span>
                                                             </button>
                                                             <button
-                                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="group relative bg-green-500 hover:bg-green-800 text-white p-2 rounded-full transition-colors duration-200">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -407,8 +407,8 @@
                                                         </div>
                                                     @else
                                                         <div class="flex flex-col items-center">
-                                                            <button 
-                                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                            <button
+                                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="group relative bg-blue-500 hover:bg-blue-700 text-white p-2 rounded-full transition-colors duration-200 flex items-center">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -422,8 +422,8 @@
                                                     @if($hasNonArchivedUpload)
                                                         <div class="flex justify-start">
                                                             <div class="flex justify-start">
-                                                                <button 
-                                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                <button
+                                                                    onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                     class="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -431,8 +431,8 @@
                                                                     Upload
                                                                 </button>
                                                             </div>
-                                                            <button 
-                                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                            <button
+                                                                onclick="openDeleteConfirmationModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="bg-red-500 hover:bg-red-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center ml-1">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 016.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -442,7 +442,7 @@
                                                         </div>
                                                         <div class="p-1 flex justify-start space-x-1">
                                                             <button style="width: 120px;"
-                                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                onclick="viewFilesModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="bg-green-500 hover:bg-green-800 text-white px-2 py-1 rounded-full transition-colors duration-200 text-sm font-semibold flex items-center justify-center">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -455,7 +455,7 @@
                                                         @if($checkStatus != 'Not Applicable')
                                                         <div class="flex justify-center">
                                                             <button style="width: 90px;"
-                                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})" 
+                                                                onclick="openUploadModal({{ $userClearance->shared_clearance_id }}, {{ $requirement->id }})"
                                                                 class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors duration-200 text-xs font-semibold">
                                                                 Upload
                                                             </button>
@@ -478,7 +478,7 @@
             function toggleFolder(header) {
                 const content = header.nextElementSibling;
                 const icon = header.querySelector('.folder-icon');
-                
+
                 content.classList.toggle('hidden');
                 icon.classList.toggle('rotate-180');
 
@@ -487,14 +487,14 @@
                 const isOpen = !content.classList.contains('hidden');
                 localStorage.setItem(`category-${category}`, isOpen);
             }
-            
+
             document.addEventListener('DOMContentLoaded', function() {
                 const folderHeaders = document.querySelectorAll('.folder-header');
-                
+
                 folderHeaders.forEach(header => {
                     const category = header.querySelector('h3').textContent.trim();
                     const isOpen = localStorage.getItem(`category-${category}`) === 'true';
-                    
+
                     if (isOpen) {
                         const content = header.nextElementSibling;
                         const icon = header.querySelector('.folder-icon');
@@ -507,7 +507,7 @@
     </div>
 
     <!-- Upload Modal -->
-    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300">
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300" style="z-index: 1000;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -730,7 +730,7 @@
 
             console.log(requirements);
             console.log(`Missing: ${missingCount}, Resubmit: ${returnCount}, Not Applicable: ${notApplicableCount}`);
-            
+
             missingCountElement.textContent = `Missing Requirements to Upload: ${missingCount} out of ${requirements.length}`;
             returnCountElement.textContent = `Resubmit Documents: ${returnCount} out of ${requirements.length}`;
 
@@ -738,7 +738,7 @@
            /* function toggleFolder(header) {
                 const content = header.nextElementSibling;
                 const icon = header.querySelector('.folder-icon');
-                
+
                 content.classList.toggle('hidden');
                 icon.classList.toggle('rotate-180');
 
@@ -747,14 +747,14 @@
                 const isOpen = !content.classList.contains('hidden');
                 localStorage.setItem(`category-${category}`, isOpen);
             }
-            
+
             document.addEventListener('DOMContentLoaded', function() {
                 const folderHeaders = document.querySelectorAll('.folder-header');
-                
+
                 folderHeaders.forEach(header => {
                     const category = header.querySelector('h3').textContent.trim();
                     const isOpen = localStorage.getItem(`category-${category}`) === 'true';
-                    
+
                     if (isOpen) {
                         const content = header.nextElementSibling;
                         const icon = header.querySelector('.folder-icon');
@@ -845,7 +845,7 @@
         function toggleFolder(header) {
             const content = header.nextElementSibling;
             const icon = header.querySelector('.folder-icon');
-            
+
             content.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');
         }
@@ -859,7 +859,7 @@
         function openDeleteConfirmationModal(sharedClearanceId, requirementId) {
             const modal = document.getElementById('deleteConfirmationModal');
             const confirmButton = document.getElementById('confirmDeleteButton');
-            
+
             modal.classList.remove('hidden');
             confirmButton.onclick = function() {
                 deleteFile(sharedClearanceId, requirementId);
@@ -915,12 +915,12 @@
         function viewFilesModal(sharedClearanceId, requirementId) {
             // Set the requirement ID in the modal
             const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
-            
+
             document.getElementById('viewFilesModal').classList.remove('hidden');
             document.getElementById('modalRequirementId').innerText = requirementId;
             document.getElementById('modalRequirementName').innerText = requirements[requirementId];
             document.getElementById('modalRequirementId').innerText = requirementId;
-            
+
 
             // Clear the current list
             const uploadedFilesGrid = document.getElementById('uploadedFilesGrid');
@@ -1016,9 +1016,9 @@
                 const previewModal = document.getElementById('previewModal');
                 const previewFrame = document.getElementById('previewFrame');
                 const previewFileName = document.getElementById('previewFileName');
-                console.log('File path:', path); 
+                console.log('File path:', path);
 
-                
+
                 // Remove comments if hosted na ang project
                 const fileUrl = `/file-view/${path}`;
                 console.log('File URL:', fileUrl);
@@ -1026,7 +1026,7 @@
                 previewFrame.src = fileUrl;
                 // previewFrame.src = url;
                 previewFileName.textContent = filename;
-                
+
                 previewModal.classList.remove('hidden');
                 previewModal.classList.add('flex');
             }
@@ -1034,7 +1034,7 @@
             function closePreviewModal() {
                 const previewModal = document.getElementById('previewModal');
                 const previewFrame = document.getElementById('previewFrame');
-                
+
                 previewModal.classList.add('hidden');
                 previewModal.classList.remove('flex');
                 previewFrame.src = '';
@@ -1236,7 +1236,7 @@
          */
         function openUploadModal(sharedClearanceId, requirementId) {
             const requirements = @json($userClearance->sharedClearance->clearance->requirements->pluck('requirement', 'id'));
-            
+
             document.getElementById('uploadModal').classList.remove('hidden');
             document.getElementById('uploadUserClearanceId').value = sharedClearanceId;
             document.getElementById('uploadRequirementId').innerText = requirementId;
@@ -1290,7 +1290,7 @@
         function checkAllUploadsComplete() {
             const progressBars = document.querySelectorAll('#uploadList .bg-blue-500');
             if (progressBars.length === 0) return false;
-            
+
             return Array.from(progressBars).every(bar => {
                 const progress = parseFloat(bar.getAttribute('data-progress'));
                 return progress === 100;
@@ -1334,7 +1334,7 @@
                     if (event.lengthComputable) {
                         const percentComplete = (event.loaded / event.total) * 100;
                         updateUploadProgress(uploadItem, percentComplete, event.loaded, event.total);
-                        
+
                         // Check if all uploads are complete after each progress update
                         if (checkAllUploadsComplete()) {
                             setTimeout(() => {
@@ -1357,7 +1357,7 @@
                     } else {
                         showNotification('An error occurred while uploading the files.', 'error');
                     }
-                    
+
                     if (document.getElementById('uploadList').children.length === 0) {
                         hideUploadTracker();
                     }

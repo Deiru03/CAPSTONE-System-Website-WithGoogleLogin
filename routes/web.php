@@ -214,8 +214,8 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::post('/admin/clearance/reset/{userId}', [AdminClearanceController::class, 'resetSpecificUserClearance'])->name('admin.clearance.resetSpecific');
     /////////////////////////////////////////// User Clearance DetailsSearch ///////////////////////////////////////////
     Route::post('/admin/clearance/feedback/store', [AdminClearanceController::class, 'storeFeedback'])->name('admin.clearance.feedback.store');
-    Route::post('/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
-    Route::get('/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
+    // Route::post('/admin/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
+    // Route::get('/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
     Route::get('/admin/admin/clearance/search', [AdminClearanceController::class, 'search'])->name('admin.clearance.search');
 
     /////////////////////////////////////////// Departments and Programs ///////////////////////////////////////////

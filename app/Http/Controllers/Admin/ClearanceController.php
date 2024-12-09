@@ -94,11 +94,15 @@ class ClearanceController extends Controller
             })
             ->when($query, function ($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%')
-                  ->orWhere('id', 'like', '%' . $query . '%');
+                ->orWhere('id', 'like', '%' . $query . '%');
             })
             ->get();
 
-        return view('admin.views.clearances.clearance-check', compact('users', 'query'));
+        // dd($users);
+
+        $academicYears = $this->getAcademicYears(); // Fetch academic years
+
+        return view('admin.views.clearances.clearance-check', compact('users', 'query', 'academicYears'));
     }
 
     // Fetch a clearance for editing

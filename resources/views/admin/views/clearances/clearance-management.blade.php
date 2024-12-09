@@ -4,7 +4,6 @@
             {{ __('Clearance Management') }}
         </h2>
     </x-slot>
-    
 
     <div class="max-w-8xl mx-auto sm:px-2 lg:px-2 shadow-lg border border-gray-300">
         <div class="p-6 text-gray-900">
@@ -19,6 +18,7 @@
                     Add Clearance Checklist
                 </span>
             </button>
+
             <!-- Add this button below the "Add Clearance Checklist" button -->
             <button onclick="openSharedClearancesModal()" class="mt-4 ml-2 bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
                 <span class="flex items-center">

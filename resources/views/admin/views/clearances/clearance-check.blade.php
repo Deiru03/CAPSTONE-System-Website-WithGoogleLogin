@@ -68,14 +68,14 @@
         </style>
     @endif
 
-    <div class="py-5 w-auto">     
+    <div class="py-5 w-auto">
         <h3 class="text-3xl font-semibold mb-4 text-blue-600">User Clearance Check</h3>
-        
+
         <!-- Search Form -->
         <div class="flex items-center mb-6">
             <form action="{{ route('admin.clearance.search') }}" method="GET" class="flex-grow mr-2">
                 <div class="flex items-center">
-                    <input type="text" name="search" placeholder="Search by name or ID" value="{{ request('search') }}" 
+                    <input type="text" name="search" placeholder="Search by name or ID" value="{{ request('search') }}"
                            class="border-2 border-gray-300 bg-white h-10 px-5 pr-15 rounded-lg text-sm focus:outline-none w-64">
                     <button type="submit" class="ml-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">
                         Search
@@ -91,7 +91,7 @@
         </div>
 
         <!-- Modal for Requirements Search -->
-        <div id="requirementsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden shadow-lg">
+        {{-- <div id="requirementsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden shadow-lg">
             <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                 <div class="mt-3 text-center">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Search Requirements</h3>
@@ -108,7 +108,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- User Clearances -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
@@ -159,15 +159,15 @@
                                     ->where('is_archived', false)
                                     ->sortByDesc('created_at')
                                     ->first();
-                                
+
                                 $hasComplied = false;
                                 if ($latestUpload) {
                                     $feedback = $latestUpload->requirement->feedback
                                         ->where('user_id', $user->id)
                                         ->where('is_archived', false)
                                         ->first();
-                                    $hasComplied = $feedback && 
-                                        $feedback->signature_status == 'Return' && 
+                                    $hasComplied = $feedback &&
+                                        $feedback->signature_status == 'Return' &&
                                         $latestUpload->created_at > $feedback->updated_at;
                                 }
                             @endphp
@@ -216,7 +216,7 @@
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="mb-4">
                     <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
                     <select id="semester" name="semester" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -319,7 +319,7 @@
         }
 
     ////// Reset Functions Script //////
-  
+
         document.getElementById('resetButton').addEventListener('click', function() {
             document.getElementById('resetUserModal').classList.remove('hidden');
         });
@@ -391,7 +391,7 @@
             }
         }
     </script>
-   
+
     {{-- New Uploads Count Sidebar --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
