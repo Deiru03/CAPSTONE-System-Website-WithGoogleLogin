@@ -53,7 +53,7 @@ class ProfileController extends Controller
         $user = $request->user();
          // Skip validation for admins without a campus_id
         if (!($user->user_type === 'Admin' && is_null($user->campus_id) ||
-              $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+              $user->user_type === 'Program-Head' && is_null($user->campus_id) ||
               $user->user_type === 'Dean' && is_null($user->campus_id))) {
             $request->validate([
                 'campus_id' => 'required',
@@ -64,22 +64,22 @@ class ProfileController extends Controller
 
         $user->fill($request->validated());
         $campuses = Campus::all();
-    
+
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
-    
+
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
             $path = $file->store('profile_pictures', 'public');
             $user->profile_picture = '/storage/' . $path;
         }
-    
+
          // Handle ID based on user type
         if (in_array($request->input('user_type'), ['Admin', 'Dean', 'Program-Head'])) {
             // Skip ID validation for superadmin
             if (!($user->user_type === 'Admin' && is_null($user->campus_id) ||
-                $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
+                $user->user_type === 'Program-Head' && is_null($user->campus_id) ||
                 $user->user_type === 'Dean' && is_null($user->campus_id))) {
                 if ($request->has('admin_id')) {
                     $request->validate([
@@ -96,7 +96,7 @@ class ProfileController extends Controller
 
                     $user->admin_id_registered = $request->admin_id;
                     $adminId->update([
-                        'is_assigned' => true, 
+                        'is_assigned' => true,
                         'user_id' => $user->id,
                     ]);
                 }
@@ -115,7 +115,7 @@ class ProfileController extends Controller
                     }
 
                     $programHeadDeanId->update([
-                        'is_assigned' => true, 
+                        'is_assigned' => true,
                         'user_id' => $user->id,
                         'type' => $request->input('user_type')
                     ]);
@@ -138,14 +138,14 @@ class ProfileController extends Controller
         // $user->clearances_status = 'pending';
         // $user->checked_by = 'System';
         $program = \App\Models\Program::find($request->input('program_id'));
-        
+
         $user->position = $request->input('position');
         $user->units = $request->input('units');
         $user->campus_id = $request->input('campus_id');
         $user->department_id = $request->input('department_id');
         $user->program_id = $request->input('program_id');
         $user->program = $program ? $program->name : null;
-    
+
         $user->save();
 
         // Save the sub-program
@@ -160,7 +160,7 @@ class ProfileController extends Controller
             ]);
         }
 
-    
+
         if ($user->user_type === 'Admin' || $user->user_type === 'Dean' || $user->user_type === 'Program-Head') {
             return Redirect::route('admin.profile.edit')->with('status', 'profile-updated', 'campuses');
         } else {
