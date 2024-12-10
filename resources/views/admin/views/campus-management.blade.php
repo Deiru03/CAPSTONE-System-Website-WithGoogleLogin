@@ -37,6 +37,7 @@
                     </p>
                 </div>
             </div>
+            @if(Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id)
             <div class="relative group">
                 <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <button onclick="openModal('campusModal')" class="relative bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl flex items-center">
@@ -46,6 +47,7 @@
                     Add Campus
                 </button>
             </div>
+            @endif
         </div>
 
         <!-- Notification -->
@@ -102,12 +104,14 @@
                                     </button>
                                 </div>
                             @endif
-                            <a href="{{ route('admin.campuses.show', $campus->id) }}" class="mt-2 w-full bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-green-400 hover:to-green-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                <span class="ml-1">View</span>
-                            </a>
+                            @if(Auth::user()->campus_id == $campus->id || (Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id))
+                                <a href="{{ route('admin.campuses.show', $campus->id) }}" class="mt-2 w-full bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-green-400 hover:to-green-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    <span class="ml-1">View</span>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @endforeach
