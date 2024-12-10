@@ -340,7 +340,7 @@
                                         ->sortByDesc('created_at')
                                         ->first();
                                 @endphp
-                                {{ $latestUpload ? $latestUpload->created_at->format('M d, Y H:i') : 'N/A' }}
+                                {{ $latestUpload ? $latestUpload->created_at->format('M d, Y g:i A') : 'N/A' }}
                             </td>
                             <td class="py-2 px-3 text-xs" onclick="event.stopPropagation()">
                                 <button onclick="openModal({{ $user->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">

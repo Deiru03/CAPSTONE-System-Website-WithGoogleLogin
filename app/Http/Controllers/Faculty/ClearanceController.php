@@ -265,6 +265,10 @@ class ClearanceController extends Controller
                     'is_read' => false,
                 ]);
 
+                UserClearance::where('id', $sharedClearanceId)->update([
+                    'updated_at' => now(),
+                ]);
+
                 // Create feedback for the requirement
                 ClearanceFeedback::create([
                     'user_id' => $user->id,
