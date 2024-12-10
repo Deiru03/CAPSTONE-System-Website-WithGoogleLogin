@@ -56,8 +56,8 @@
                 </p>
             </div>
         </div> --}}
-    
-    
+
+
         <!-- Add this after your existing statistics cards -->
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <!-- Clearance Status Chart -->
@@ -67,9 +67,9 @@
                     <canvas id="clearanceStatusChart"></canvas>
                 </div>
                 <div class="mt-2 text-sm text-gray-600 flex justify-between">
-                    <span>In Progress: {{ $clearance->where('clearances_status', 'pending')->count() }}</span>
-                    <span>Completed: {{ $clearance->where('clearances_status', 'complete')->count() }}</span>
-                    <span>Resubmit: {{ $clearance->where('clearances_status', 'return')->count() }}</span>
+                    <span>In Progress: {{ $clearanceTotal->where('clearances_status', 'pending')->count() }}</span>
+                    <span>Completed: {{ $clearanceTotal->where('clearances_status', 'complete')->count() }}</span>
+                    <span>Resubmit: {{ $clearanceTotal->where('clearances_status', 'return')->count() }}</span>
                 </div>
             </div>
 
@@ -80,8 +80,8 @@
                     <canvas id="checklistChart"></canvas>
                 </div>
                 @php
-                    $totalUsers = $clearance->count();
-                    $usersWithCopy = $clearance->filter(function($user) {
+                    $totalUsers = $clearanceTotal->count();
+                    $usersWithCopy = $clearanceTotal->filter(function($user) {
                         return $user->userClearances->where('is_active', true)->isNotEmpty();
                     })->count();
                     $usersWithoutCopy = $totalUsers - $usersWithCopy;
@@ -101,23 +101,23 @@
                 <div class="mt-4 text-sm text-gray-600">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <span class="font-semibold">Total Activities:</span> 
+                            <span class="font-semibold">Total Activities:</span>
                             {{ $totalActivities }}
                         </div>
                         <div>
-                            <span class="font-semibold">Today's Activities:</span> 
+                            <span class="font-semibold">Today's Activities:</span>
                             {{ end($activityData) }}
                         </div>
                     </div>
-                    
+
                     <!-- Hover trigger area -->
                     <div class="relative group">
                         <div class="cursor-pointer text-blue-600 hover:text-blue-800 mt-2">
                             Hover to see breakdown
                         </div>
-                        
+
                         <!-- Hidden breakdown that shows on hover -->
-                        <div class="absolute left-0 mt-1 bg-white shadow-lg rounded-lg p-3 invisible group-hover:visible 
+                        <div class="absolute left-0 mt-1 bg-white shadow-lg rounded-lg p-3 invisible group-hover:visible
                                 transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 w-64 border border-gray-200">
                             <span class="font-semibold">Activity Breakdown:</span>
                             <ul class="mt-1 space-y-1">
@@ -146,9 +146,9 @@
                 labels: ['In-Progress', 'Completed', 'Resubmit'],
                 datasets: [{
                     data: [
-                        {{ $clearance->where('clearances_status', 'pending')->count() }},
-                        {{ $clearance->where('clearances_status', 'complete')->count() }},
-                        {{ $clearance->where('clearances_status', 'return')->count() }}
+                        {{ $clearanceTotal->where('clearances_status', 'pending')->count() }},
+                        {{ $clearanceTotal->where('clearances_status', 'complete')->count() }},
+                        {{ $clearanceTotal->where('clearances_status', 'return')->count() }}
                     ],
                     backgroundColor: ['#FCD34D', '#10B981', '#F97316'],
                     borderWidth: 1
@@ -251,7 +251,7 @@
             });
         });
     </script>
-        
+
 
          <!-- Search and Filter Form -->
          <form method="GET" action="{{ route('admin.views.clearances') }}" class="mb-4 flex items-center">
@@ -263,7 +263,7 @@
             </select>
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
         </form>
-    
+
         <div class="overflow-x-auto">
             <div class="max-h-[600px] overflow-y-auto">
                 {{-- <table class="min-w-full text-sm border-collapse border border-gray-300">
@@ -357,16 +357,27 @@
             </div>
         </div>
 
-        <!-- Total Users and Pagination -->
+        <!-- Manual Pagination Controls -->
         <div class="flex justify-between items-center mt-4">
-            <div>
+            <div class="flex space-x-4">
                 <span class="text-sm text-gray-600">Total Users: {{ $clearance->total() }}</span>
+                <span class="text-sm text-gray-600">Showing {{ $clearance->firstItem() }} - {{ $clearance->lastItem() }}</span>
             </div>
-            <div>
-                {{ $clearance->links() }}
+            <div class="flex space-x-2">
+                @if($clearance->currentPage() > 1)
+                    <a href="{{ $clearance->previousPageUrl() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Previous
+                    </a>
+                @endif
+
+                @if($clearance->hasMorePages())
+                    <a href="{{ $clearance->nextPageUrl() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Next
+                    </a>
+                @endif
             </div>
         </div>
-        
+
         {{-- Edit Modal for Clearance Checklist Modification --}}
         <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-10">
             <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
@@ -376,19 +387,19 @@
                     </svg>
                     Edit Clearance
                 </h3>
-                
+
                 <!-- Current Clearance Info -->
                 <div id="currentClearanceInfo" class="mb-4 p-3 bg-blue-50 rounded-md hidden">
                     <p class="text-sm text-blue-600">Current Active Clearance:</p>
                     <p id="currentClearanceName" class="font-medium text-blue-800"></p>
                     <p id="currentClearanceDetails" class="text-sm text-blue-600"></p> <!-- New line for additional details -->
                 </div>
-        
+
                 <!-- No Clearance Message -->
                 <div id="noClearanceMessage" class="text-red-500 mb-4 hidden">
                     This user does not have a clearance copy yet.
                 </div>
-        
+
                 <form id="editForm" method="post" action="{{ route('admin.clearance.assign') }}">
                     @csrf
                     <input type="hidden" name="id" id="editId">
@@ -424,7 +435,7 @@
         </div>
 
     <!-- Notification -->
-    <div id="notification" 
+    <div id="notification"
         class="z-50 fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg transform transition-all duration-500 opacity-0 translate-y-[-100%] pointer-events-none">
     </div>
 
@@ -433,11 +444,11 @@
         function openModal(id) {
             console.log('Opening modal for user ID:', id);
             document.getElementById('editId').value = id;
-            
+
             // Get user data
             const users = @json($users);
             const user = users.find(u => u.id === parseInt(id));
-            
+
             if (!user) {
                 console.error('User not found:', id);
                 return;
@@ -445,24 +456,24 @@
 
             // Get active clearance if exists
             const activeClearance = user.user_clearances.find(uc => uc.is_active);
-            
+
             if (activeClearance) {
                 document.getElementById('noClearanceMessage').classList.add('hidden');
                 document.getElementById('currentClearanceInfo').classList.remove('hidden');
-                document.getElementById('currentClearanceName').textContent = 
+                document.getElementById('currentClearanceName').textContent =
                     activeClearance.shared_clearance.clearance.document_name;
-                
+
                 // Add more details
-                document.getElementById('currentClearanceDetails').textContent = 
+                document.getElementById('currentClearanceDetails').textContent =
                     `Assigned on: ${activeClearance.assigned_date}, Status: ${activeClearance.status}`;
-                
+
                 document.getElementById('editSharedClearance').value = activeClearance.shared_clearance_id;
             } else {
                 document.getElementById('noClearanceMessage').classList.remove('hidden');
                 document.getElementById('currentClearanceInfo').classList.add('hidden');
                 document.getElementById('editSharedClearance').value = '';
             }
-            
+
             document.getElementById('editModal').classList.remove('hidden');
         }
 
@@ -517,15 +528,15 @@
                 console.error('Notification element not found');
                 return;
             }
-            
+
             notification.textContent = message;
             notification.classList.remove('bg-green-500', 'bg-red-500');
             notification.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
-            
+
             // Show notification
             notification.style.transform = 'translateY(0)';
             notification.style.opacity = '1';
-            
+
             // Hide after 3 seconds
             setTimeout(() => {
                 notification.style.transform = 'translateY(-100%)';
@@ -544,5 +555,17 @@
         }
     </script>
 
+     <script>
+           window.addEventListener('beforeunload', function() {
+               localStorage.setItem('scrollPosition', window.scrollY);
+           });
+
+           document.addEventListener('DOMContentLoaded', function() {
+               const scrollPosition = localStorage.getItem('scrollPosition');
+               if (scrollPosition) {
+                   window.scrollTo(0, parseInt(scrollPosition, 10));
+               }
+           });
+       </script>
 
 </x-admin-layout>

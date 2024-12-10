@@ -324,11 +324,14 @@ class AdminController extends Controller
             ->pluck('count', 'transaction_type')
             ->toArray();
 
-        $clearance = $query->paginate(100);
+        $perPage = 10;
+        $clearanceTotal = $query->get(); // Get total count before pagination
+        $clearance = $query->paginate($perPage);
 
         return view('admin.views.clearances', compact(
             'clearance',
             'clearances',
+            'clearanceTotal',
             'users',
             'sharedClearances',
             'activityData',
