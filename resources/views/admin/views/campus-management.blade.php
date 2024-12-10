@@ -100,14 +100,14 @@
                                         </svg>
                                         <span class="ml-1">Edit</span>
                                     </button>
-                                    <a href="{{ route('admin.campuses.show', $campus->id) }}" class="flex-1 bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-green-400 hover:to-green-500">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                        <span class="ml-1">View</span>
-                                    </a>
                                 </div>
                             @endif
+                            <a href="{{ route('admin.campuses.show', $campus->id) }}" class="mt-2 w-full bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center shadow-md hover:bg-gradient-to-r hover:from-green-400 hover:to-green-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                <span class="ml-1">View</span>
+                            </a>
                         </div>
                     </div>
                 @endforeach
@@ -333,7 +333,7 @@
                      // Set the preview image source
                     const preview = document.getElementById('edit_preview_image');
                     if (data.profile_picture) {
-                        preview.src = `/storage/${data.profile_picture}`;
+                        preview.src = `/profile_pictures/${data.profile_picture.split('/').pop()}`;
                         preview.classList.remove('hidden');
                     } else {
                         preview.src = '/images/default-profile.png';
