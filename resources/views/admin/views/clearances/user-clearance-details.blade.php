@@ -198,7 +198,6 @@
 
     <div class="mt-10">
         @php
-            $newUploadsCount = 0;
             $onCheckCount = 0;
             $resubmitsCount = 0;
             $compliedCount = 0;
@@ -228,8 +227,6 @@
                         } elseif ($feedback->signature_status == 'Complied') {
                             $compliedCount++;
                         }
-                    } else {
-                        $newUploadsCount++;
                     }
                 }
                 if ($isComplied = $uploadedFile && $feedback && $feedback->signature_status == 'Resubmit' && $uploadedFile->created_at > $feedback->updated_at) {

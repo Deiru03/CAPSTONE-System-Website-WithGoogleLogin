@@ -334,13 +334,12 @@
                             </td>
                             <td class="py-2 px-3 last_clearance_update text-xs">
                                 @php
-                                    $latestUpload = $user->userClearances
-                                        ->flatMap->uploadedClearances
+                                    $latestUpdate = $user->userClearances
                                         ->where('is_archived', false)
-                                        ->sortByDesc('created_at')
+                                        ->sortByDesc('updated_at')
                                         ->first();
                                 @endphp
-                                {{ $latestUpload ? $latestUpload->created_at->format('M d, Y g:i A') : 'N/A' }}
+                                {{ $latestUpdate ? $latestUpdate->updated_at->format('M d, Y g:i A') : 'N/A' }}
                             </td>
                             <td class="py-2 px-3 text-xs" onclick="event.stopPropagation()">
                                 <button onclick="openModal({{ $user->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">

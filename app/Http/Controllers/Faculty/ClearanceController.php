@@ -265,9 +265,13 @@ class ClearanceController extends Controller
                     'is_read' => false,
                 ]);
 
-                UserClearance::where('id', $sharedClearanceId)->update([
-                    'updated_at' => now(),
-                ]);
+                // Find the UserClearance record
+                $userClearance = UserClearance::where('user_id', $user->id)
+                    ->where('shared_clearance_id', $sharedClearanceId)
+                    ->firstOrFail();
+
+                // Update the 'updated_at' timestamp
+                $userClearance->touch();
 
                 // Create feedback for the requirement
                 ClearanceFeedback::create([
