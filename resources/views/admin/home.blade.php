@@ -30,7 +30,7 @@
                 <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-500">Dashboard</a>
                 <a href="{{ route('admin.views.submittedReports') }}" class="text-gray-700 hover:text-blue-500">Submitted Report</a>
                 <a href="{{ route('admin.views.myFiles') }}" class="text-gray-700 hover:text-blue-500">My Files</a>
-                <a href="{{ route('admin.clearance.manage') }}" class="text-gray-700 hover:text-blue-500">Clearance</a> 
+                <a href="{{ route('admin.clearance.manage') }}" class="text-gray-700 hover:text-blue-500">Clearance</a>
                 --}}
                 <div class="relative">
                     <x-dropdown align="right" width="48">
@@ -60,7 +60,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
-                <a href="#" class="text-gray-700 hover:text-blue-500">About Us</a>
+                <a href="{{ route('about-us') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('about-us') ? 'text-white font-semibold' : '' }}">About Us</a>
             </nav>
         </div>
     </div>
@@ -71,7 +71,7 @@
                 <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="h-32 w-32">
             </div>
         </a>
-        
+
         <!-- Welcome Message -->
         <a href="{{ route('admin.dashboard') }}" class="block relative z-10 text-center mb-12">
             <div class="cursor-pointer">
@@ -164,7 +164,7 @@
             <!-- Progress bar -->
             <div class="w-64 bg-gray-700 rounded-full h-1 overflow-hidden mt-4">
                 <div id="progressBar" class="w-0 h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 transition-all duration-300 ease-out"></div>
-            </div>     
+            </div>
         </div>
     </div>
 

@@ -60,7 +60,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
-                <a href="#" class="text-gray-700 hover:text-blue-500">About Us</a>
+                <a href="{{ route('about-us') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('about-us') ? 'text-white font-semibold' : '' }}">About Us</a>
             </nav>
         </div>
     </div>
@@ -90,7 +90,7 @@
         </a>
         <div class="h-24"></div>
     </div>
-            
+
     <!-- Quick Actions -->
     <div class="flex justify-center items-center max-w-4xl w-full mx-auto relative z-20 -mt-72">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -165,7 +165,7 @@
             <!-- Progress bar -->
             <div class="w-64 bg-gray-700 rounded-full h-1 overflow-hidden mt-4">
                 <div id="progressBar" class="w-0 h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 transition-all duration-300 ease-out"></div>
-            </div>     
+            </div>
         </div>
     </div>
 
