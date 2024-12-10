@@ -73,10 +73,12 @@ class AdminController extends Controller
         } elseif ($user->user_type === 'Dean') {
             $userQuery->where('department_id', $user->department_id);
         } elseif ($user->user_type === 'Program-Head') {
-            $userQuery->where('program_id', $user->program_id)
+            $userQuery->where(function($query) use ($user) {
+                $query->where('program_id', $user->program_id)
                       ->orWhereHas('subPrograms', function($sq) use ($user) {
                           $sq->where('program_id', $user->program_id);
                       });
+            });
         }
 
         //////////////////////// Clearance Counts //////////////////////////
@@ -158,11 +160,13 @@ class AdminController extends Controller
                 $q->where('department_id', Auth::user()->department_id);
             })->count(); // Count reports for dean
         } elseif (Auth::check() && Auth::user()->user_type === 'Program-Head') {
-            $submittedReportsCount = $submittedReportsQuery->whereHas('user', function($q) {
-                $q->where('program_id', Auth::user()->program_id)
-                  ->orWhereHas('subPrograms', function($sq) {
-                      $sq->where('program_id', Auth::user()->program_id);
-                  });
+            $submittedReportsCount = $submittedReportsQuery->whereHas('user', function($q) use ($user) {
+                $q->where(function($query) use ($user) {
+                    $query->where('program_id', $user->program_id)
+                          ->orWhereHas('subPrograms', function($sq) use ($user) {
+                              $sq->where('program_id', $user->program_id);
+                          });
+                });
             })->count(); // Count reports for program head
         }
 
@@ -474,7 +478,9 @@ class AdminController extends Controller
             }
         }
 
-        $faculty = $query->paginate(100); // Show 100 records per page to handle larger datasets while maintaining performance
+        $perPage = 100;
+        $faculty = $query->get(); // Get total count before pagination
+        $facultyTable = $query->paginate($perPage);
 
         foreach ($faculty as $member) {
             $member->program_name = Program::find($member->program_id)->name ?? 'N/A';
@@ -483,7 +489,7 @@ class AdminController extends Controller
         $departments = Department::all();
         $programs = Program::all();
 
-        return view('admin.views.faculty', compact('faculty', 'departments', 'programs', 'adminName'));
+        return view('admin.views.faculty', compact('faculty', 'facultyTable', 'departments', 'programs', 'adminName'));
     }
 
     public function showCollege(): View

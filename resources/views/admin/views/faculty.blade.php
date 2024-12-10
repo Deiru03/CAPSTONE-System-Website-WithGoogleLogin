@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
     <script src="{{ asset('js/faculty.js') }}"></script>
-    
+
     <!-- Notification -->
     <div id="notificationModern" role="alert" class="hidden fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
         <div class="flex items-center">
@@ -156,7 +156,7 @@
                         <button onclick="openReportOptionsModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                             Generate Report
                         </button>
-                        <button onclick="window.location='{{ route('admin.facultyReport.managed') }}'" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded ml-2">
+                        <button onclick="window.open('{{ route('admin.facultyReport.managed') }}', '_blank')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded ml-2">
                             Generate Managed Faculty Report
                         </button>
                     </div>
@@ -183,7 +183,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Faculty Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full border border-gray-300">
                 <div class="table-container overflow-y-auto" style="max-height: 600px;">
@@ -204,8 +204,8 @@
                                 @endif
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-500"> 
-                            @foreach ($faculty as $member)
+                        <tbody class="divide-y divide-gray-500">
+                            @foreach ($facultyTable as $member)
                             <tr>
                                 <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[100px]">{{ $member->id }}</td>
                                 <td class="px-1 py-2 overflow-hidden text-ellipsis border-r max-w-[200px]">{{ $member->name }}</td>
@@ -220,16 +220,16 @@
                                 @if(Auth::user()->user_type === 'Admin')
                                     <td class="px-1 py-2 overflow-hidden text-ellipsis text-center border-r max-w-[100px]">{{ $member->user_type }}</td>
                                     <td class="py-2 px-1 border-b flex space-x-2 justify-center max-w-[150px]">
-                                        <button 
-                                            onclick="openEditModal({{ $member->id }})" 
+                                        <button
+                                            onclick="openEditModal({{ $member->id }})"
                                             class="bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                             </svg>
                                             Edit
                                         </button>
-                                        <button 
-                                            onclick="openDeleteModal({{ $member->id }}, '{{ addslashes($member->name) }}')" 
+                                        <button
+                                            onclick="openDeleteModal({{ $member->id }}, '{{ addslashes($member->name) }}')"
                                             class="bg-red-100 hover:bg-red-200 text-red-700 flex items-center text-xs px-2 py-1 rounded-md transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 000 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
@@ -242,12 +242,33 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>     
+                </div>
                 <div class="mt-4">
-                    {{ $faculty->links() }}
+                    {{ $facultyTable->links() }}
                 </div>
             </div>
-  
+
+            <!-- Manual Pagination Controls -->
+            <div class="flex justify-between items-center mt-4">
+                <div class="flex space-x-4">
+                    <span class="text-sm text-gray-600">Total Users: {{ $facultyTable->total() }}</span>
+                    <span class="text-sm text-gray-600">Showing {{ $facultyTable->firstItem() }} - {{ $facultyTable->lastItem() }}</span>
+                </div>
+                <div class="flex space-x-2">
+                    @if($facultyTable->currentPage() > 1)
+                        <a href="{{ $facultyTable->previousPageUrl() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Previous
+                        </a>
+                    @endif
+
+                    @if($facultyTable->hasMorePages())
+                        <a href="{{ $facultyTable->nextPageUrl() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Next
+                        </a>
+                    @endif
+                </div>
+            </div>
+
         <!-- Edit Modal -->
         <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
@@ -362,14 +383,14 @@
                     </div>
                 </form>
                 <div id="editNotification" class="hidden mt-4 text-green-600 bg-green-100 p-3 rounded-lg border border-green-200"></div>
-                
+
                 <!-- Loader for Edit Modal -->
                 <div id="editLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
                     <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-12 w-12"></div>
                 </div>
             </div>
         </div>
-    
+
         <!-- Delete Modal -->
         <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
@@ -402,7 +423,7 @@
                 <div id="deleteNotification" class="hidden mt-4 text-red-600 bg-red-100 p-3 rounded-lg border border-red-200">
                     <!-- Notification message will appear here -->
                 </div>
-                
+
                 <!-- Loader for Delete Modal -->
                 <div id="deleteLoader" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-2xl">
                     <div class="loader border-t-4 border-red-500 border-solid rounded-full animate-spin h-12 w-12"></div>
@@ -420,7 +441,7 @@
                     </svg>
                     Manage Faculty
                 </h3>
-                
+
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div class="relative">
                         <input type="text" id="facultyNameSearch" placeholder="Search by name..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
@@ -438,8 +459,8 @@
                         <input type="text" id="facultyProgramSearch" placeholder="Search by program..." class="w-full pl-8 pr-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300" onkeyup="filterFaculty()">
                         <svg class="absolute left-2 top-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
-                </div>  
-                
+                </div>
+
                 <div class="flex justify-between mb-3 flex-grow overflow-hidden">
                     <div class="w-1/2 pr-2 flex flex-col h-full">
                         <h4 class="text-base font-medium mb-1 text-gray-700">Available Faculty</h4>
@@ -459,26 +480,26 @@
                         <button onclick="removeSelected()" class="mt-2 px-4 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Remove Selected</button>
                     </div>
                 </div>
-                
+
                 <div id="notification" class="hidden fixed bottom-4 right-4 p-4 bg-gradient-to-r from-green-50 to-green-100 text-green-800 rounded-xl shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 border border-green-200 z-50 flex items-center space-x-3">
                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span class="font-medium"></span>
                 </div>
-        
+
                 <div class="flex justify-end mt-4">
                     {{-- <button onclick="updateFaculty()" class="px-4 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">Save</button> --}}
                     <button onclick="closeManageModal()" class="ml-2 px-4 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Close</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Report Options Modal -->
         <div id="reportOptionsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
                 <h3 class="text-2xl font-bold mb-6 text-gray-800">Generate Report Options</h3>
-                <form id="reportOptionsForm" method="POST" action="{{ route('admin.facultyReport.generate') }}">
+                <form id="reportOptionsForm" method="POST" action="{{ route('admin.facultyReport.generate') }}" target="_blank">
                     @csrf
                     <div class="space-y-4">
                         <div>
@@ -525,7 +546,7 @@
         function openReportOptionsModal() {
             document.getElementById('reportOptionsModal').classList.remove('hidden');
         }
-    
+
         function closeReportOptionsModal() {
             document.getElementById('reportOptionsModal').classList.add('hidden');
         }
@@ -558,7 +579,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Log the data to check its structure   
+                console.log(data); // Log the data to check its structure
                 const unselectedFaculty = document.getElementById('unselectedFaculty');
                 const selectedFaculty = document.getElementById('selectedFaculty');
                 unselectedFaculty.innerHTML = '';
@@ -570,7 +591,7 @@
 
                     const departmentName = faculty.department ? faculty.department.name : 'N/A';
                     const programName = faculty.program ? faculty.program.name : 'N/A';
-                    
+
                     let profilePicture;
                     if (faculty.profile_picture) {
                         let profilePicturePath;
@@ -703,13 +724,13 @@
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const notificationContent = notification.querySelector('span');
-            
+
             // Set message
             notificationContent.textContent = message;
-            
+
             // Add appropriate styling based on type
             notification.className = 'fixed bottom-4 right-4 p-4 rounded-xl shadow-xl transition-all duration-500 ease-in-out transform hover:scale-105 border z-50 flex items-center space-x-3';
-            
+
             if (type === 'success') {
                 notification.classList.add('bg-gradient-to-r', 'from-green-50', 'to-green-100', 'text-green-800', 'border-green-200');
             } else if (type === 'error') {
@@ -717,24 +738,24 @@
             } else if (type === 'warning') {
                 notification.classList.add('bg-gradient-to-r', 'from-yellow-50', 'to-yellow-100', 'text-yellow-800', 'border-yellow-200');
             }
-            
+
             // Show notification with smooth slide-in animation
             notification.classList.remove('hidden');
             notification.style.transform = 'translateX(100%)';
             notification.style.opacity = '0';
-            
+
             requestAnimationFrame(() => {
                 notification.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
                 notification.style.transform = 'translateX(0)';
                 notification.style.opacity = '1';
             });
-            
+
             // Hide with smooth fade-out animation
             setTimeout(() => {
                 notification.style.transition = 'transform 0.5s ease-in, opacity 0.5s ease-in';
                 notification.style.transform = 'translateX(100%)';
                 notification.style.opacity = '0';
-                
+
                 setTimeout(() => {
                     notification.classList.add('hidden');
                     notification.style.transform = '';
