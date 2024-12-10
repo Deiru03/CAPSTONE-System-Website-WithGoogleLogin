@@ -4,6 +4,7 @@
             {{ __('Clearance Management') }}
         </h2>
     </x-slot>
+    
 
     <div class="max-w-8xl mx-auto sm:px-2 lg:px-2 shadow-lg border border-gray-300">
         <div class="p-6 text-gray-900">
@@ -18,7 +19,6 @@
                     Add Clearance Checklist
                 </span>
             </button>
-
             <!-- Add this button below the "Add Clearance Checklist" button -->
             <button onclick="openSharedClearancesModal()" class="mt-4 ml-2 bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
                 <span class="flex items-center">
@@ -32,10 +32,10 @@
 
         <!-- Clearance Table -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 max-w-full">
-            <div class="table-container overflow-x-auto" style="max-height: 770px; max-width: 1200px;">
+            <div class="table-container overflow-x-auto" style="max-height: 770px; max-width-full">
                 <table class="min-w-full text-sm border-collapse border border-gray-300">
                     <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 sticky -top-3">
-                        <tr>
+                        <tr class="border-b border-gray-300">
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">ID</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Document Name</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-b border-gray-300">Description</th>
@@ -86,6 +86,13 @@
                                         </svg>
                                         Manage Reqs
                                     </button>
+                                    <button onclick="copyClearance({{ $clearance->id }})" class="text-blue-600 hover:text-blue-800 flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M13 7H7v6h6V7z" />
+                                            <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" clip-rule="evenodd" />
+                                        </svg>
+                                        Copy Clearance
+                                    </button>
                                     <button 
                                         onclick="openShareModal({{ $clearance->id }}, '{{ addslashes($clearance->document_name) }}')" 
                                         class="text-green-600 hover:text-green-800 flex items-center text-sm">
@@ -111,7 +118,6 @@
                 </tbody>
             </table>
         </div>     
-        </div>
     </div>
 
 
@@ -122,7 +128,7 @@
     </script>
 
     <!-- Add Modal -->
-    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
+    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -184,7 +190,7 @@
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
+    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -246,7 +252,7 @@
     </div>
 
      <!-- Edit Requirements Modal -->
-     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
+     <div id="editRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-purple-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -286,7 +292,7 @@
             </div>
 
             <!-- Add Requirement Modal (Nested) -->
-            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden z-20">
+            <div id="addRequirementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 hidden z-20" style="z-index: 100;">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full relative">
                     <h4 class="text-xl font-semibold mb-4 text-gray-800">Add Requirement</h4>
                     <form id="addRequirementForm">
@@ -345,7 +351,7 @@
     </div>
 
     <!-- Share Clearance Modal -->
-    <div id="shareModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 backdrop-blur-sm hidden transition-opacity duration-300">
+    <div id="shareModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 backdrop-blur-sm hidden transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -381,7 +387,7 @@
     </div>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30 transition-opacity duration-300">
+    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -421,7 +427,7 @@
     </div>
     
     <!-- Shared Clearances Modal ID -->
-    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20">
+    <div id="sharedClearancesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20" style="z-index: 50;">
         <div class="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -458,7 +464,7 @@
     </div>
 
     <!-- Remove Shared Clearance Confirmation Modal -->
-    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30">
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-30" style="z-index: 50;">
         <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
             <h3 class="text-xl font-bold mb-4 text-gray-800">Confirm Removal</h3>
             <p class="mb-6">Are you sure you want to remove this shared clearance?</p>
@@ -474,7 +480,7 @@
     </div>
 
     <!-- View Details Modal -->
-    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300">
+    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20 hidden z-20 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-5 rounded-2xl shadow-2xl max-w-2xl w-full relative overflow-hidden duration-300 scale-95 hover:scale-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -1541,4 +1547,30 @@
             }
 
         </script>
+
+    {{-- Copy Clearance and Requirements --}}
+    <script>
+        function copyClearance(clearanceId) {
+            fetch(`/admin/admin/clearance/copy/${clearanceId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Clearance copied successfully.');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error copying clearance:', error);
+                alert('An error occurred while copying the clearance.');
+            });
+        }
+    </script>
 </x-admin-layout>

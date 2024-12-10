@@ -83,6 +83,39 @@ class ClearanceController extends Controller
         }
     }
 
+    // Copy a clearance
+    public function copy($id)
+    {
+        try {
+            $clearance = Clearance::with('requirements')->findOrFail($id);
+    
+            // Create a new clearance with the same attributes
+            $newClearance = $clearance->replicate();
+            $newClearance->document_name = $clearance->document_name . ' (Copy)';
+            $newClearance->number_of_requirements = $clearance->requirements->count();
+            $newClearance->save();
+    
+            // Copy the requirements
+            foreach ($clearance->requirements as $requirement) {
+                $newRequirement = $requirement->replicate();
+                $newRequirement->clearance_id = $newClearance->id;
+                $newRequirement->save();
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Clearance copied successfully.',
+                'clearance' => $newClearance
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error copying clearance: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while copying the clearance.'
+            ], 500);
+        }
+    }
+
     public function search(Request $request)
     {
         $query = $request->input('search');

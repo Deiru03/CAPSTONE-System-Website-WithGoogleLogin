@@ -189,6 +189,7 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
         Route::delete('/clearance/delete/{id}', [AdminClearanceController::class, 'destroy'])->name('admin.clearance.destroy');
         Route::get('/clearance/{id}/details', [AdminClearanceController::class, 'getClearanceDetails'])->name('admin.clearance.details');
         Route::get('/clearance/all', [AdminClearanceController::class, 'getAllClearances'])->name('admin.clearance.all');
+        Route::post('/admin/clearance/copy/{id}', [AdminClearanceController::class, 'copy'])->name('admin.clearance.copy');
     });
 
     Route::prefix('clearance/{clearanceId}/requirements')->group(function () {
