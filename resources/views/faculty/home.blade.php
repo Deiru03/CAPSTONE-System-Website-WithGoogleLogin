@@ -83,7 +83,7 @@
                 </p>
             </div>
             <div class="cursor-pointer">
-                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
+                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105 pulse-color">
                     Click me to proceed to your dashboard.
                 </h1>
             </div>
@@ -122,6 +122,34 @@
         }
         .animate-float {
             animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulseColor {
+            0%, 100% {
+            color: #ffffff; /* Start and end color */
+            }
+            16% {
+                color: #ccf6ff; /* Lighter Blue */
+            }
+            32% {
+                color: #a9e2ff; /* Sky Blue */
+            }
+            48% {
+                color: #8fb1fa; /* Blue */
+            }
+            64% {
+                color: #81beff; /* Light Blue */
+            }
+            80% {
+                color: #b4e6ff; /* Sky Blue */
+            }
+            96% {
+                color: #e4faff; /* Lighter Blue */
+            }
+        }
+
+        .pulse-color {
+            animation: pulseColor 5s infinite;
         }
     </style>
     <footer class="bg-white py-6 mt-24 px-12">
