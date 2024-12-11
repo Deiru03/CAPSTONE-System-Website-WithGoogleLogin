@@ -338,8 +338,8 @@
 
                                         @foreach(Auth::user()->availableRoles() as $role)
                                             @if($role !== Auth::user()->user_type)
-                                                {{-- @if(!(Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id && $role === 'Faculty')) --}}
-                                                    @if(!(Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id))
+                                                @if(!(Auth::user()->user_type === 'Admin' && !Auth::user()->campus_id) && !(Auth::user()->user_type === 'Program-Head' && !Auth::user()->campus_id) && !(Auth::user()->user_type === 'Dean' && !Auth::user()->campus_id))
+                                                    @if((Auth::user()->user_type !== 'Admin' || Auth::user()->campus_id) && (Auth::user()->user_type !== 'Program-Head' || Auth::user()->campus_id) && (Auth::user()->user_type !== 'Dean' || Auth::user()->campus_id))
                                                         <form method="POST" action="{{ route('switchRole') }}">
                                                             @csrf
                                                             <input type="hidden" name="role" value="{{ $role }}">
@@ -351,7 +351,7 @@
                                                             </x-dropdown-link>
                                                         </form>
                                                     @endif
-                                                {{-- @endif --}}
+                                                @endif
                                             @endif
                                         @endforeach
 
