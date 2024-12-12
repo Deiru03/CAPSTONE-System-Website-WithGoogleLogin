@@ -522,9 +522,9 @@
                 <input type="hidden" id="uploadRequirementIdInput" name="requirementId">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
-                    <div class="flex flex-col space-y-1">
-                        <p class="text-sm text-gray-600">ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
-                        <p class="text-sm text-gray-600">Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
+                    <div class="flex flex-col space-y-1" style="max-height: 250px; overflow-y: auto;">
+                        <p class="text-sm text-gray-600">Requirement ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
+                        <p class="text-sm text-gray-600" style="white-space: pre-line">Requirement Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
                     </div>
                 </div>
                 <!-- Warning Message -->
@@ -578,7 +578,7 @@
     </div>
 
     <!-- View Files Modal -->
-    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300">
+    <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300" style="z-index: 50;">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 to-teal-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -590,7 +590,7 @@
             </h3>
             <div class="mb-4 border-b pb-4">
                 <p class="text-gray-600">Requirement ID: <strong><span id="modalRequirementId" class="font-medium text-gray-900"></span></strong></p>
-                <p class="text-gray-600">Requirement Name: <strong><span id="modalRequirementName" class="font-medium text-blue-900"></span></strong></p>
+                <p class="text-gray-600 max-h-[300px] overflow-y-auto">Requirement Name: <strong><span id="modalRequirementName" class="font-medium text-blue-900"></span></strong></p>
             </div>
             <div class="max-h-96 overflow-y-auto">
                 <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
