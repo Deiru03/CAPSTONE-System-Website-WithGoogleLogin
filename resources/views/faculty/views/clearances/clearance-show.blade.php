@@ -8,7 +8,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <!-- Upload Notification -->
-    <div id="uploadNotification" class="hidden backdrop-blur-sm fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50">
+    <div id="uploadNotification" class="hidden backdrop-blur-sm fixed top-0 right-0 m-6 p-4 rounded-lg shadow-lg transition-all duration-500 transform translate-x-full z-50" style="z-index: 9999;">
         <div id="notificationIcon" class="inline-block mr-2"></div>
         <span id="notificationMessage"></span>
     </div>
@@ -508,66 +508,66 @@
 
     <!-- Upload Modal -->
     <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300" style="z-index: 1000;">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-            <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
                 {{ $userClearance->uploadedClearanceFor($requirement->id) ? 'Upload File' : 'Upload File' }}
             </h3>
-            <form id="uploadForm" class="space-y-6">
+            <form id="uploadForm" class="space-y-4">
                 @csrf
                 <input type="hidden" id="uploadUserClearanceId" name="userClearanceId">
                 <input type="hidden" id="uploadRequirementIdInput" name="requirementId">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
-                    <div class="flex flex-col space-y-1" style="max-height: 250px; overflow-y: auto;">
-                        <p class="text-sm text-gray-600">Requirement ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
-                        <p class="text-sm text-gray-600" style="white-space: pre-line">Requirement Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Requirement Details</label>
+                    <div class="flex flex-col space-y-1" style="max-height: 150px; overflow-y: auto;">
+                        <p class="text-xs text-gray-600">Requirement ID: <span id="uploadRequirementId" class="font-medium text-gray-900"></span></p>
+                        <p class="text-xs text-gray-600" style="white-space: pre-line">Requirement Name: <strong><span id="uploadRequirementName" class="font-medium text-blue-900"></span></strong></p>
                     </div>
                 </div>
                 <!-- Warning Message -->
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+                <div class="bg-red-50 border-l-4 border-red-400 p-3 mb-3">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="h-4 w-4 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">
+                        <div class="ml-2">
+                            <p class="text-xs text-red-700">
                                 <strong class="font-medium">Important Warning:</strong> When uploading large files, please wait for the current upload to complete before uploading files for other requirements. Uploading multiple files simultaneously may cause interruptions and failures.
                             </p>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <label for="uploadFiles" class="block text-sm font-medium text-gray-700 mb-2">Select Files</label>
-                    <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors duration-300">
+                    <label for="uploadFiles" class="block text-xs font-medium text-gray-700 mb-1">Select Files</label>
+                    <div id="dropArea" class="mt-1 block w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 transition-colors duration-300">
                         <p class="text-gray-500">Drag & drop files here or click to select files</p>
                         <input type="file" id="uploadFiles" name="files[]" multiple class="hidden" accept="application/pdf">
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Allowed type: PDF only. Max size per file: 200mb.</p>
+                    <p class="mt-1 text-xs text-gray-500">Allowed type: PDF only. Max size per file: 200mb.</p>
                 </div>
                 <div id="uploadLoader" class="hidden flex items-center justify-center">
-                    <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-8 w-8"></div>
-                    <span class="ml-2">Uploading...</span>
+                    <div class="loader border-t-4 border-blue-500 border-solid rounded-full animate-spin h-6 w-6"></div>
+                    <span class="ml-2 text-xs">Uploading...</span>
                 </div>
-                <div id="uploadProgressContainer" class="hidden mt-4">
+                <div id="uploadProgressContainer" class="hidden mt-3">
                     <div class="w-full bg-gray-200 rounded-full">
                         <div id="uploadProgressBar" class="bg-blue-500 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: 0%">0%</div>
                     </div>
                 </div>
-                <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" onclick="closeUploadModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105 text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         Close
                     </button>
-                    <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-700 hover:shadow-lg hover:-translate-y-1 transform hover:scale-105 text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                         Upload
@@ -578,28 +578,28 @@
     </div>
 
         <!-- View Files Modal -->
-        <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300" style="z-index: 50;">
-            <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-500 to-teal-500"></div>
-                <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div id="viewFilesModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-10 transition-opacity duration-300" style="z-index: 500;">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full relative overflow-hidden max-h-[700px] overflow-y-auto">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-teal-500"></div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    View Uploaded Files
+                    Uploaded Files
                 </h3>
-                <div class="mb-4 border-b pb-4">
-                    <p class="text-gray-600">Requirement ID: <strong><span id="modalRequirementId" class="font-medium text-gray-900"></span></strong></p>
-                    <p class="text-gray-600 max-h-[300px] overflow-y-auto">Requirement Name: <strong><span id="modalRequirementName" class="font-medium text-blue-900"></span></strong></p>
+                <div class="mb-3 border-b pb-3">
+                    <p class="text-sm text-gray-600">Requirement ID: <span id="modalRequirementId" class="font-medium text-gray-900"></span></p>
+                    <p class="text-sm text-gray-600 max-h-[150px] overflow-y-auto" style="max-height: 150px; overflow-y: auto;">Requirement Name: <span id="modalRequirementName" class="font-medium text-blue-900"></span></p>
                 </div>
-                <div class="max-h-96 overflow-y-auto">
-                    <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="max-h-72 overflow-y-auto">
+                    <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" style="max-height: 480px; overflow-y: auto;">
                         <!-- Uploaded files will be dynamically inserted here -->
                     </div>
                 </div>
-                <div class="mt-8 flex justify-end">
-                    <button onclick="closeViewFilesModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-gray-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="mt-4 flex justify-end">
+                    <button onclick="closeViewFilesModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm flex items-center transition duration-200 hover:bg-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         Close
@@ -609,7 +609,7 @@
         </div>
 
         <!-- Preview Modal -->
-        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-35 hidden items-center justify-center z-40">
+        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-35 hidden items-center justify-center z-40" style="z-index: 500;">
             <div class="bg-white rounded-lg w-11/12 h-5/6 max-w-4xl flex flex-col">
                 <div class="flex justify-between items-center p-4 border-b">
                     <h3 id="previewFileName" class="text-lg font-semibold text-gray-800"></h3>
@@ -626,7 +626,7 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300">
+        <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300" style="z-index: 1000;">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
                 <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
@@ -670,7 +670,7 @@
     @endif
 
     <!-- Single File Delete Modal -->
-    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300">
+    <div id="singleFileDeleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-35 hidden z-30 transition-opacity duration-300" style="z-index: 1000;">>
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
             <h3 class="text-3xl font-bold mb-6 text-gray-800 flex items-center">
