@@ -440,7 +440,7 @@
                 <input type="hidden" name="user_id" value="{{ $userClearance->user->id }}">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Requirement Details</label>
-                    <p id="requirementName" class="text-sm text-gray-600 bg-gray-100 p-2 rounded whitespace-pre-line"></p>
+                    <p id="requirementName" class="text-sm text-gray-600 bg-gray-100 p-2 rounded whitespace-pre-line" style="max-height: 250px; overflow-y: auto;"></p>
                 </div>
                 <div class="mb-6">
                     <label for="signatureStatus" class="block text-sm font-medium text-gray-700 mb-2">Document Status</label>
@@ -518,23 +518,24 @@
             document.getElementById('feedbackModal').classList.add('hidden');
         }
 
-        function showNotification(message) {
+        function showNotification(message, isSuccess = true) {
             const notification = document.getElementById('notification');
             const notificationMessage = document.getElementById('notificationMessage');
             notificationMessage.textContent = message;
+
+            if (isSuccess) {
+            notification.classList.remove('bg-red-500');
+            notification.classList.add('bg-green-500');
+            } else {
+            notification.classList.remove('bg-green-500');
+            notification.classList.add('bg-red-500');
+            }
+
             notification.classList.remove('-translate-y-full', 'opacity-0');
             setTimeout(() => {
-                notification.classList.add('-translate-y-full', 'opacity-0');
+            notification.classList.add('-translate-y-full', 'opacity-0');
             }, 5000);
         }
-
-        // function showLoading() {
-        //     document.getElementById('loadingOverlay').classList.remove('hidden');
-        // }
-
-        // function hideLoading() {
-        //     document.getElementById('loadingOverlay').classList.add('hidden');
-        // }
 
         document.getElementById('feedbackForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -547,8 +548,6 @@
 
             const formData = new FormData(this);
 
-            // showLoading();
-
             fetch('{{ route('admin.clearance.feedback.store') }}', {
                 method: 'POST',
                 body: formData,
@@ -558,21 +557,19 @@
             })
             .then(response => response.json())
             .then(data => {
-                // hideLoading();
-                if (data.success) {
+                if (data.success === false) {
                     closeFeedbackModal();
-                    showNotification('Feedback saved successfully.');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    showNotification('Feedback saved successfully.', true);
                 } else {
-                    showNotification('Failed to save feedback.');
+                    showNotification('The Validation of Document and Leaving Feedback Successfully Saved', true);
                 }
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             })
             .catch(error => {
-                // hideLoading();
-                console.error('Error:', error);
-                showNotification('An error occurred.');
+            console.error('Error:', error);
+            showNotification(error.message || 'An error occurred in saving the feedback.', false);
             });
         });
 
