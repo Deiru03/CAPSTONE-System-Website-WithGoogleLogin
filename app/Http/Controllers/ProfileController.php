@@ -114,6 +114,11 @@ class ProfileController extends Controller
                         return back()->withErrors(['id' => "This {$idType} is already assigned to another user."]);
                     }
 
+                    if ($programHeadDeanId->type && $programHeadDeanId->type !== $request->input('user_type')) {
+                        $idType = $programHeadDeanId->type === 'Program-Head' ? 'Program Head ID' : 'Dean ID';
+                        return back()->withErrors(['id' => "This ID is already assigned as a {$idType}."]);
+                    }
+
                     $programHeadDeanId->update([
                         'is_assigned' => true,
                         'user_id' => $user->id,
