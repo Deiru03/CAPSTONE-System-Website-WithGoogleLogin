@@ -60,7 +60,11 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                <hr class="border-r border-gray-300 h-6">
                 <a href="{{ route('about-us') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('about-us') ? 'text-white font-semibold' : '' }}">About Us</a>
+                <hr class="border-r border-gray-300 h-6">
+                <a href="{{ route('admin.overview') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('admin.overview') ? 'text-white font-semibold' : '' }}">Overview</a>
+                <hr class="border-r border-gray-300 h-6">
             </nav>
         </div>
     </div>
@@ -82,8 +86,8 @@
                     Efficiently manage and secure your quality assurance documents
                 </p>
             </div>
-            <<div class="cursor-pointer">
-                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105">
+            <div class="cursor-pointer">
+                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105 pulse-color hover:shadow-lg">
                     Click me to proceed to your dashboard.
                 </h1>
             </div>
@@ -122,6 +126,44 @@
         }
         .animate-float {
             animation: float 6s ease-in-out infinite;
+        }
+        .shadow-text {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulseColor {
+            0%, 100% {
+            color: #ffffff; /* Start and end color */
+            }
+            16% {
+                color: #ccf6ff; /* Lighter Blue */
+            }
+            32% {
+                color: #a9e2ff; /* Sky Blue */
+            }
+            48% {
+                color: #8fb1fa; /* Blue */
+            }
+            64% {
+                color: #81beff; /* Light Blue */
+            }
+            80% {
+                color: #b4e6ff; /* Sky Blue */
+            }
+            96% {
+                color: #e4faff; /* Lighter Blue */
+            }
+        }
+
+        .pulse-color {
+            animation: pulseColor 5s infinite;
         }
     </style>
     <footer class="bg-white py-6 mt-24">

@@ -60,7 +60,11 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                <hr class="border-r border-gray-300 h-6">
                 <a href="{{ route('about-us') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('about-us') ? 'text-white font-semibold' : '' }}">About Us</a>
+                <hr class="border-r border-gray-300 h-6">
+                <a href="{{ route('faculty.overview') }}" class="text-gray-700 hover:text-blue-500 {{ request()->routeIs('faculty.overview') ? 'text-white font-semibold' : '' }}">Overview</a>
+                <hr class="border-r border-gray-300 h-6">
             </nav>
         </div>
     </div>
@@ -83,7 +87,7 @@
                 </p>
             </div>
             <div class="cursor-pointer">
-                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105 pulse-color">
+                <h1 class="text-3xl font-bold text-white mb-6 shadow-text transition-all duration-300 hover:scale-105 pulse-color hover:shadow-lg">
                     Click me to proceed to your dashboard.
                 </h1>
             </div>
