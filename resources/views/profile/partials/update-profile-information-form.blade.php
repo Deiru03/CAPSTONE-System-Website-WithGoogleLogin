@@ -146,9 +146,6 @@
                                         $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
                                         $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
                                     <option value="" disabled>Select a College</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
-                                    @endforeach
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('department_id')" />
                             </div>
@@ -161,13 +158,6 @@
                                     $user->user_type === 'Program-Head' && is_null($user->campus_id) || 
                                     $user->user_type === 'Dean' && is_null($user->campus_id)) disabled @endif required>
                                 <option value="" disabled>Select a program</option>
-                                @foreach($departments as $department)
-                                    @foreach($department->programs as $program)
-                                        <option value="{{ $program->id }}" data-department="{{ $department->id }}" {{ old('program_id', $user->program_id) == $program->id ? 'selected' : '' }}>
-                                            {{ $program->name }}
-                                        </option>
-                                    @endforeach
-                                @endforeach
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('program_id')" />
                         </div>
@@ -193,11 +183,11 @@
                             <div id="sub-programs-container" class="space-y-1">
                                 @foreach($user->subPrograms as $subProgram)
                                     <div class="flex items-center space-x-2">
-                                        <select name="sub_program_ids[]" class="flex-1 mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <select name="sub_program_ids[]" class="flex-1 mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" style="max-height: 200px; overflow-y: auto;">
                                             <option value="" disabled>Select a Program</option>
                                             @foreach($programs as $program)
                                                 <option value="{{ $program->id }}" {{ $subProgram->program_id == $program->id ? 'selected' : '' }}>
-                                                    {{ $program->name }}
+                                                    {{ $program->department->campus->name }} - {{ $program->department->name }} - {{ $program->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -211,6 +201,29 @@
                                 Add Sub Program
                             </button>
                         </div>
+
+                        <style>
+                            select[name="sub_program_ids[]"] {
+                                max-height: 200px;
+                            }
+                            select[name="sub_program_ids[]"] option {
+                                padding: 8px;
+                            }
+                            /* For webkit browsers like Chrome/Safari */
+                            select[name="sub_program_ids[]"]::-webkit-scrollbar {
+                                width: 8px;
+                            }
+                            select[name="sub_program_ids[]"]::-webkit-scrollbar-track {
+                                background: #f1f1f1;
+                            }
+                            select[name="sub_program_ids[]"]::-webkit-scrollbar-thumb {
+                                background: #888;
+                                border-radius: 4px;
+                            }
+                            select[name="sub_program_ids[]"]::-webkit-scrollbar-thumb:hover {
+                                background: #555;
+                            }
+                        </style>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
@@ -228,10 +241,10 @@
                                     subProgramDiv.classList.add('flex', 'items-center', 'mt-2');
 
                                     subProgramDiv.innerHTML = `
-                                        <select name="sub_program_ids[]" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <select name="sub_program_ids[]" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" style="max-height: 200px; overflow-y: auto;">
                                             <option value="" disabled>Select a sub-program</option>
                                             @foreach($programs as $program)
-                                                <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                                <option value="{{ $program->id }}">{{ $program->department->campus->name }} - {{ $program->department->name }} - {{ $program->name }}</option>
                                             @endforeach
                                         </select>
                                         <button type="button" class="ml-2 text-red-500 remove-sub-program">
@@ -529,6 +542,76 @@
                                 notification.classList.remove('bg-green-100', 'border-l-4', 'border-green-500', 'text-green-700', 'bg-red-100', 'border-red-500', 'text-red-700');
                             }, 500);
                         }, 2000);
+                    }
+                </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const oldCampusId = "{{ old('campus_id', $user->campus_id) }}";
+                        const oldDepartmentId = "{{ old('department_id', $user->department_id) }}";
+                        const oldProgramId = "{{ old('program_id', $user->program_id) }}";
+                
+                        if (oldCampusId) {
+                            document.getElementById('campus_id').value = oldCampusId;
+                            loadDepartments(oldCampusId, oldDepartmentId);
+                        }
+                
+                        if (oldDepartmentId) {
+                            loadPrograms(oldDepartmentId, oldProgramId);
+                        }
+                    });
+                
+                    document.getElementById('campus_id').addEventListener('change', function() {
+                        const campusId = this.value;
+                        loadDepartments(campusId);
+                    });
+                
+                    document.getElementById('department_id').addEventListener('change', function() {
+                        const departmentId = this.value;
+                        loadPrograms(departmentId);
+                    });
+                
+                    function loadDepartments(campusId, selectedDepartmentId = null) {
+                        const departmentSelect = document.getElementById('department_id');
+                        departmentSelect.innerHTML = '<option value="" disabled selected>Select your department</option>';
+                
+                        if (campusId) {
+                            fetch(`/departments/${campusId}`)
+                                .then(response => response.json())
+                                .then(departments => {
+                                    departments.forEach(department => {
+                                        const option = document.createElement('option');
+                                        option.value = department.id;
+                                        option.textContent = department.name;
+                                        if (selectedDepartmentId && selectedDepartmentId == department.id) {
+                                            option.selected = true;
+                                        }
+                                        departmentSelect.appendChild(option);
+                                    });
+                                })
+                                .catch(error => console.error('Error fetching departments:', error));
+                        }
+                    }
+                
+                    function loadPrograms(departmentId, selectedProgramId = null) {
+                        const programSelect = document.getElementById('program_id');
+                        programSelect.innerHTML = '<option value="" disabled selected>Select your program</option>';
+                
+                        if (departmentId) {
+                            fetch(`/programs/${departmentId}`)
+                                .then(response => response.json())
+                                .then(programs => {
+                                    programs.forEach(program => {
+                                        const option = document.createElement('option');
+                                        option.value = program.id;
+                                        option.textContent = program.name;
+                                        if (selectedProgramId && selectedProgramId == program.id) {
+                                            option.selected = true;
+                                        }
+                                        programSelect.appendChild(option);
+                                    });
+                                })
+                                .catch(error => console.error('Error fetching programs:', error));
+                        }
                     }
                 </script>
             </form>
