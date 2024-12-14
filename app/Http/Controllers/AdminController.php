@@ -35,6 +35,11 @@ class AdminController extends Controller
         return view('admin.home');
     }
 
+    public function overview(): View
+    {
+        return view('admin.overview');
+    }
+
      /////////////////////////////////////////////// Auto Update Clearance Status Controller /////////////////////////////////////////////////
 
      public function updateClearanceStatus($userId)

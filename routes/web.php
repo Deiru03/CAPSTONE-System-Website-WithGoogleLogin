@@ -158,6 +158,7 @@ Route::middleware(['auth', 'verified', 'Admin', 'Dean', 'Program-Head'])->prefix
     Route::get('/archive', [AdminController::class, 'archive'])->name('admin.views.archive');
     Route::get('/profile', [AdminController::class, 'profileEdit'])->name('admin.profile.edit');
     Route::get('/admin-id-management', [AdminController::class, 'adminIdManagement'])->name('admin.adminIdManagement');
+    Route::get('/overview', [AdminController::class, 'overview'])->name('admin.overview');
 
     ///////////////////// Admin ID Management /////////////////////
     Route::post('/admin-id-management', [AdminController::class, 'createAdminId'])->name('admin.createAdminId');
@@ -258,6 +259,7 @@ Route::middleware(['auth', 'verified', 'Faculty'])->prefix('faculty')->group(fun
     Route::get('/my-files', [FacultyController::class, 'myFiles'])->name('faculty.views.myFiles');
     Route::get('/archive', [FacultyController::class, 'archive'])->name('faculty.views.archive');
     Route::get('/test', [FacultyController::class, 'test'])->name('faculty.views.test');
+    Route::get('/overview', [FacultyController::class, 'overview'])->name('faculty.overview');
 
     //////////////////////// DomPDF  Clearance Slip //////////////////////
     Route::get('/faculty/clearance-report', [FacultyController::class, 'generateClearanceReport'])->name('faculty.generateClearanceReport');

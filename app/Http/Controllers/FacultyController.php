@@ -26,6 +26,11 @@ class FacultyController extends Controller
         return view('faculty.home');
     }
 
+    public function overview(): View
+    {
+        return view('faculty.overview');
+    }
+
     public function dashboard(): View
     {
         $user = Auth::user();
