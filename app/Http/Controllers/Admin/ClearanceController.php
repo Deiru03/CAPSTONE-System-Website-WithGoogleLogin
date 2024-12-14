@@ -562,11 +562,25 @@ class ClearanceController extends Controller
             Log::info('Feedback updated:', $feedback->toArray());
 
             // Additional Logic for storing reports and updating user status
+            $requirement = ClearanceRequirement::find($validatedData['requirement_id']);
+            $requirementName = $requirement ? $requirement->requirement : 'Unknown requirement';
+
+            // Truncate the requirement name to 100 characters
+            if (strlen($requirementName) > 100) {
+                $requirementName = substr($requirementName, 0, 100) . '...';
+            }
+
             SubmittedReport::create([
                 'admin_id' => Auth::id(),
                 'user_id' => $validatedData['user_id'],
-                'title' => 'Clearance Checklist: ',
-                'transaction_type' => $feedback->signature_status == 'Resubmit' ? 'Resubmit Document' : 'Validated Document',
+                'title' => 'Clearance Checklist: ' . $requirementName,
+                'transaction_type' => match($feedback->signature_status) {
+                    'Resubmit' => 'Resubmitted Document',
+                    'Complied' => 'Validated Document',
+                    'Not Applicable' => 'Not Applicable Document',
+                    'Checking' => 'Document Under Review',
+                    default => ' ',
+                },
                 'status' => 'Completed',
             ]);
 
@@ -584,7 +598,12 @@ class ClearanceController extends Controller
 
             // Get the requirement name
             $requirement = ClearanceRequirement::find($validatedData['requirement_id']);
-            $requirementName = $requirement ? $requirement->requirement : 'Unknown requirement';
+            // Limit requirement name to 100 characters with ellipsis if longer
+            $requirementName = $requirement ? 
+                (strlen($requirement->requirement) > 100 ? 
+                    substr($requirement->requirement, 0, 97) . '...' : 
+                    $requirement->requirement) : 
+                'Unknown requirement';
 
             switch($feedback->signature_status) {
                 case 'Resubmit':

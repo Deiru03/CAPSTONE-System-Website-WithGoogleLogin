@@ -559,9 +559,10 @@
             .then(data => {
                 if (data.success === false) {
                     closeFeedbackModal();
-                    showNotification('Feedback saved successfully.', true);
+                    showNotification('The Faculty Requirement Update Successfully (No Notif Send).', true);
                 } else {
-                    showNotification('The Validation of Document and Leaving Feedback Successfully Saved', true);
+                    closeFeedbackModal();
+                    showNotification('The Faculty Requirement Update Successfully', true)
                 }
                 setTimeout(() => {
                     location.reload();
