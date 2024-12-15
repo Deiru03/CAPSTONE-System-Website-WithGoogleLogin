@@ -225,6 +225,23 @@
                                     {{ $header }} <!-- Use the header variable -->
                                 </h2>
                             </div>
+
+                            <!-- Date and Time -->
+                            <div class="text-center mt-10">
+                                <h4>{{ date('F d, Y') }}</h4>
+                                <p> {{ date( 'l' )}} </p><p id="currentTime">{{ date('h:i A') }}</p>
+                                <script>
+                                    function updateTime() {
+                                        const timeElement = document.getElementById('currentTime');
+                                        const now = new Date();
+                                        timeElement.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                                    }
+                                    // Update time immediately and then every minute
+                                    updateTime();
+                                    setInterval(updateTime, 60000);
+                                </script>
+                            </div>
+
                             <div class="flex items-center space-x-4">
                                 <!-- Overview Link -->
                                 <a href="{{ route('faculty.overview') }}" class="text-gray-600 hover:text-gray-900 transition-colors duration-200 hover:scale-110 relative group">
@@ -235,8 +252,6 @@
                                         Overview of the System
                                     </span>
                                 </a>
-
-
                                 <!-- Notification Bell -->
                                 <div class="notification-div relative" style="position: relative; top: 0px; right: 0px;">
                                     <button id="notificationBell" class="relative text-gray-600 hover:bg-gray-100 p-2 rounded-full transition-colors duration-200">

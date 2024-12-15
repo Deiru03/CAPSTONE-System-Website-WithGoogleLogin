@@ -285,6 +285,21 @@
                                 </h2>
                             </div>
 
+                            {{-- <div class="text-center mt-10">
+                                <h4>{{ date('F d, Y') }}</h4>
+                                <p> {{ date( 'l' )}} </p><p id="currentTime">{{ date('h:i A') }}</p>
+                                <script>
+                                    function updateTime() {
+                                        const timeElement = document.getElementById('currentTime');
+                                        const now = new Date();
+                                        timeElement.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                                    }
+                                    // Update time immediately and then every minute
+                                    updateTime();
+                                    setInterval(updateTime, 60000);
+                                </script>
+                            </div> --}}
+
                             <div class="flex items-center space-x-4">
                                 <!-- Overview Link -->
                                 <a href="{{ route('admin.overview') }}" class="text-gray-600 hover:text-gray-900 transition-colors duration-200 hover:scale-110 relative group">

@@ -240,9 +240,17 @@
         </div>
         <main>
             <div class="header2">
-                <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="logo" />
-                {{-- <img src="{{ asset('images/IQALogo.jpg') }}" alt="IQA Logo" class="logo" /> --}}
-                <h3>OCCIDENTAL MINDORO STATE COLLEGE</h3>
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <img src="{{ asset('images/OMSCLogo.png') }}" alt="OMSC Logo" class="logo" />
+                        <h3>OCCIDENTAL MINDORO STATE COLLEGE</h3>
+                    </div>
+                    <div>
+                        <h2>DATE: {{ date('F j, Y') }}</h2>
+                        <h2>DAY: {{ date('l') }}</h2>
+                        <h2>TIME: {{ date('h:i A') }}</h2>
+                    </div>
+                </div>
             </div>
             <div class="container">
                 <div class="header">
