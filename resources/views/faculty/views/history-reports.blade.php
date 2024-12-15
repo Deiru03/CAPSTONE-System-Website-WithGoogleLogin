@@ -64,7 +64,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Checked By</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Title</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider items-center text-center">Transaction Type</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider items-center text-center w-[170px]" style="width: 170px;">Transaction Type</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Date</th>
                                         {{-- <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Status</th> --}}
                                     </tr>

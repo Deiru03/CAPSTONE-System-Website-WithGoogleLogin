@@ -67,7 +67,7 @@
                                 <th class="hidden w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
                                 <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Faculty</th>
                                 <th class="w-2/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider items-center text-center">Transaction Type</th>
+                                <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider items-center text-center w-[170px]">Transaction Type</th>
                                 <th class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
