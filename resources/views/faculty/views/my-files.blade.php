@@ -19,37 +19,34 @@
                     @if($uploadedFiles->isEmpty())
                         <p class="mt-4 text-gray-500">No files uploaded yet.</p>
                     @else
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border-b">File Name</th>
-                                    <th class="py-2 px-4 border-b">Requirement</th>
-                                    <th class="py-2 px-4 border-b">Uploaded Date</th>
-                                    <th class="py-2 px-4 border-b">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($uploadedFiles as $file)
-                                    <tr>
-                                        <td class="py-2 px-4 border-b">{{ basename($file->file_path) }}</td>
-                                        <td class="py-2 px-4 border-b">{{ $file->requirement->requirement ?? 'N/A' }}</td>
-                                        <td class="py-2 px-4 border-b">{{ $file->created_at->format('Y-m-d H:i') }}</td>
-                                        <td class="py-2 px-4 border-b">
-                                            <button onclick="viewFile('{{ $file->file_path }}', '{{ basename($file->file_path) }}')" class="text-blue-500 hover:underline">View</button>
-                                            {{-- <a href="{{ Storage::url($file->file_path) }}" target="_blank" class="text-blue-500 hover:underline">View</a>
-                                            <form action="{{ route('faculty.clearances.deleteSingleFile', [$file->shared_clearance_id, $file->requirement_id, $file->id]) }}" 
-                                                method="POST" 
-                                                class="inline"
-                                                onsubmit="return handleDelete(event, this)">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:underline">Delete</button>
-                                            </form> --}}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 over" style="max-height: 300; overflow-y: auto;">
+                            @foreach($uploadedFiles as $file)
+                                <div class="flex flex-col p-4 bg-white border rounded-lg shadow-sm hover:shadow-md hover:border-blue-500 transition duration-200 ease-in-out">
+                                    <div class="flex items-center mb-2">
+                                        <!-- File Icon -->
+                                        <div class="mr-4 text-gray-500 flex-shrink-0">
+                                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H4z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-medium text-gray-800 truncate">{{ basename($file->file_path) }}</p>
+                                            <p class="text-sm text-gray-500">Uploaded: {{ $file->created_at->format('Y-m-d h:i:A') }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end space-x-2">
+                                        <button 
+                                            onclick="viewFile('{{ $file->file_path }}', '{{ basename($file->file_path) }}')" 
+                                            class="text-blue-500 hover:text-blue-700 relative group">
+                                            <span class="invisible group-hover:visible absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                                Click to view file content
+                                            </span>
+                                            View
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
             </div>
@@ -58,12 +55,12 @@
 
     <!-- Preview Modal -->
     <div id="previewModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 shadow-lg rounded-md bg-white">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 shadow-lg rounded-md bg-white" style="max-height: 80vh;">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-medium" id="previewFileName"></h3>
                 <button onclick="closePreviewModal()" class="text-gray-600 hover:text-gray-800">&times;</button>
             </div>
-            <iframe id="previewFrame" class="w-full h-[80vh]"></iframe>
+            <iframe id="previewFrame" class="w-full h-[70vh]"></iframe>
         </div>
     </div>
 
@@ -142,6 +139,41 @@
             previewFrame.src = '';
         }
 
+    // Other JavaScript functions
     </script>
-    
+    @if($uploadedFiles->isEmpty())
+        <p class="mt-4 text-gray-500">No files uploaded yet.</p>
+    @else
+        <div class="mt-6 overflow-y-auto" style="max-height: 400px;">
+            <table class="min-w-full divide-y divide-gray-200 border-2 border-gray-200 rounded-lg">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">File Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Uploaded At</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach($uploadedFiles as $file)
+                <tr class="hover:bg-blue-100 transition-colors duration-200">
+                    <td class="px-6 py-4 whitespace-nowrap">{{ basename($file->file_path) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $file->created_at->format('Y-m-d H:i') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <button onclick="viewFile('{{ $file->file_path }}', '{{ basename($file->file_path) }}')" class="text-blue-500 hover:text-blue-700">
+                            View
+                        </button>
+                    {{-- <form action="{{ route('faculty.clearances.deleteSingleFile', [$file->shared_clearance_id, $file->requirement_id, $file->id]) }}" method="POST" class="inline" onsubmit="return handleDelete(event, this)">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-500 hover:text-red-700">
+                        Delete
+                        </button>
+                    </form> --}}
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+            </table>
+        </div>
+    @endif
 </x-app-layout>
