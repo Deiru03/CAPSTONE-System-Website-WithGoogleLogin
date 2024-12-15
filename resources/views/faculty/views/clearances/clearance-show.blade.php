@@ -177,6 +177,15 @@
                     </svg>
                     Download My Checklist PDF
                 </a>
+                <div>
+                    <span class="text-sm text-gray-500">Last Updated: {{ date('F d, Y', strtotime($userClearance->updated_at)) }}</span>
+                </div>
+                <a href="{{ route('faculty.generateClearanceReport') }}" class="inline-flex items-center px-4 py-2 {{ $userInfo->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-white text-sm font-medium rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    Generate Clearance Slip
+                </a>
             </div>
         </div>
 
@@ -228,7 +237,18 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto border-2 border-gray-400 rounded-lg hover:shadow-lg transition-shadow duration-200">
+
+        <div class="mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500 shadow-sm">
+            <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-blue-700">
+                <span class="font-semibold">Tip:</span> Click on the folder headers below to expand or collapse the requirements sections.
+            </p>
+            </div>
+        </div>
+        <div class="overflow-x-auto border border-gray-300 rounded-lg hover:shadow-lg transition-shadow duration-200">
             <div class="bg-white rounded-lg overflow-hidden shadow-lg">
                 <!-- Dynamic Categories -->
                 @php

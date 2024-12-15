@@ -227,9 +227,9 @@
                             </div>
 
                             <!-- Date and Time -->
-                            <div class="text-center mt-10">
+                            <div class="text-center -mt-3">
                                 <h4>{{ date('F d, Y') }}</h4>
-                                <p> {{ date( 'l' )}} </p><p id="currentTime">{{ date('h:i A') }}</p>
+                                <span> {{ date( 'l' )}} </span><span id="currentTime">{{ date('h:i A') }}</span>
                                 <script>
                                     function updateTime() {
                                         const timeElement = document.getElementById('currentTime');
