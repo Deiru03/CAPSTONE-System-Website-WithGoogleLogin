@@ -557,16 +557,16 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success === false) {
+                if (data.success === true) {
                     closeFeedbackModal();
-                    showNotification('The Faculty Requirement Update Successfully (No Notif Send).', true);
+                    showNotification('Your action was successfully saved', true);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 } else {
                     closeFeedbackModal();
-                    showNotification('The Faculty Requirement Update Successfully', true)
+                    showNotification('There was an error saving your action', false)
                 }
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
             })
             .catch(error => {
             console.error('Error:', error);
