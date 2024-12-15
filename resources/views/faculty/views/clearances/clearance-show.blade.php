@@ -593,7 +593,7 @@
                     <p class="text-sm text-gray-600 max-h-[150px] overflow-y-auto" style="max-height: 150px; overflow-y: auto;">Requirement Name: <span id="modalRequirementName" class="font-medium text-blue-900"></span></p>
                 </div>
                 <div class="max-h-72 overflow-y-auto">
-                    <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" style="max-height: 480px; overflow-y: auto;">
+                    <div id="uploadedFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" style="max-height: 280px; overflow-y: auto;">
                         <!-- Uploaded files will be dynamically inserted here -->
                     </div>
                 </div>
