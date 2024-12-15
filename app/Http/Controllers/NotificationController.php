@@ -35,6 +35,7 @@ class NotificationController extends Controller
             ->where('is_read', false)
             ->whereIn('user_id', $users->pluck('id'))
             ->whereNull('admin_user_id') // Changed to whereNull to exclude notifications with admin_user_id
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(function($notification) {
                 return [
@@ -60,7 +61,8 @@ class NotificationController extends Controller
         $notificationsFaculty = UserNotification::with(['user', 'adminUser'])
             ->where('is_read', false)
             ->whereNotNull('admin_user_id')
-            ->where('user_id', Auth::id()) // Only get notifications for this faculty user
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc') // Added sorting here
             ->get()
             ->map(function($notificationF) {
                 return [
