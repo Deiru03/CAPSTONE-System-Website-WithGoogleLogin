@@ -252,15 +252,24 @@
         });
     </script>
 
-
-         <!-- Search and Filter Form -->
-         <form method="GET" action="{{ route('admin.views.clearances') }}" class="mb-4 flex items-center">
+        <!-- Search and Filter Form -->
+        <form method="GET" action="{{ route('admin.views.clearances') }}" class="mb-4 flex items-center">
             <input type="text" name="search" placeholder="Search by name, email, program, or status..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
+            
             <select name="sort" class="border rounded p-2 mr-2 w-40">
                 <option value="" disabled {{ request('sort') ? '' : 'selected' }}>Sort by Name</option>
                 <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A to Z</option>
                 <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z to A</option>
             </select>
+        
+            <!-- Campus Filter Dropdown -->
+            <select name="campus" class="border rounded p-2 mr-2 w-40">
+                <option value="" disabled {{ request('campus') ? '' : 'selected' }}>Filter by Campus</option>
+                @foreach($campuses as $campus)
+                    <option value="{{ $campus->id }}" {{ request('campus') == $campus->id ? 'selected' : '' }}>{{ $campus->name }}</option>
+                @endforeach
+            </select>
+        
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
         </form>
 

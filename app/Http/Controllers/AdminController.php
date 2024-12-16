@@ -231,6 +231,12 @@ class AdminController extends Controller
             });
         }
 
+        // Handle campus filter
+        if ($request->has('campus')) {
+            $campus = $request->input('campus');
+            $query->where('campus_id', $campus);
+        }
+
         // Fetch users with their latest clearance activities
         $users = User::with([
             'userClearances.sharedClearance.clearance',
@@ -240,6 +246,9 @@ class AdminController extends Controller
         ])->get();
 
         $sharedClearances = SharedClearance::with('clearance')->get();
+
+        // Get campuses
+        $campuses = Campus::all();
 
         // Handle sorting
         if ($request->has('sort')) {
