@@ -232,7 +232,7 @@ class AdminController extends Controller
         }
 
         // Handle campus filter
-        if ($request->has('campus')) {
+        if ($request->has('campus') && $request->input('campus') !== 'all') {
             $campus = $request->input('campus');
             $query->where('campus_id', $campus);
         }

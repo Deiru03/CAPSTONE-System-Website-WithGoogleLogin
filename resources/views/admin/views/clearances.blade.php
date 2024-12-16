@@ -264,7 +264,7 @@
         
             <!-- Campus Filter Dropdown -->
             <select name="campus" class="border rounded p-2 mr-2 w-40">
-                <option value="" disabled {{ request('campus') ? '' : 'selected' }}>Filter by Campus</option>
+                <option value="all" {{ request('campus') == 'all' ? 'selected' : '' }}>All Campus</option>
                 @foreach($campuses as $campus)
                     <option value="{{ $campus->id }}" {{ request('campus') == $campus->id ? 'selected' : '' }}>{{ $campus->name }}</option>
                 @endforeach
