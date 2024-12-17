@@ -387,11 +387,11 @@
         </div>
 
         {{-- Edit Modal for Clearance Checklist Modification --}}
-        <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-10">
+        <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-10" style="z-index: 150;">
             <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
                 <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                     Edit Clearance
                 </h3>
@@ -400,7 +400,7 @@
                 <div id="currentClearanceInfo" class="mb-4 p-3 bg-blue-50 rounded-md hidden">
                     <p class="text-sm text-blue-600">Current Active Clearance:</p>
                     <p id="currentClearanceName" class="font-medium text-blue-800"></p>
-                    <p id="currentClearanceDetails" class="text-sm text-blue-600"></p> <!-- New line for additional details -->
+                    <p id="currentClearanceDetails" class="text-sm text-blue-600"></p>
                 </div>
 
                 <!-- No Clearance Message -->
@@ -412,31 +412,95 @@
                     @csrf
                     <input type="hidden" name="id" id="editId">
                     <div class="mb-4">
-                        <label for="editSharedClearance" class="block text-sm font-medium text-gray-700 mb-1">
-                            {{ isset($activeClearance) ? 'Change Clearance' : 'Assign Clearance' }}
-                        </label>
-                        <select name="shared_clearance_id" id="editSharedClearance" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                            <option value="">Select a clearance</option>
-                            @foreach($sharedClearances as $sharedClearance)
-                                <option value="{{ $sharedClearance->id }}">
-                                    {{ $sharedClearance->clearance->document_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <label for="editSharedClearance" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ isset($activeClearance) ? 'Change Clearance' : 'Assign Clearance' }}
+                    </label>
+                    <select name="shared_clearance_id" id="editSharedClearance" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="" class="text-gray-500">Select a clearance template...</option>
+                        @foreach($sharedClearances as $sharedClearance)
+                            <option value="{{ $sharedClearance->id }}" class="py-2">
+                                {{ $sharedClearance->clearance->document_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="mt-1 text-sm text-gray-500">
+                        Each template includes predefined clearance requirements and settings
+                    </div>
+                    <div class="mt-4" id="clearanceInfo">
+                        <div class="divide-y divide-gray-200">
+                            <div class="py-3">
+                                <div class="flex items-center mb-2">
+                                    <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="font-medium text-lg">Clearance Details</span>
+                                </div>
+                                
+                                @foreach($sharedClearances as $clearance)
+                                <div class="clearance-details ml-7 hidden" data-clearance-id="{{ $clearance->id }}">
+                                    <div class="h-[150px] overflow-y-auto pr-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Document Name:</span>
+                                            {{ $clearance->clearance->document_name }}
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Description:</span>
+                                            <span class='text-blue-700 font-semibold'>{{ $clearance->clearance->description }}</span>
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Teaching Units:</span>
+                                            <span class='text-blue-700 font-semibold'>{{ $clearance->clearance->units }}</span>
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Type/Position:</span>
+                                            <span class='text-blue-700 font-semibold'>{{ $clearance->clearance->position }}</span>
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Created Date:</span>
+                                            <span class='text-blue-700 font-semibold'>{{ $clearance->created_at->format('M d, Y') }}</span>
+                                        </p>
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-medium">Last Updated:</span>
+                                            <span class='text-blue-700 font-semibold'>{{ $clearance->updated_at->format('M d, Y') }}</sapn>
+                                        </p>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.getElementById('editSharedClearance').addEventListener('change', function() {
+                            // Hide all clearance details first
+                            document.querySelectorAll('.clearance-details').forEach(el => {
+                                el.classList.add('hidden');
+                            });
+
+                            // Show selected clearance details
+                            const selectedId = this.value;
+                            if (selectedId) {
+                                const selectedDetails = document.querySelector(`.clearance-details[data-clearance-id="${selectedId}"]`);
+                                if (selectedDetails) {
+                                    selectedDetails.classList.remove('hidden');
+                                }
+                            }
+                        });
+                    </script>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Save Changes
-                        </button>
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Save Changes
+                    </button>
                     </div>
                 </form>
             </div>
