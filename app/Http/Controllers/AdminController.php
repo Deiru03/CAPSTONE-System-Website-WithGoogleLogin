@@ -342,7 +342,7 @@ class AdminController extends Controller
             ->pluck('count', 'transaction_type')
             ->toArray();
 
-        $perPage = 10;
+        $perPage = 100;
         $clearanceTotal = $query->get(); // Get total count before pagination
         $clearance = $query->paginate($perPage);
 
@@ -355,6 +355,7 @@ class AdminController extends Controller
             'activityData',
             'labels',
             'totalActivities',
+            'campuses',
             'activityBreakdown'
         ));
     }
