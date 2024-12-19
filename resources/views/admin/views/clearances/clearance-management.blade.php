@@ -274,7 +274,7 @@
                     <table class="min-w-full text-sm border-collapse">
                         <thead class="bg-gray-100 sticky top-0">
                             <tr>
-                                <th class="px-2 py-3 text-left text-xs font-medium text-red-900 uppercase tracking-wider">ID</th>
+                                <th class="px-2 py-3 text-left text-xs font-medium text-red-900 uppercase tracking-wider hidden">ID</th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># of<br>Req</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requirement</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -1078,8 +1078,8 @@
             requirements.forEach(req => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="px-2 py-2 border text-sm text-gray-300">${req.id}</td>
-                    <td class="px-4 py-2 border text-sm">${tbody.children.length + 1}</td>
+                    <td class="px-2 py-2 border text-sm text-gray-300 hidden">${req.id}</td>
+                    <td class="px-4 py-2 border text-sm preserve-whitespace">${tbody.children.length + 1}</td>
                     <td class="px-4 py-2 border preserve-whitespace text-sm text-black">${req.requirement}</td>
                     <td class="px-4 py-2 border text-sm">
                         <button onclick="openEditRequirementModal(${currentClearanceId}, ${req.id})" class="text-blue-500 mr-2">
@@ -1186,6 +1186,7 @@
             document.getElementById('editRequirementModal').classList.add('hidden');
             document.getElementById('editRequirementForm').reset();
             document.getElementById('editRequirementNotification').classList.add('hidden');
+            fetchRequirements(currentClearanceId); // Refresh the requirements table
         }
 
         document.getElementById('editRequirementForm').addEventListener('submit', function(event) {

@@ -21,7 +21,8 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-200 sticky-header">
                     <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden">ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># of<br>Req</th>
                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requirement</th>
                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -29,7 +30,8 @@
                 <tbody class="divide-y divide-gray-200">
                     @foreach ($clearance->requirements as $requirement)
                     <tr>
-                        <td class="px-4 py-3 whitespace-nowrap">{{ $requirement->id }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap hidden">{{ $requirement->id }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $loop->iteration }}</td>
                         <td class="px-4 py-3 preserve-whitespace">{{ $requirement->requirement }}</td>
                         <td class="py-2 px-3 border-b">
                             <button 
@@ -204,6 +206,7 @@
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap">${data.requirement.id}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${data.requirement.original_index}</td>
                     <td class="px-4 py-3 whitespace-nowrap">${data.requirement.requirement}</td>
                     <td class="py-2 px-3 border-b">
                         <button onclick="openEditRequirementModal(${data.requirement.clearance_id}, ${data.requirement.id})" class="text-blue-500 flex items-center text-xs mr-2">
