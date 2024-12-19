@@ -93,9 +93,9 @@
                         <canvas id="clearanceStatusChart"></canvas>
                     </div>
                     <div class="mt-2 text-sm text-gray-600 flex justify-between">
-                        <span>Pending: {{ $clearancePending }}</span>
+                        <span>In Progress: {{ $clearancePending }}</span>
                         <span>Complete: {{ $clearanceComplete }}</span>
-                        <span>In Progress: {{ $clearanceReturn }}</span>
+                        <span>Return: {{ $clearanceReturn }}</span>
                     </div>
                 </div>
 
@@ -250,7 +250,7 @@
                     new Chart(document.getElementById('clearanceStatusChart'), {
                         type: 'doughnut',
                         data: {
-                            labels: ['Pending', 'Complete', 'Return'],
+                            labels: ['In Progress', 'Complete', 'Resubmit'],
                             datasets: [{
                                 data: [{{ $clearancePending }}, {{ $clearanceComplete }}, {{ $clearanceReturn }}],
                                 backgroundColor: ['#FCD34D', '#10B981', '#F97316']

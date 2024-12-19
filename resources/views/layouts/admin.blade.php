@@ -285,9 +285,9 @@
                                 </h2>
                             </div>
 
-                            {{-- <div class="text-center mt-10">
-                                <h4>{{ date('F d, Y') }}</h4>
-                                <p> {{ date( 'l' )}} </p><p id="currentTime">{{ date('h:i A') }}</p>
+                            <div class="text-center">
+                                {{-- <h4>{{ date('F d, Y') }}</h4> --}}
+                                <p> {{ date( 'd, l' )}} </p><p id="currentTime">{{ date('h:i A') }}</p>
                                 <script>
                                     function updateTime() {
                                         const timeElement = document.getElementById('currentTime');
@@ -298,7 +298,7 @@
                                     updateTime();
                                     setInterval(updateTime, 60000);
                                 </script>
-                            </div> --}}
+                            </div>
 
                             <div class="flex items-center space-x-4">
                                 <!-- Overview Link -->
