@@ -91,24 +91,26 @@
     </div>
 
     <!-- Reset Button -->
-    <div class="flex items-center space-x-2">
-        <button id="resetButton" class="
-            {{ $userClearance->user->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-700 border-2 border-green-600 hover:border-green-800' : 'bg-red-500 hover:bg-red-700 border-2 border-red-600 hover:border-red-800' }}
-            text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-            </svg>
-            <span>Update User Clearances</span>
-        </button>
-        <span class="text-sm text-gray-600 mt-2">
-            This will reset the user's clearances to the selected academic year and semester.<br>
-            If <span class="text-green-500"><strong>green</strong></span>, the user's clearances are complete.<br>
-            If <span class="text-red-500"><strong>red</strong></span>, the user's clearances are incomplete/in-progress.
-        </span>
-    </div>
+    @if (Auth::user()->user_type === 'Admin')
+        <div class="flex items-center space-x-2">
+            <button id="resetButton" class="
+                {{ $userClearance->user->clearances_status === 'complete' ? 'bg-green-500 hover:bg-green-700 border-2 border-green-600 hover:border-green-800' : 'bg-red-500 hover:bg-red-700 border-2 border-red-600 hover:border-red-800' }}
+                text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                <span>Update User Clearances</span>
+            </button>
+            <span class="text-sm text-gray-600 mt-2">
+                This will reset the user's clearances to the selected academic year and semester.<br>
+                If <span class="text-green-500"><strong>green</strong></span>, the user's clearances are complete.<br>
+                If <span class="text-red-500"><strong>red</strong></span>, the user's clearances are incomplete/in-progress.
+            </span>
+        </div>
+    @endif
 
     <!-- Confirmation Modal -->
-    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50 mt-10">
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h3 id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></h3>
 
