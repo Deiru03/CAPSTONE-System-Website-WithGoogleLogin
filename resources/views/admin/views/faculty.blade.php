@@ -431,6 +431,28 @@
             </div>
         </div>
 
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 backdrop-blur-sm hidden z-50 transition-all duration-300">
+            <div class="bg-white bg-opacity-10 p-8 rounded-2xl shadow-2xl border border-white border-opacity-20 backdrop-filter backdrop-blur-lg">
+            <div class="text-center space-y-4">
+                <div class="flex justify-center items-center">
+                    <!-- Outer ring -->
+                    <div class="relative w-16 h-16 items-center">
+                        <div class="loader w-full h-full border-4 border-blue-200 border-opacity-30 rounded-full animate-spin items-center mt-3 ml-3"></div>
+                        <!-- Inner ring -->
+                        {{-- <div class="absolute inset-0 border-4 border-blue-200 border-t-transparent rounded-full animate-spin items-center"></div> --}}
+                    </div>
+                </div>
+                <p class="text-white text-xl font-semibold tracking-wider">
+                Loading<span class="animate-pulse">...</span>
+                </p>
+                <p class="text-sm" style="font-style: italic; color: #9fe1ff;">Please wait while the system fetching all users in the database</p>
+                <p class="text-sm" style="font-style: italic; color: #87effd;">This may take a few seconds</p>
+            </div>
+            </div>
+        </div>
+
         <!-- Assign Faculty -->
         <div id="manageModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 hidden z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-4xl w-full h-[90vh] relative overflow-hidden flex flex-col">
@@ -573,6 +595,9 @@
         }
 
         function openManageModal() {
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
             fetch('/admin/admin/manage-faculty', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
@@ -623,9 +648,15 @@
                     }
                 });
 
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
                 document.getElementById('manageModal').classList.remove('hidden');
             })
             .catch(error => {
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
                 console.error('Error fetching faculty data:', error);
                 showNotification('An error occurred while fetching faculty data.');
             });
