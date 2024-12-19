@@ -503,8 +503,9 @@ class AdminController extends Controller
 
         $departments = Department::all();
         $programs = Program::all();
+        $campuses = Campus::all();
 
-        return view('admin.views.faculty', compact('faculty', 'facultyTable', 'departments', 'programs', 'adminName'));
+        return view('admin.views.faculty', compact('faculty', 'facultyTable', 'departments', 'programs', 'adminName', 'campuses'));
     }
 
     public function showCollege(): View
@@ -777,13 +778,31 @@ class AdminController extends Controller
 
         return $pdf->stream('managed-faculty-report.pdf');
     }
-
+    
+    // Department and Program Filter
+    public function getDepartmentsByCampus($campusId)
+    {
+        $departments = Department::where('campus_id', $campusId)->get();
+        return response()->json(['departments' => $departments]);
+    }
+    
+    public function getProgramsByDepartment($departmentId)
+    {
+        $programs = Program::where('department_id', $departmentId)->get();
+        return response()->json(['programs' => $programs]);
+    }
     public function generateFacultyReport(Request $request)
     {
         $query = User::with(['department', 'program']);
 
         $omscLogo = base64_encode(file_get_contents(public_path('/images/OMSCLogo.png'))); //working
         $iqaLogo = base64_encode(file_get_contents(public_path('/images/IQALogo.jpg'))); //working
+
+        if ($request->filled('campus')) {
+            $query->whereHas('department', function($q) use ($request) {
+                $q->where('campus_id', $request->campus);
+            });
+        }
 
         if ($request->filled('department')) {
             $query->where('department_id', $request->department);

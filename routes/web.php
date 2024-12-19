@@ -131,6 +131,8 @@ Route::get('/api/notifications/unread-faculty', [NotificationController::class, 
 Route::post('/switch-role', [ProfileController::class, 'switchRole'])->name('switchRole');
 
 /////////////////////////////////////////////// DomPDF Routes ////////////////////////////////////////////////
+Route::get('/admin/campuses/{campus}/departments', [AdminController::class, 'getDepartmentsByCampus']);
+Route::get('/admin/departments/{department}/programs', [AdminController::class, 'getProgramsByDepartment']);
 Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generateReport');
 Route::post('/admin/faculty-report/generate', [AdminController::class, 'generateFacultyReport'])->name('admin.facultyReport.generate');
 Route::get('/admin/faculty-report/managed', [AdminController::class, 'generateManagedFacultyReport'])->name('admin.facultyReport.managed');

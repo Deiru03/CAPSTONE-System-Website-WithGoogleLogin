@@ -525,8 +525,17 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
+                            <label for="campus" class="block text-sm font-medium text-gray-700">Campus</label>
+                            <select name="campus" id="campus" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" onchange="loadDepartments(this.value)">
+                                <option value="">All Campuses</option>
+                                @foreach($campuses as $campus)
+                                    <option value="{{ $campus->id }}">{{ $campus->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
                             <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
-                            <select name="department" id="department" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <select name="department" id="department" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" onchange="loadPrograms(this.value)">
                                 <option value="">All Departments</option>
                                 @foreach($departments as $department)
                                     <option value="{{ $department->id }}">{{ $department->name }}</option>
@@ -565,6 +574,46 @@
 
     <!-- Script for Assign Faculty -->
     <script>
+        // Global variables
+        // Departments and programs are fetched from the server and stored here
+        function loadDepartments(campusId) {
+            const departmentSelect = document.getElementById('department');
+            departmentSelect.innerHTML = '<option value="">All Departments</option>'; // Reset departments
+
+            if (campusId) {
+                fetch(`/admin/campuses/${campusId}/departments`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.departments.forEach(department => {
+                            const option = document.createElement('option');
+                            option.value = department.id;
+                            option.textContent = department.name;
+                            departmentSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching departments:', error));
+            }
+        }
+
+        function loadPrograms(departmentId) {
+            const programSelect = document.getElementById('program');
+            programSelect.innerHTML = '<option value="">All Programs</option>'; // Reset programs
+
+            if (departmentId) {
+                fetch(`/admin/departments/${departmentId}/programs`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.programs.forEach(program => {
+                            const option = document.createElement('option');
+                            option.value = program.id;
+                            option.textContent = program.name;
+                            programSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching programs:', error));
+            }
+        }
+
         function openReportOptionsModal() {
             document.getElementById('reportOptionsModal').classList.remove('hidden');
         }
